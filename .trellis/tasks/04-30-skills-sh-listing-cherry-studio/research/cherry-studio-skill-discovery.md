@@ -1,6 +1,6 @@
-# Research: Cherry Studio Skill Discovery & Why `npm i -g @mindfoldhq/trellis` Is Invisible
+# Research: Cherry Studio Skill Discovery & Why `npm i -g @liushuang/trellis` Is Invisible
 
-- **Query**: How does Cherry Studio (https://github.com/CherryHQ/cherry-studio) discover, install, and manage "Agent skills"? Why can't a user who installed `@mindfoldhq/trellis@beta` via global npm see/manage Trellis inside `Agent → 属性 → 技能`?
+- **Query**: How does Cherry Studio (https://github.com/CherryHQ/cherry-studio) discover, install, and manage "Agent skills"? Why can't a user who installed `@liushuang/trellis@beta` via global npm see/manage Trellis inside `Agent → 属性 → 技能`?
 - **Scope**: external (Cherry Studio is open source; investigation done via GitHub repo, PRs, issues, release notes)
 - **Date**: 2026-04-30
 - **Cherry Studio version analyzed**: v1.9.1 → v1.9.3 (latest at time of research)
@@ -99,7 +99,7 @@ Yes. `skills.init` + `skills.register` (PR #14184) lets the agent — invoked fr
 - Issue #14660 ("Skills installed via Skillhub CLI to `Project\skills\` cannot be internally indexed") confirms this: a CLI-installed skill outside Cherry Studio's workspace is invisible. The agent literally responds with "previously installed via Skillhub CLI to the project\skills\ directory are local files, not in the Agent SDK's skill management list, and need to be called directly via file path."
 - Issue #14192 confirms even Cherry Studio's own agent-created skills get lost when written to the wrong path (no working dir selected) — discovery is path-strict.
 
-**Implication:** `npm install -g @mindfoldhq/trellis@beta` writes to a location Cherry Studio never looks at. The user's CLI binary on `$PATH` is invisible to the Skills panel by design.
+**Implication:** `npm install -g @liushuang/trellis@beta` writes to a location Cherry Studio never looks at. The user's CLI binary on `$PATH` is invisible to the Skills panel by design.
 
 ---
 

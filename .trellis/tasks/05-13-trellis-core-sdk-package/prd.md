@@ -2,7 +2,7 @@
 
 ## 当前意图
 
-设计并后续实现 `@mindfoldhq/trellis-core`，把 Trellis CLI 里已经成型的 channel/task 领域逻辑抽成可发布的 TypeScript core package。CLI 继续作为用户命令入口，但不再独占 channel 事件、thread reducer、storage、watch、task record 等核心语义。外部 Node 消费方后续应能通过 in-process API 调用同一套 core，而不是 subprocess 调 `trellis channel ...`。
+设计并后续实现 `@liushuang/trellis-core`，把 Trellis CLI 里已经成型的 channel/task 领域逻辑抽成可发布的 TypeScript core package。CLI 继续作为用户命令入口，但不再独占 channel 事件、thread reducer、storage、watch、task record 等核心语义。外部 Node 消费方后续应能通过 in-process API 调用同一套 core，而不是 subprocess 调 `trellis channel ...`。
 
 ## 背景
 
@@ -15,8 +15,8 @@
 
 ## 目标
 
-- 新增 workspace package：`packages/core`，npm 包名 `@mindfoldhq/trellis-core`。
-- `packages/cli` 依赖 `@mindfoldhq/trellis-core@workspace:*`。
+- 新增 workspace package：`packages/core`，npm 包名 `@liushuang/trellis-core`。
+- `packages/cli` 依赖 `@liushuang/trellis-core@workspace:*`。
 - Core 包拥有 channel/task 的领域类型、schema、storage、reducer、watch、API 函数。
 - CLI command files 变薄：只负责参数解析、终端输出、exit code、help 文案。
 - 下游 Node 消费方可直接 import core API，并写入 `origin: "api"` 的 channel events。

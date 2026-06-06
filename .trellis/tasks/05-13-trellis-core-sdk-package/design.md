@@ -2,13 +2,13 @@
 
 ## 总体结论
 
-新增 `packages/core`，发布为 `@mindfoldhq/trellis-core`。第一版按 Node-only ESM library 设计，不做 browser/isomorphic SDK。Trellis channel 依赖 filesystem、lock、watch、child process、stdin/stdout supervisor；当前最重要的是边界清晰和单一来源，不是多运行时兼容。
+新增 `packages/core`，发布为 `@liushuang/trellis-core`。第一版按 Node-only ESM library 设计，不做 browser/isomorphic SDK。Trellis channel 依赖 filesystem、lock、watch、child process、stdin/stdout supervisor；当前最重要的是边界清晰和单一来源，不是多运行时兼容。
 
 目标分层：
 
 ```text
-@mindfoldhq/trellis-core = domain + storage + runtime primitives
-@mindfoldhq/trellis      = CLI args + terminal rendering + exit codes
+@liushuang/trellis-core = domain + storage + runtime primitives
+@liushuang/trellis      = CLI args + terminal rendering + exit codes
 downstream Node services = in-process consumers of trellis-core
 ```
 
@@ -36,7 +36,7 @@ packages/
 ```json
 {
   "dependencies": {
-    "@mindfoldhq/trellis-core": "workspace:*"
+    "@liushuang/trellis-core": "workspace:*"
   }
 }
 ```
@@ -52,7 +52,7 @@ P0 消费方也是 Node ESM/TypeScript，先减少 build/release 变量。CJS �
 
 ```json
 {
-  "name": "@mindfoldhq/trellis-core",
+  "name": "@liushuang/trellis-core",
   "version": "0.6.0-beta.N",
   "type": "module",
   "main": "./dist/index.js",
@@ -257,7 +257,7 @@ storage primitives remain internal: `appendEvent`, event paths, lock paths,
 示例：
 
 ```ts
-import { postThread } from "@mindfoldhq/trellis-core/channel";
+import { postThread } from "@liushuang/trellis-core/channel";
 
 await postThread({
   channel: "trellis-issue",
@@ -625,10 +625,10 @@ Library tsconfig：
 发布前验证后续补：
 
 ```bash
-pnpm --filter @mindfoldhq/trellis-core build
-pnpm --filter @mindfoldhq/trellis-core test
-pnpm --filter @mindfoldhq/trellis-core typecheck
-pnpm --filter @mindfoldhq/trellis-core lint
+pnpm --filter @liushuang/trellis-core build
+pnpm --filter @liushuang/trellis-core test
+pnpm --filter @liushuang/trellis-core typecheck
+pnpm --filter @liushuang/trellis-core lint
 pnpm --dir packages/core exec publint --strict
 pnpm --dir packages/core exec attw --pack . --profile esm-only
 ```
@@ -639,12 +639,12 @@ ESM-only failure，而不是解析到错误文件。
 
 ## Versioning and release integration
 
-`@mindfoldhq/trellis-core` 第一阶段跟随 CLI 同版本发布，不单独走独立
+`@liushuang/trellis-core` 第一阶段跟随 CLI 同版本发布，不单独走独立
 semver 线：
 
 ```text
-@mindfoldhq/trellis       0.6.0-beta.N
-@mindfoldhq/trellis-core  0.6.0-beta.N
+@liushuang/trellis       0.6.0-beta.N
+@liushuang/trellis-core  0.6.0-beta.N
 ```
 
 理由：
@@ -680,8 +680,8 @@ rc line:     0.6.0-rc.0    -> npm dist-tag rc
 - Core 和 CLI 在每条线内都保持同一个 exact version：
 
 ```text
-@mindfoldhq/trellis       0.6.0-rc.0
-@mindfoldhq/trellis-core  0.6.0-rc.0
+@liushuang/trellis       0.6.0-rc.0
+@liushuang/trellis-core  0.6.0-rc.0
 ```
 
 - CLI 发布包依赖 core 时必须指向同一 exact version，而不是宽松 range：
@@ -689,13 +689,13 @@ rc line:     0.6.0-rc.0    -> npm dist-tag rc
 ```json
 {
   "dependencies": {
-    "@mindfoldhq/trellis-core": "0.6.0-rc.0"
+    "@liushuang/trellis-core": "0.6.0-rc.0"
   }
 }
 ```
 
-这避免 `@mindfoldhq/trellis@0.6.0-rc.0` 在用户机器上解析到
-`@mindfoldhq/trellis-core@0.6.0-beta.N` 或未来 `0.6.0`。
+这避免 `@liushuang/trellis@0.6.0-rc.0` 在用户机器上解析到
+`@liushuang/trellis-core@0.6.0-beta.N` 或未来 `0.6.0`。
 - 首次发布 core package 必须包含：
   - `publishConfig.access: "public"`
   - `publishConfig.provenance: true`，并更新 publish workflow 的
@@ -719,20 +719,20 @@ Release workflow 必须随 P0 更新：
   GA 线上递增 patch。
 - Root `package.json` 应声明 `packageManager`，避免本地和 CI 的 pnpm 版本漂移。
 - Manifest/changelog 仍属于 CLI package，因为 `trellis update` 消费
-  `@mindfoldhq/trellis` tarball 里的 manifests；core package 不单独拥有
+  `@liushuang/trellis` tarball 里的 manifests；core package 不单独拥有
   migration manifest。
 
 Verification additions：
 
 ```bash
-pnpm --filter @mindfoldhq/trellis-core build
-pnpm --filter @mindfoldhq/trellis-core typecheck
-pnpm --filter @mindfoldhq/trellis-core test
-pnpm --filter @mindfoldhq/trellis-core lint
-pnpm --filter @mindfoldhq/trellis build
-pnpm --filter @mindfoldhq/trellis typecheck
-pnpm --filter @mindfoldhq/trellis test
-pnpm --filter @mindfoldhq/trellis lint
+pnpm --filter @liushuang/trellis-core build
+pnpm --filter @liushuang/trellis-core typecheck
+pnpm --filter @liushuang/trellis-core test
+pnpm --filter @liushuang/trellis-core lint
+pnpm --filter @liushuang/trellis build
+pnpm --filter @liushuang/trellis typecheck
+pnpm --filter @liushuang/trellis test
+pnpm --filter @liushuang/trellis lint
 pnpm --dir packages/core exec publint --strict
 pnpm --dir packages/core exec attw --pack .
 ```

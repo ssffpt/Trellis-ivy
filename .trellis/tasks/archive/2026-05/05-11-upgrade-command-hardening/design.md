@@ -5,7 +5,7 @@
 `packages/cli/src/commands/upgrade.ts` owns the command behavior:
 
 - resolve target npm tag from current CLI version or `--tag`
-- build `npm install -g @mindfoldhq/trellis@<tag>`
+- build `npm install -g @liushuang/trellis@<tag>`
 - run it with `spawnSync`
 - report npm failures
 
@@ -34,7 +34,7 @@ Use direct spawning:
 
 ```text
 command: npm
-args: install -g @mindfoldhq/trellis@<tag>
+args: install -g @liushuang/trellis@<tag>
 options: { stdio: "inherit", shell: false }
 ```
 
@@ -46,7 +46,7 @@ Use `cmd.exe` to run the npm command shim:
 
 ```text
 command: cmd.exe
-args: /d /s /c npm install -g @mindfoldhq/trellis@<tag>
+args: /d /s /c npm install -g @liushuang/trellis@<tag>
 options: { stdio: "inherit", shell: false }
 ```
 
@@ -59,7 +59,7 @@ This avoids relying on direct `.cmd` launching semantics while still avoiding a 
 Print a human-readable command:
 
 ```text
-Run: npm install -g @mindfoldhq/trellis@beta
+Run: npm install -g @liushuang/trellis@beta
 ```
 
 For Windows, the display command should stay user-facing (`npm ...`), even if the internal process is `cmd.exe /d /s /c ...`.
@@ -86,7 +86,7 @@ Troubleshooting:
 - Check npm global prefix and PATH: npm config get prefix
 - If this is a permissions error, fix your Node/npm install or prefix; Trellis does not run sudo.
 - If another trellis binary is earlier on PATH, check which trellis / where trellis.
-- Manual command: npm install -g @mindfoldhq/trellis@beta
+- Manual command: npm install -g @liushuang/trellis@beta
 ```
 
 The command must not add `sudo`, `--force`, or automatic cleanup. Those are user-controlled recovery choices.

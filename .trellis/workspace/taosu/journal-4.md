@@ -363,7 +363,7 @@ External contributor @suyuan2022 filed issue #154 about SessionStart hook output
 Researched whether VSCode Copilot auto-loads `.claude/` when both platforms are installed. **Answer: no.** Copilot's auto-discovered instruction sources are a closed list (`.github/copilot-instructions.md`, `.github/instructions/*`, `AGENTS.md`, `.vscode/settings.json` copilot keys, `.github/skills/`, `.github/chatmodes/`). No documentation or behavior treats `.claude/` as a recognized source. Only impact is `@workspace` indexing can surface `.claude/*.md` as ordinary file content — not as instructions. No Trellis-side mitigation needed.
 
 ### 2. Local reproduction of issue #154
-Fresh `npx @mindfoldhq/trellis@beta init --claude` in `/tmp`, ran `session-start.py`:
+Fresh `npx @liushuang/trellis@beta init --claude` in `/tmp`, ran `session-start.py`:
 
 | Section | Bytes | KB | % |
 |---|---:|---:|---:|

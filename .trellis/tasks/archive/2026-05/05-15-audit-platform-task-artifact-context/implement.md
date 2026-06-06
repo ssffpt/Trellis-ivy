@@ -14,9 +14,9 @@
 ## Verification Results
 
 ```bash
-pnpm --filter @mindfoldhq/trellis test -- regression.test.ts
-pnpm --filter @mindfoldhq/trellis exec vitest run test/regression.test.ts -t "sub-agent context injection fallback"
-pnpm --filter @mindfoldhq/trellis typecheck
+pnpm --filter @liushuang/trellis test -- regression.test.ts
+pnpm --filter @liushuang/trellis exec vitest run test/regression.test.ts -t "sub-agent context injection fallback"
+pnpm --filter @liushuang/trellis typecheck
 git diff --check
 ```
 
@@ -41,7 +41,7 @@ agent cards and regression tests back into that existing contract.
 ## Validation Commands
 
 ```bash
-pnpm --filter @mindfoldhq/trellis test -- regression.test.ts
+pnpm --filter @liushuang/trellis test -- regression.test.ts
 ```
 
 If the focused command is unsupported, run the closest package-level test command

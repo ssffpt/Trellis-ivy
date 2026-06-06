@@ -21,13 +21,13 @@ Create and work on branch: `trellis-agents`
    - Move `src/types/ai-tools.ts` → `packages/core/src/types/`
    - Move `src/types/migration.ts` → `packages/core/src/types/`
    - Move `src/constants/paths.ts` → `packages/core/src/constants/`
-   - Create `packages/core/package.json` as `@mindfoldhq/trellis-core`
+   - Create `packages/core/package.json` as `@liushuang/trellis-core`
 
 3. **Extract `packages/shared`**
    - Move `src/utils/*` → `packages/shared/src/utils/`
    - Move `src/templates/*` → `packages/shared/src/templates/`
    - Move `src/migrations/*` → `packages/shared/src/migrations/`
-   - Create `packages/shared/package.json` as `@mindfoldhq/trellis-shared`
+   - Create `packages/shared/package.json` as `@liushuang/trellis-shared`
 
 4. **Migrate CLI to `apps/cli`**
    - Move `src/cli/` → `apps/cli/src/`
@@ -35,7 +35,7 @@ Create and work on branch: `trellis-agents`
    - Move `src/configurators/` → `apps/cli/src/configurators/`
    - Move `bin/` → `apps/cli/bin/`
    - Update imports to use workspace packages
-   - Keep `@mindfoldhq/trellis` as package name for npm publishing
+   - Keep `@liushuang/trellis` as package name for npm publishing
 
 5. **Scaffold `apps/electron`**
    - Create basic Electron + React + Vite setup
@@ -46,7 +46,7 @@ Create and work on branch: `trellis-agents`
      │   ├── main/       # Electron main process
      │   ├── preload/    # Context bridge
      │   └── renderer/   # React UI
-     ├── package.json    # @mindfoldhq/trellis-app
+     ├── package.json    # @liushuang/trellis-app
      ├── vite.config.ts
      └── electron-builder.json
      ```
@@ -57,26 +57,26 @@ Create and work on branch: `trellis-agents`
 ```
 trellis/
 ├── apps/
-│   ├── cli/                    # @mindfoldhq/trellis (existing CLI)
+│   ├── cli/                    # @liushuang/trellis (existing CLI)
 │   │   ├── src/
 │   │   │   ├── commands/
 │   │   │   ├── configurators/
 │   │   │   └── index.ts
 │   │   ├── bin/
 │   │   └── package.json
-│   └── electron/               # @mindfoldhq/trellis-app (new GUI)
+│   └── electron/               # @liushuang/trellis-app (new GUI)
 │       ├── src/
 │       │   ├── main/
 │       │   ├── preload/
 │       │   └── renderer/
 │       └── package.json
 ├── packages/
-│   ├── core/                   # @mindfoldhq/trellis-core
+│   ├── core/                   # @liushuang/trellis-core
 │   │   ├── src/
 │   │   │   ├── types/
 │   │   │   └── constants/
 │   │   └── package.json
-│   └── shared/                 # @mindfoldhq/trellis-shared
+│   └── shared/                 # @liushuang/trellis-shared
 │       ├── src/
 │       │   ├── utils/
 │       │   ├── templates/
@@ -123,6 +123,6 @@ trellis/
 ## Technical Notes
 
 - Keep `.trellis/` in root for dogfooding
-- Use workspace protocol for internal deps: `"@mindfoldhq/trellis-core": "workspace:*"`
-- Preserve `@mindfoldhq/trellis` package name for backward compatibility
+- Use workspace protocol for internal deps: `"@liushuang/trellis-core": "workspace:*"`
+- Preserve `@liushuang/trellis` package name for backward compatibility
 - Consider Turborepo for build orchestration in future

@@ -9,7 +9,7 @@
 
 ## Summary
 
-The new issue says an external daemon wants to lower agent execution to `@mindfoldhq/trellis-core` channel APIs, but core currently lacks the runtime side of channel-as-lib: spawn, supervisor, inbox watcher, worker registry, interrupt, paginated event reads, and cross-channel subscription. The issue asks Trellis to turn those CLI/runtime policies into explicit reusable core contracts instead of copying CLI hardcoded behavior.
+The new issue says an external daemon wants to lower agent execution to `@liushuang/trellis-core` channel APIs, but core currently lacks the runtime side of channel-as-lib: spawn, supervisor, inbox watcher, worker registry, interrupt, paginated event reads, and cross-channel subscription. The issue asks Trellis to turn those CLI/runtime policies into explicit reusable core contracts instead of copying CLI hardcoded behavior.
 
 ## Requested Design Areas
 

@@ -97,7 +97,7 @@
 ```bash
 pnpm typecheck
 pnpm lint
-pnpm --filter @mindfoldhq/trellis test
+pnpm --filter @liushuang/trellis test
 ```
 
-当前验证结果：`pnpm lint`、`pnpm typecheck`、`pnpm --filter @mindfoldhq/trellis test` 均通过。
+当前验证结果：`pnpm lint`、`pnpm typecheck`、`pnpm --filter @liushuang/trellis test` 均通过。

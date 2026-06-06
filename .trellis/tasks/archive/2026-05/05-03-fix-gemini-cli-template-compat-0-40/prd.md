@@ -6,7 +6,7 @@ Make `trellis init --gemini` produce templates that load cleanly on Gemini CLI 0
 
 ## Reproduction (from #224)
 
-`@mindfoldhq/trellis@0.5.0-rc.2` + `gemini-cli 0.40.1`:
+`@liushuang/trellis@0.5.0-rc.2` + `gemini-cli 0.40.1`:
 
 1. Agent loading error — `tools: Expected array, received string` for every `.gemini/agents/trellis-*.md`.
 2. Hook event `UserPromptSubmit` rejected — Gemini 0.40.x renamed it to `BeforeAgent`.

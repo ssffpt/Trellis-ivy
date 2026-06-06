@@ -126,11 +126,11 @@ aider --model sonnet --api-key anthropic=<key>
 
 ```bash
 # NPM (Recommended)
-npm install -g @mindfoldhq/trellis
+npm install -g @liushuang/trellis
 trellis init
 
 # Or with npx
-npx @mindfoldhq/trellis init
+npx @liushuang/trellis init
 ```
 
 ---
@@ -232,7 +232,7 @@ npx @mindfoldhq/trellis init
 ### Trellis 建议徽章
 
 ```markdown
-![npm](https://img.shields.io/npm/v/@mindfoldhq/trellis)
+![npm](https://img.shields.io/npm/v/@liushuang/trellis)
 ![License](https://img.shields.io/badge/License-MIT-blue)
 ![Node.js](https://img.shields.io/badge/Node.js-18+-brightgreen)
 ![TypeScript](https://img.shields.io/badge/TypeScript-5.0+-blue)
@@ -568,7 +568,7 @@ AI coding tools are powerful, but sessions are isolated. Trellis provides:
 ## Quick Start
 
 \`\`\`bash
-npm install -g @mindfoldhq/trellis
+npm install -g @liushuang/trellis
 trellis init
 \`\`\`
 

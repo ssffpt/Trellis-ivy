@@ -2,7 +2,7 @@
 
 ## 功能结论
 
-`trellis mem` 应迁移出 CLI command，成为 `@mindfoldhq/trellis-core` 的可复用历史检索能力；CLI 只负责参数解析和终端展示。`channel` 继续作为协作事件流，`forum` 是一种 channel 类型，`thread` 是 forum 内的单个话题。第一版实现同时完成 mem-core 迁移、channel schema 复用、`threads` 到 `forum` 的破坏式改名。
+`trellis mem` 应迁移出 CLI command，成为 `@liushuang/trellis-core` 的可复用历史检索能力；CLI 只负责参数解析和终端展示。`channel` 继续作为协作事件流，`forum` 是一种 channel 类型，`thread` 是 forum 内的单个话题。第一版实现同时完成 mem-core 迁移、channel schema 复用、`threads` 到 `forum` 的破坏式改名。
 
 用户视角的能力分层：
 
@@ -84,7 +84,7 @@ GitNexus 查到的 `mem` 入口关系：
 
 不同 `mem` 会话来源保留自己的原始结构，core v1 的 public model 以 `MemSessionInfo`、`SearchHit`、`MemSearchMatch`、`MemContextResult`、`MemExtractResult` 为中心。不要引入泛化的 `SearchRecord` public API；现有 `trellis mem search` 是 session-level match，不是 record stream。
 
-内部实现可以在 adapter 层使用临时 normalized turn / hit 结构，但这些结构不进入 `@mindfoldhq/trellis-core/mem` public barrel。第一版不做 cursor、pagination、channel/forum/thread history source。
+内部实现可以在 adapter 层使用临时 normalized turn / hit 结构，但这些结构不进入 `@liushuang/trellis-core/mem` public barrel。第一版不做 cursor、pagination、channel/forum/thread history source。
 
 这个模型只服务 `mem` 检索和上下文抽取，不替代 channel event schema。channel 仍然以 event log 为事实来源；第一版 mem 不读取 channel event log。
 
@@ -143,7 +143,7 @@ CLI 不深导入 `core/internal/*`。如果 CLI 需要某个能力，应先提�
 不要从 `packages/core/src/index.ts` root barrel re-export mem。调用方应显式使用：
 
 ```ts
-import { searchMemSessions } from "@mindfoldhq/trellis-core/mem";
+import { searchMemSessions } from "@liushuang/trellis-core/mem";
 ```
 
 这样避免根包突然暴露大量 `DialogueTurn`、`SearchHit`、`MemFilter` 等 API。
@@ -155,7 +155,7 @@ Do not create a generic `helpers/` directory. Do not create `packages/core/src/s
 直接复用 core/channel：
 
 - 当前 v1 不直接复用 channel `ContextEntry`。`trellis mem context` 是 dialogue-window context，不是 channel file/raw attached context。
-- `ContextEntry`, `FileContextEntry`, `RawContextEntry`, `asContextEntries`, `contextEntryKey`, `buildContextEntries` 继续由 channel 拥有，并从 `@mindfoldhq/trellis-core/channel` 公开导出。
+- `ContextEntry`, `FileContextEntry`, `RawContextEntry`, `asContextEntries`, `contextEntryKey`, `buildContextEntries` 继续由 channel 拥有，并从 `@liushuang/trellis-core/channel` 公开导出。
 - `GLOBAL_PROJECT_KEY` 当前不引入 mem；只有 mem 真要表达 channel global bucket marker 时再复用。
 
 不应强行复用 channel：
@@ -185,7 +185,7 @@ Schema dependency decision:
 
 - `packages/cli` currently depends on `zod`; `packages/core` does not.
 - Core task schema uses zero-dependency hand-written parse/safeParse style.
-- Preferred implementation is to avoid adding `zod` to `@mindfoldhq/trellis-core` for this extraction. Move TypeScript types plus lightweight runtime guards into core, or keep platform-file zod parsing inside CLI only if a parser cannot be moved cleanly.
+- Preferred implementation is to avoid adding `zod` to `@liushuang/trellis-core` for this extraction. Move TypeScript types plus lightweight runtime guards into core, or keep platform-file zod parsing inside CLI only if a parser cannot be moved cleanly.
 - If implementation finds zod would materially reduce risk, that must be an explicit design change because it changes core's dependency surface.
 
 ## Channel and forum reuse
@@ -332,5 +332,5 @@ Naming decisions:
 
 - `packages/cli/src/commands/mem.ts` 目前过大，拆分时容易把 terminal rendering 混进 core。实现时先提纯 types/filter/search/context，再迁移 source adapters。
 - `forum` 命名变更会影响已有本机 global channel。接受手动 grep 替换，不在代码里承载旧名。
-- `@mindfoldhq/trellis-core/mem` subpath export 是新增公开面，需要 build 或 smoke test 验证 package export 可被 Node 导入。
+- `@liushuang/trellis-core/mem` subpath export 是新增公开面，需要 build 或 smoke test 验证 package export 可被 Node 导入。
 - 旧 CLI helper tests 不能倒逼 `packages/cli/src/commands/mem.ts` 继续导出 pure helpers；pure tests 应迁移到 `packages/core/test/mem/*`，CLI tests 只覆盖 command behavior / JSON output / exit behavior。

@@ -10,7 +10,7 @@
 |---|---|
 | `gh api repos/mindfold-ai/marketplace/commits/main` | Official marketplace `main` is `76a36ea573ed1ff00712f91a326061cc59d34958`, dated 2026-04-03. Local `marketplace` submodule points to the same commit. |
 | `gh api repos/mindfold-ai/Trellis/commits/main` | Trellis `main` is `b3fe644a0d9a4ae4180cde61d5818d002333465e`, dated 2026-04-20. |
-| `npm view @mindfoldhq/trellis version dist-tags --json` | npm `latest` is `0.4.0`; npm `beta` is `0.5.0-beta.16`. |
+| `npm view @liushuang/trellis version dist-tags --json` | npm `latest` is `0.4.0`; npm `beta` is `0.5.0-beta.16`. |
 | `packages/cli/package.json` | Current branch package version is `0.5.0-beta.16`. |
 | `marketplace/skills/trellis-meta/SKILL.md` | Meta-skill still declares `0.4.0-beta.8`, last updated 2026-03-24. |
 

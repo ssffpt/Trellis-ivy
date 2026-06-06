@@ -50,8 +50,8 @@
    - Update task PRD acceptance checkboxes when implemented.
 
 6. Validation
-   - `pnpm --filter @mindfoldhq/trellis-core test`
-   - `pnpm --filter @mindfoldhq/trellis test -- --runInBand` if supported, or
+   - `pnpm --filter @liushuang/trellis-core test`
+   - `pnpm --filter @liushuang/trellis test -- --runInBand` if supported, or
      targeted Vitest files for channel tests
    - `pnpm typecheck`
    - `pnpm lint`

@@ -9,7 +9,7 @@
 
 [English](./README.md) | 中文
 
-[![npm version](https://img.shields.io/npm/v/@mindfoldhq/trellis)](https://www.npmjs.com/package/@mindfoldhq/trellis)
+[![npm version](https://img.shields.io/npm/v/@liushuang/trellis)](https://www.npmjs.com/package/@liushuang/trellis)
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
 [![Claude Code](https://img.shields.io/badge/Claude%20Code-Compatible-blueviolet)](https://claude.ai/code)
 [![Cursor](https://img.shields.io/badge/Cursor-Compatible-blue)](https://cursor.sh)
@@ -41,7 +41,7 @@ Trellis 解决这些问题。
 ### 安装
 
 ```bash
-npm install -g @mindfoldhq/trellis@latest
+npm install -g @liushuang/trellis@latest
 ```
 
 ### 初始化

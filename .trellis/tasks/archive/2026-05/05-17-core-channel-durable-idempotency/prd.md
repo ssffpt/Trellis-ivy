@@ -2,7 +2,7 @@
 
 ## Goal
 
-Add durable idempotency to `@mindfoldhq/trellis-core` channel writes so replayed commands can return the original event instead of appending duplicate JSONL events.
+Add durable idempotency to `@liushuang/trellis-core` channel writes so replayed commands can return the original event instead of appending duplicate JSONL events.
 
 ## User Value
 

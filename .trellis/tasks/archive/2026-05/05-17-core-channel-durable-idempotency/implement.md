@@ -39,10 +39,10 @@
 ## Validation Commands
 
 ```bash
-pnpm --filter @mindfoldhq/trellis-core test -- test/channel/idempotency.test.ts
-pnpm --filter @mindfoldhq/trellis-core lint
-pnpm --filter @mindfoldhq/trellis-core typecheck
-pnpm --filter @mindfoldhq/trellis-core build
+pnpm --filter @liushuang/trellis-core test -- test/channel/idempotency.test.ts
+pnpm --filter @liushuang/trellis-core lint
+pnpm --filter @liushuang/trellis-core typecheck
+pnpm --filter @liushuang/trellis-core build
 ```
 
 ## Rollback Point

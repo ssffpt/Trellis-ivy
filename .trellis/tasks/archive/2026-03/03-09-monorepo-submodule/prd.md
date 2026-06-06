@@ -19,7 +19,7 @@
 - `doc/` — changelog、示例文档 zip (可删除，内容陈旧)
 - `docs/` — guide.md、blog 文章 (6 个 md 文件，需迁移到 docs 仓库)
 - `template-fetcher.ts` 硬编码 `gh:mindfold-ai/docs` 作为模板源
-- npm 发布为 `@mindfoldhq/trellis`，`files: ["dist", "bin", "README.md", "LICENSE"]`
+- npm 发布为 `@liushuang/trellis`，`files: ["dist", "bin", "README.md", "LICENSE"]`
 
 **Docs 仓库** (`mindfold-ai/docs`):
 - Mintlify 框架，部署在 `docs.trytrellis.app`
@@ -85,13 +85,13 @@ Trellis/                         # 主仓库 (mindfold-ai/Trellis)
 
 ## npm Publish 适配方案 (已分析)
 
-包名 `@mindfoldhq/trellis`，当前从仓库根发布。搬到 `packages/cli/` 后：
+包名 `@liushuang/trellis`，当前从仓库根发布。搬到 `packages/cli/` 后：
 
 | 项 | 变化 |
 |---|---|
 | `bin`, `main`, `types` 字段 | **不用改** — 相对于 package.json 的路径不变 |
 | `files` 字段 | 需确认 `README.md` 和 `LICENSE` 的位置（可在 cli/ 放精简版或脚本拷贝） |
-| CI publish.yml | 加 `working-directory: packages/cli` 或 `pnpm --filter @mindfoldhq/trellis publish` |
+| CI publish.yml | 加 `working-directory: packages/cli` 或 `pnpm --filter @liushuang/trellis publish` |
 | CI ci.yml | build 验证路径改为 `packages/cli/dist/` |
 | release 脚本 | `pnpm version` 需要在 `packages/cli/` 下执行 |
 | `prepublishOnly` | 需确认 workspace 下行为正确 |

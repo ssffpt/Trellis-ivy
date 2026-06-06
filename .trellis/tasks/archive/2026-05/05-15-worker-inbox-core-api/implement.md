@@ -69,18 +69,18 @@ to use `watchWorkerInbox()`:
 Run:
 
 ```bash
-pnpm --filter @mindfoldhq/trellis-core test worker-inbox
-pnpm --filter @mindfoldhq/trellis-core test channel
-pnpm --filter @mindfoldhq/trellis-core typecheck
-pnpm --filter @mindfoldhq/trellis-core lint
-pnpm --filter @mindfoldhq/trellis typecheck
+pnpm --filter @liushuang/trellis-core test worker-inbox
+pnpm --filter @liushuang/trellis-core test channel
+pnpm --filter @liushuang/trellis-core typecheck
+pnpm --filter @liushuang/trellis-core lint
+pnpm --filter @liushuang/trellis typecheck
 ```
 
 When the deferred CLI supervisor consolidation is implemented, run:
 
 ```bash
-pnpm --filter @mindfoldhq/trellis test channel
-pnpm --filter @mindfoldhq/trellis lint
+pnpm --filter @liushuang/trellis test channel
+pnpm --filter @liushuang/trellis lint
 ```
 
 ## Review gate

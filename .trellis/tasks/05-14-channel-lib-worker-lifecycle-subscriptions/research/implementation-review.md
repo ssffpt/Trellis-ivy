@@ -22,14 +22,14 @@
 ## Final Validation
 
 ```bash
-env -u TRELLIS_HOOKS pnpm --filter @mindfoldhq/trellis-core exec vitest run test/channel/channel-runtime.test.ts
+env -u TRELLIS_HOOKS pnpm --filter @liushuang/trellis-core exec vitest run test/channel/channel-runtime.test.ts
 pnpm --dir packages/core exec vitest run test/channel/channel-runtime.test.ts
-pnpm --filter @mindfoldhq/trellis-core typecheck
-pnpm --filter @mindfoldhq/trellis-core lint
-pnpm --filter @mindfoldhq/trellis-core test
-pnpm --filter @mindfoldhq/trellis-core build
-pnpm --filter @mindfoldhq/trellis typecheck
-pnpm --filter @mindfoldhq/trellis lint
+pnpm --filter @liushuang/trellis-core typecheck
+pnpm --filter @liushuang/trellis-core lint
+pnpm --filter @liushuang/trellis-core test
+pnpm --filter @liushuang/trellis-core build
+pnpm --filter @liushuang/trellis typecheck
+pnpm --filter @liushuang/trellis lint
 cd packages/cli && npx vitest run test/commands/channel.test.ts test/commands/channel-codex-adapter.test.ts
 ./.trellis/scripts/task.py validate .trellis/tasks/05-14-channel-lib-worker-lifecycle-subscriptions
 ```

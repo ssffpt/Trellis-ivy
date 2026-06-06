@@ -27,7 +27,7 @@
 
 ```bash
 # 1. 安装
-npm install -g @mindfoldhq/trellis@latest
+npm install -g @liushuang/trellis@latest
 
 # 2. 初始化项目
 cd your-project

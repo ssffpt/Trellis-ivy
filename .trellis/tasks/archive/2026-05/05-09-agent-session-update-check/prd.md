@@ -25,7 +25,7 @@ Notify users about available Trellis updates even when they do not manually run 
 - If `.trellis/.version` is older than the version resolved from `trellis --version`, include a concise visible hint before the context body:
   - current project version
   - available Trellis version
-  - `run npm install -g @mindfoldhq/trellis@latest`
+  - `run npm install -g @liushuang/trellis@latest`
 - If the installed project version equals or is newer than the resolved version, print nothing.
 - If `trellis --version` fails or version parsing fails, print nothing.
 - Do not perform the update check for JSON output, record mode, packages mode, or phase mode.

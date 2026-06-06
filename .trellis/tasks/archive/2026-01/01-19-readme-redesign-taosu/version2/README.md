@@ -14,7 +14,7 @@
 </p>
 
 <p align="center">
-  <a href="https://www.npmjs.com/package/@mindfoldhq/trellis"><img src="https://img.shields.io/npm/v/@mindfoldhq/trellis" alt="npm"></a>
+  <a href="https://www.npmjs.com/package/@liushuang/trellis"><img src="https://img.shields.io/npm/v/@liushuang/trellis" alt="npm"></a>
   <a href="./LICENSE"><img src="https://img.shields.io/badge/License-MIT-blue.svg" alt="License"></a>
 </p>
 
@@ -29,7 +29,7 @@
 ## Install
 
 ```bash
-npm install -g @mindfoldhq/trellis@latest
+npm install -g @liushuang/trellis@latest
 cd your-project && trellis init -u your-name
 ```
 

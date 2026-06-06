@@ -2,7 +2,7 @@
   "id": "trellis-core-sdk-package",
   "name": "trellis-core-sdk-package",
   "title": "Design trellis-core SDK package",
-  "description": "Design @mindfoldhq/trellis-core package boundaries, public API, channel extraction order, and downstream integration contract.",
+  "description": "Design @liushuang/trellis-core package boundaries, public API, channel extraction order, and downstream integration contract.",
   "status": "in_progress",
   "dev_type": null,
   "scope": null,

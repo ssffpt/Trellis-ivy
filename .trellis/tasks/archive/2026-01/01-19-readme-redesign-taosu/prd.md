@@ -134,7 +134,7 @@ Based on Trellis's positioning as a "workflow layer for AI coding":
 ### Badges (Priority: P1)
 
 ```markdown
-![npm version](https://img.shields.io/npm/v/@mindfoldhq/trellis)
+![npm version](https://img.shields.io/npm/v/@liushuang/trellis)
 ![License](https://img.shields.io/badge/License-MIT-blue)
 ![GitHub stars](https://img.shields.io/github/stars/mindfoldhq/trellis)
 ```

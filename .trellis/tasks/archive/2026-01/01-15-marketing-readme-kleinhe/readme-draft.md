@@ -66,7 +66,7 @@
 
 ```bash
 # Install
-npm install -g @mindfoldhq/trellis
+npm install -g @liushuang/trellis
 
 # Initialize in your project
 trellis init
