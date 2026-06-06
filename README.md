@@ -12,6 +12,10 @@
 </p>
 
 <p align="center">
+<strong>Fork Notice:</strong> This is <code>@liushuang/trellis</code> — a personal fork of the original Trellis project for custom workflow experiments.
+</p>
+
+<p align="center">
 <a href="./README_CN.md">简体中文</a> •
 <a href="https://docs.trytrellis.app/">Docs</a> •
 <a href="https://docs.trytrellis.app/start/install-and-first-task">Quick Start</a> •
@@ -20,8 +24,8 @@
 </p>
 
 <p align="center">
-<a href="https://www.npmjs.com/package/@mindfoldhq/trellis"><img src="https://img.shields.io/npm/v/@mindfoldhq/trellis.svg?style=flat-square&color=2563eb" alt="npm version" /></a>
-<a href="https://www.npmjs.com/package/@mindfoldhq/trellis"><img src="https://img.shields.io/npm/dw/@mindfoldhq/trellis?style=flat-square&color=cb3837&label=downloads" alt="npm downloads" /></a>
+<a href="https://www.npmjs.com/package/@liushuang/trellis"><img src="https://img.shields.io/npm/v/@liushuang/trellis.svg?style=flat-square&color=2563eb" alt="npm version" /></a>
+<a href="https://www.npmjs.com/package/@liushuang/trellis"><img src="https://img.shields.io/npm/dw/@liushuang/trellis?style=flat-square&color=cb3837&label=downloads" alt="npm downloads" /></a>
 <a href="https://github.com/mindfold-ai/Trellis/blob/main/LICENSE"><img src="https://img.shields.io/badge/license-AGPL--3.0-16a34a.svg?style=flat-square" alt="license" /></a>
 <a href="https://github.com/mindfold-ai/Trellis/stargazers"><img src="https://img.shields.io/github/stars/mindfold-ai/Trellis?style=flat-square&color=eab308" alt="stars" /></a>
 <a href="https://docs.trytrellis.app/"><img src="https://img.shields.io/badge/docs-trytrellis.app-0f766e?style=flat-square" alt="docs" /></a>
@@ -76,7 +80,7 @@ Prerequisites:
 Install Trellis:
 
 ```bash
-npm install -g @mindfoldhq/trellis@beta
+npm install -g @liushuang/trellis@beta
 ```
 
 Initialize a repository:
