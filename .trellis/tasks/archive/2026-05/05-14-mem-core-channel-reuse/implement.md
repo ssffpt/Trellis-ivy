@@ -16,9 +16,9 @@
 Validation:
 
 ```bash
-pnpm --filter @liushuang/trellis-core test -- test/channel/metadata.test.ts test/channel/threads.test.ts
-pnpm --filter @liushuang/trellis test -- test/commands/channel.test.ts
-pnpm --filter @liushuang/trellis typecheck
+pnpm --filter trellis-ivy-core test -- test/channel/metadata.test.ts test/channel/threads.test.ts
+pnpm --filter trellis-ivy test -- test/commands/channel.test.ts
+pnpm --filter trellis-ivy typecheck
 ```
 
 ## Phase 2 — Mem extraction boundary
@@ -33,11 +33,11 @@ pnpm --filter @liushuang/trellis typecheck
 - [x] Do not import channel `ContextEntry` into mem v1; mem context remains dialogue-window context.
 - [x] Move only `isPlainObject` to `packages/core/src/internal/json.ts` if mem parser guards need it. Keep JSONL/path/time/dialogue helpers under `packages/core/src/mem/`.
 - [x] Do not reuse channel-only `ChannelScope`, `EventOrigin`, `ThreadAction`, or `ThreadState` for unrelated mem concepts.
-- [x] Keep core dependency surface intentional: do not add `zod` to `@liushuang/trellis-core` unless a follow-up design note explicitly accepts that dependency.
+- [x] Keep core dependency surface intentional: do not add `zod` to `trellis-ivy-core` unless a follow-up design note explicitly accepts that dependency.
 - [x] Move pure data types and search/filter/context helpers into core.
 - [x] Keep CLI-only rendering, argument parsing, and exit handling in `packages/cli/src/commands/mem.ts`.
-- [x] Add `@liushuang/trellis-core/mem` as an explicit package subpath export in `packages/core/package.json`.
-- [x] Do not re-export mem from `packages/core/src/index.ts`; callers must import from `@liushuang/trellis-core/mem`.
+- [x] Add `trellis-ivy-core/mem` as an explicit package subpath export in `packages/core/package.json`.
+- [x] Do not re-export mem from `packages/core/src/index.ts`; callers must import from `trellis-ivy-core/mem`.
 - [x] Public mem API exports: `listMemSessions`, `searchMemSessions`, `readMemContext`, `extractMemDialogue`, `listMemProjects`.
 - [x] Keep internal pure context selection as `selectContextTurns`; do not expose it unless a real external consumer appears.
 - [x] Return structured results with warnings from core; CLI decides how to print warnings and whether to exit.
@@ -47,10 +47,10 @@ pnpm --filter @liushuang/trellis typecheck
 Validation:
 
 ```bash
-pnpm --filter @liushuang/trellis-core test -- mem
-pnpm --filter @liushuang/trellis-core build
-pnpm --filter @liushuang/trellis-core typecheck
-pnpm --filter @liushuang/trellis typecheck
+pnpm --filter trellis-ivy-core test -- mem
+pnpm --filter trellis-ivy-core build
+pnpm --filter trellis-ivy-core typecheck
+pnpm --filter trellis-ivy typecheck
 ```
 
 ## Phase 3 — CLI wrapper preservation
@@ -66,8 +66,8 @@ pnpm --filter @liushuang/trellis typecheck
 Validation:
 
 ```bash
-pnpm --filter @liushuang/trellis test -- test/commands/mem-helpers.test.ts test/commands/mem-since-cross-day.test.ts test/commands/mem-platforms.test.ts test/commands/mem-phase-slice.test.ts test/commands/mem-integration.test.ts
-pnpm --filter @liushuang/trellis typecheck
+pnpm --filter trellis-ivy test -- test/commands/mem-helpers.test.ts test/commands/mem-since-cross-day.test.ts test/commands/mem-platforms.test.ts test/commands/mem-phase-slice.test.ts test/commands/mem-integration.test.ts
+pnpm --filter trellis-ivy typecheck
 ```
 
 ## Review gates
@@ -78,38 +78,38 @@ pnpm --filter @liushuang/trellis typecheck
 - [x] Update `.trellis/spec/cli/backend/commands-channel.md` and core/CLI package specs before commit.
 - [ ] Do not edit historical release manifests. New manifests/changelogs use `forum`; published manifests keep historical `threads` text.
 - [x] Run grep gate: `rg -n 'type: "threads"|--type threads|channel threads|threads channel|thread channel|listThreads|readThreadsChannelEvents|ThreadsOptions' packages/core packages/cli .trellis/spec -g '!packages/cli/src/migrations/manifests/*.json'`.
-- [x] Run no-deep-import gate: `rg -n '@liushuang/trellis-core/.*/internal|@liushuang/trellis-core/internal|packages/core/src/internal|packages/core/src/mem/internal' packages/cli/src packages/cli/test`.
+- [x] Run no-deep-import gate: `rg -n 'trellis-ivy-core/.*/internal|trellis-ivy-core/internal|packages/core/src/internal|packages/core/src/mem/internal' packages/cli/src packages/cli/test`.
 - [x] Run no-zod-core gate: `rg -n '"zod"|from "zod"|from '\''zod'\''' packages/core/package.json packages/core/src`.
-- [x] Run package export smoke after build: `node -e 'await import("@liushuang/trellis-core/mem")'` from a context that resolves the built package, or add equivalent core package smoke coverage.
+- [x] Run package export smoke after build: `node -e 'await import("trellis-ivy-core/mem")'` from a context that resolves the built package, or add equivalent core package smoke coverage.
 - [ ] Commit as one coherent change only if forum rename and mem-core extraction both fit the same release slice; otherwise split into two commits.
 
 ## Release-blocking validation
 
 ```bash
-pnpm --filter @liushuang/trellis-core build
-pnpm --filter @liushuang/trellis-core test -- test/mem
-pnpm --filter @liushuang/trellis-core test -- test/channel/metadata.test.ts test/channel/threads.test.ts
-pnpm --filter @liushuang/trellis test -- test/commands/channel.test.ts
-pnpm --filter @liushuang/trellis test -- test/commands/mem-helpers.test.ts test/commands/mem-since-cross-day.test.ts test/commands/mem-platforms.test.ts test/commands/mem-phase-slice.test.ts test/commands/mem-integration.test.ts
-pnpm --filter @liushuang/trellis-core typecheck
-pnpm --filter @liushuang/trellis typecheck
+pnpm --filter trellis-ivy-core build
+pnpm --filter trellis-ivy-core test -- test/mem
+pnpm --filter trellis-ivy-core test -- test/channel/metadata.test.ts test/channel/threads.test.ts
+pnpm --filter trellis-ivy test -- test/commands/channel.test.ts
+pnpm --filter trellis-ivy test -- test/commands/mem-helpers.test.ts test/commands/mem-since-cross-day.test.ts test/commands/mem-platforms.test.ts test/commands/mem-phase-slice.test.ts test/commands/mem-integration.test.ts
+pnpm --filter trellis-ivy-core typecheck
+pnpm --filter trellis-ivy typecheck
 rg -n '"zod"|from "zod"|from '\''zod'\''' packages/core/package.json packages/core/src
-rg -n '@liushuang/trellis-core/.*/internal|@liushuang/trellis-core/internal|packages/core/src/internal|packages/core/src/mem/internal' packages/cli/src packages/cli/test
+rg -n 'trellis-ivy-core/.*/internal|trellis-ivy-core/internal|packages/core/src/internal|packages/core/src/mem/internal' packages/cli/src packages/cli/test
 rg -n 'type: "threads"|--type threads|channel threads|threads channel|thread channel|listThreads|readThreadsChannelEvents|ThreadsOptions' packages/core packages/cli .trellis/spec -g '!packages/cli/src/migrations/manifests/*.json'
 ```
 
 Latest validation (2026-05-14):
 
-- `pnpm --filter @liushuang/trellis-core build` — passed.
-- `pnpm --filter @liushuang/trellis-core typecheck` — passed.
-- `pnpm --filter @liushuang/trellis-core test -- test/mem` — passed, 178 tests.
-- `pnpm --filter @liushuang/trellis typecheck` — passed.
-- `pnpm --filter @liushuang/trellis exec vitest run test/commands/mem-helpers.test.ts test/commands/mem-integration.test.ts` — passed, 37 tests.
-- `pnpm --filter @liushuang/trellis-core lint` — passed.
-- `pnpm --filter @liushuang/trellis lint` — passed.
-- `@liushuang/trellis-core/mem` subpath smoke import passed; root barrel does not export mem.
+- `pnpm --filter trellis-ivy-core build` — passed.
+- `pnpm --filter trellis-ivy-core typecheck` — passed.
+- `pnpm --filter trellis-ivy-core test -- test/mem` — passed, 178 tests.
+- `pnpm --filter trellis-ivy typecheck` — passed.
+- `pnpm --filter trellis-ivy exec vitest run test/commands/mem-helpers.test.ts test/commands/mem-integration.test.ts` — passed, 37 tests.
+- `pnpm --filter trellis-ivy-core lint` — passed.
+- `pnpm --filter trellis-ivy lint` — passed.
+- `trellis-ivy-core/mem` subpath smoke import passed; root barrel does not export mem.
 - Core mem grep gates passed: no `zod`, no `console.*`, no `process.exit`.
-- CLI deep-import gate passed: CLI imports only public `@liushuang/trellis-core/mem`.
+- CLI deep-import gate passed: CLI imports only public `trellis-ivy-core/mem`.
 
 Trellis channel checks:
 

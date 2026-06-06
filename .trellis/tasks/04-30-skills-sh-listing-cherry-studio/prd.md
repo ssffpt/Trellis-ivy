@@ -20,7 +20,7 @@ issue #205 的两个隐含前提**都不成立**：
    报错 `在技能市场中未找到名为 "Trellis" 的技能` 是 claude-plugins.dev 没收录 Trellis，不是 skills.sh。
 
 2. **"npm 全局装完应该在技能列表里看到"** ❌（类目错配）
-   Cherry Studio 的"技能"=`SKILL.md` 目录（Anthropic Claude Skill 形态），不是 CLI 不是 npm 包。Cherry Studio 完全不扫 `npm root -g` / `~/.claude/skills/` / `~/.codex/skills/`，只扫它自己 Electron `userData` 下的 `Skills/` 和当前 agent workspace。`npm i -g @liushuang/trellis` 进入的位置 Cherry Studio **设计上看不到**。
+   Cherry Studio 的"技能"=`SKILL.md` 目录（Anthropic Claude Skill 形态），不是 CLI 不是 npm 包。Cherry Studio 完全不扫 `npm root -g` / `~/.claude/skills/` / `~/.codex/skills/`，只扫它自己 Electron `userData` 下的 `Skills/` 和当前 agent workspace。`npm i -g trellis-ivy` 进入的位置 Cherry Studio **设计上看不到**。
    平行案例：issue [CherryHQ/cherry-studio#14660](https://github.com/CherryHQ/cherry-studio/issues/14660)（Tencent Skillhub CLI）有完全相同的失败模式。
 
 > 好消息：skills.sh 和 claude-plugins.dev 都自动爬 GitHub 上的 `SKILL.md`，仓库改对了一次性收两边。
@@ -47,7 +47,7 @@ issue #205 的两个隐含前提**都不成立**：
 - 不动 CLI 主链路、不破坏现有 npm 分发。
 
 **Cons**：
-- 解决的是"Cherry Studio 能搜到并装上 SKILL.md"——装的是个**指引文档**，agent 看到后还得自己去跑 `npx @liushuang/trellis init`。这跟用户预期的"装完即用"还是有差距。
+- 解决的是"Cherry Studio 能搜到并装上 SKILL.md"——装的是个**指引文档**，agent 看到后还得自己去跑 `npx trellis-ivy init`。这跟用户预期的"装完即用"还是有差距。
 - claude-plugins.dev 爬虫覆盖度不像 skills.sh 那么明确，回收时延未知。
 
 ### Approach B：A + 主动联系 Cherry Studio 把 Trellis 加入官方 marketplace 白名单

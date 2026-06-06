@@ -16,11 +16,11 @@
 ### Trellis 的分发模型
 
 ```
-npm install -g @liushuang/trellis   # 安装 CLI + 模板
+npm install -g trellis-ivy   # 安装 CLI + 模板
                     ↓
 trellis init                          # 复制模板到项目
                     ↓
-npm update @liushuang/trellis        # 更新 CLI + 模板
+npm update trellis-ivy        # 更新 CLI + 模板
                     ↓
 trellis update                        # 应用新模板（缺失！）
 ```

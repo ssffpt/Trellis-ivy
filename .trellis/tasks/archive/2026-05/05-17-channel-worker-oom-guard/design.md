@@ -18,7 +18,7 @@ supervisor. Today idle workers can remain alive until the user manually kills
 them. Repeated local use can accumulate Claude/Codex processes until the
 machine OOMs.
 
-`@liushuang/trellis-core` already has worker state, runtime contracts, and
+`trellis-ivy-core` already has worker state, runtime contracts, and
 host-local liveness probes. It should not become the provider process manager.
 The immediate fix belongs in the CLI runtime layer, with small core substrate
 changes only where state projection needs a stable field.

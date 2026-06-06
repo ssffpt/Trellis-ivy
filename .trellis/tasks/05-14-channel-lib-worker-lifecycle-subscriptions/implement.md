@@ -110,12 +110,12 @@ Scope decision: this task covers the full issue. The ordered work below was stag
 ## Validation Commands
 
 ```bash
-pnpm --filter @liushuang/trellis-core test
-pnpm --filter @liushuang/trellis-core test -- test/channel
-pnpm --filter @liushuang/trellis-core build
-pnpm --filter @liushuang/trellis test -- test/commands/channel*.test.ts
-pnpm --filter @liushuang/trellis lint
-pnpm --filter @liushuang/trellis typecheck
+pnpm --filter trellis-ivy-core test
+pnpm --filter trellis-ivy-core test -- test/channel
+pnpm --filter trellis-ivy-core build
+pnpm --filter trellis-ivy test -- test/commands/channel*.test.ts
+pnpm --filter trellis-ivy lint
+pnpm --filter trellis-ivy typecheck
 python3 ./.trellis/scripts/task.py validate .trellis/tasks/05-14-channel-lib-worker-lifecycle-subscriptions
 ```
 

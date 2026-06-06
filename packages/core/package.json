@@ -1,5 +1,5 @@
 {
-  "name": "@liushuang/trellis-core",
+  "name": "trellis-ivy-core",
   "version": "0.6.0-beta.22",
   "description": "Trellis core SDK — channel and task domain primitives consumed by the Trellis CLI and downstream Node services",
   "type": "module",

@@ -10,7 +10,7 @@
 
 ## Decisions imported from discussion
 
-- `@liushuang/trellis-core` should be a real package, not a CLI wrapper.
+- `trellis-ivy-core` should be a real package, not a CLI wrapper.
 - CLI should call core.
 - Downstream Node consumers should call core in-process.
 - Core first version should be Node-only ESM.

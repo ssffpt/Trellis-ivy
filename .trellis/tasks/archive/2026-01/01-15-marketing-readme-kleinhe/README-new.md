@@ -5,7 +5,7 @@
 <!-- TODO: 设计流程图 init→start→work→finish -->
 <!-- ![Workflow](./assets/workflow.png) -->
 
-[![npm version](https://img.shields.io/npm/v/@liushuang/trellis)](https://www.npmjs.com/package/@liushuang/trellis)
+[![npm version](https://img.shields.io/npm/v/trellis-ivy)](https://www.npmjs.com/package/trellis-ivy)
 [![License](https://img.shields.io/badge/License-FSL--1.1--MIT-blue)](LICENSE)
 
 English | [中文](./README-zh.md)
@@ -27,7 +27,7 @@ Works with Claude Code, Cursor, and OpenCode (coming soon).
 
 ```bash
 # Install
-npm install -g @liushuang/trellis
+npm install -g trellis-ivy
 
 # Initialize in your project
 cd your-project

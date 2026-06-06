@@ -6,7 +6,7 @@ Implemented. Architecture review findings were merged before implementation, and
 
 ## Problem
 
-`@liushuang/trellis-core` now owns channel storage, event schema, seq allocation, metadata/thread reducers, and pure mutation/read/watch APIs. The runtime half of channel remains in `@liushuang/trellis` CLI: spawn, supervisor, inbox watcher, kill, pid file reconciliation, provider adapters, and terminal event handling.
+`trellis-ivy-core` now owns channel storage, event schema, seq allocation, metadata/thread reducers, and pure mutation/read/watch APIs. The runtime half of channel remains in `trellis-ivy` CLI: spawn, supervisor, inbox watcher, kill, pid file reconciliation, provider adapters, and terminal event handling.
 
 That split blocks in-process consumers. A daemon can read channel events through core, but cannot spawn, route, interrupt, or monitor workers without shelling out to CLI or reimplementing CLI runtime logic.
 
@@ -497,8 +497,8 @@ This sequence keeps state projection stable before moving process orchestration,
   - `messages --raw` preserves new event fields
   - `.trellis/spec/cli/backend/commands-channel.md` matches emitted event schema
 - Type checks:
-  - `pnpm --filter @liushuang/trellis-core build`
-  - `pnpm --filter @liushuang/trellis typecheck`
+  - `pnpm --filter trellis-ivy-core build`
+  - `pnpm --filter trellis-ivy typecheck`
 - Runtime dogfood:
   - spawn worker, send targeted message, kill worker, send targeted message again, observe `undeliverable`
   - create two channels in a scope and verify cross-channel watch sees both

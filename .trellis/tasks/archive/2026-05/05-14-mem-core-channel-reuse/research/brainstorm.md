@@ -27,10 +27,10 @@ Repository index evidence:
 Confirmed facts:
 
 - `mem` is still implemented as one large CLI command file, with reusable parsing/search/context logic mixed with terminal rendering and process-level exit behavior.
-- `@liushuang/trellis-core/channel` already owns channel storage, thread reducers, context entries, public channel APIs, and type parsing.
+- `trellis-ivy-core/channel` already owns channel storage, thread reducers, context entries, public channel APIs, and type parsing.
 - Existing beta code uses `ChannelType = "chat" | "threads"` and stores `type:"threads"` for thread-list-first channels.
 - Thread as an inner primitive is already a real concept: event kind `thread`, `ThreadAction`, `ThreadState`, `postThread`, `renameThread`, thread context APIs, and `reduceThreads`.
-- `mem.ts` currently uses `zod` for runtime schemas; `@liushuang/trellis-core` currently has no `zod` dependency and uses hand-written lightweight parsers for task records.
+- `mem.ts` currently uses `zod` for runtime schemas; `trellis-ivy-core` currently has no `zod` dependency and uses hand-written lightweight parsers for task records.
 - `packages/core/src/channel/index.ts` already exports `ContextEntry`, `FileContextEntry`, `RawContextEntry`, `ChannelScope`, `EventOrigin`, `asContextEntries`, `asStringArray`, `contextEntryKey`, and related channel primitives.
 - `mem.ts` exports or defines its own `Platform`, `SessionInfo`, `DialogueRole`, `DialogueTurn`, `SearchHit`, `Filter`, task.py parsing, JSONL reading, injection stripping, dialogue chunking, source adapters, and CLI formatting.
 
@@ -71,7 +71,7 @@ Remaining user/product decisions:
 
 4. Decision: First implementation slice scope.
    Evidence: `mem` currently mixes reusable search/context logic in CLI; channel already owns event schema, context entries, and thread reducers in core; forum rename touches the same channel/thread schema surface.
-   User answer: Do these together: move current `mem` core capabilities into `@liushuang/trellis-core`, reuse channel schema where duplicate definitions exist, and rename `threads` to `forum`. Do not expand `mem` product capability by making channel/forum/thread history a new mem source.
+   User answer: Do these together: move current `mem` core capabilities into `trellis-ivy-core`, reuse channel schema where duplicate definitions exist, and rename `threads` to `forum`. Do not expand `mem` product capability by making channel/forum/thread history a new mem source.
    Resulting requirement: The task is one cohesive core/channel release slice, not separate follow-up work. Implementation must avoid parallel duplicate schemas between mem and channel while preserving current `mem` behavior.
 
 5. Decision: Core mem source layout and helper naming.
@@ -82,7 +82,7 @@ Remaining user/product decisions:
 6. Decision: Where channel/mem shared pieces live.
    Evidence: Trellis channel architect review in `brainstorm-mem-core-forum` rejected `shared/` and top-level `context/` for this scope. `mem context` means dialogue-window context; channel `ContextEntry` means file/raw attached context. No current mem v1 code needs `ContextEntry`.
    User answer: Discussed through architect worker; accept minimal boundary.
-   Resulting requirement: Do not create `packages/core/src/shared/` or `packages/core/src/context/` in this release. Keep `ContextEntry` channel-owned and publicly re-exported from `@liushuang/trellis-core/channel`. Move only truly cross-domain `isPlainObject` to `packages/core/src/internal/json.ts` if mem parser guards need it. Keep JSONL/path/time/dialogue helpers under `packages/core/src/mem/`.
+   Resulting requirement: Do not create `packages/core/src/shared/` or `packages/core/src/context/` in this release. Keep `ContextEntry` channel-owned and publicly re-exported from `trellis-ivy-core/channel`. Move only truly cross-domain `isPlainObject` to `packages/core/src/internal/json.ts` if mem parser guards need it. Keep JSONL/path/time/dialogue helpers under `packages/core/src/mem/`.
 
 7. Decision: Remove plural `threads` terminology.
    Evidence: Current CLI has `trellis channel threads <name>` for listing all thread topics in a `type:"threads"` channel; current code also has `listThreads`, `readThreadsChannelEvents`, `ThreadsOptions`, and many user-facing “threads channel” strings.
@@ -97,4 +97,4 @@ Remaining user/product decisions:
 9. Decision: Final implementation-readiness blockers.
    Evidence: Architect opposition review round 4 found no remaining product questions, but identified planning blockers around historical manifests, current mem CLI command semantics, legacy `type:"threads"` log behavior, core package export shape, and validation gates.
    User answer: No new product decision required; incorporate review.
-   Resulting requirement: Do not rewrite historical manifests; exclude published manifest JSON from grep gates. Preserve existing `trellis mem search <keyword> --platform ...` and `trellis mem context <session-id> --grep ...` behavior, with no hit id concept. Define legacy `threads` as rejected/non-forum, not half-compatible. Add only `@liushuang/trellis-core/mem` subpath export and do not root-export mem. Add validation gates for package export smoke, no core zod dependency, no CLI deep imports, and forum terminology cleanup.
+   Resulting requirement: Do not rewrite historical manifests; exclude published manifest JSON from grep gates. Preserve existing `trellis mem search <keyword> --platform ...` and `trellis mem context <session-id> --grep ...` behavior, with no hit id concept. Define legacy `threads` as rejected/non-forum, not half-compatible. Add only `trellis-ivy-core/mem` subpath export and do not root-export mem. Add validation gates for package export smoke, no core zod dependency, no CLI deep imports, and forum terminology cleanup.

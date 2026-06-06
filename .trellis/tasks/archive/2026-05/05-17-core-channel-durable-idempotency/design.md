@@ -2,7 +2,7 @@
 
 ## Boundary
 
-This task changes `@liushuang/trellis-core` channel mutation semantics only.
+This task changes `trellis-ivy-core` channel mutation semantics only.
 The CLI remains a caller of core APIs and does not gain new flags.
 
 Core remains the owner of:

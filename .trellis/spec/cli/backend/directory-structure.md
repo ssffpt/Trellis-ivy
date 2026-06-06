@@ -6,7 +6,7 @@
 
 ## Overview
 
-This project is a **TypeScript monorepo** using ES modules. It publishes a CLI package (`@liushuang/trellis`) and a reusable core package (`@liushuang/trellis-core`). The source code also follows a **dogfooding architecture** - Trellis uses its own configuration files (`.cursor/`, `.claude/`, `.trellis/`) as templates for new projects.
+This project is a **TypeScript monorepo** using ES modules. It publishes a CLI package (`trellis-ivy`) and a reusable core package (`trellis-ivy-core`). The source code also follows a **dogfooding architecture** - Trellis uses its own configuration files (`.cursor/`, `.claude/`, `.trellis/`) as templates for new projects.
 
 ---
 
@@ -14,14 +14,14 @@ This project is a **TypeScript monorepo** using ES modules. It publishes a CLI p
 
 ```
 packages/
-├── core/                # @liushuang/trellis-core: reusable APIs
+├── core/                # trellis-ivy-core: reusable APIs
 │   ├── src/
 │   │   ├── channel/     # channel/thread storage, reducers, event protocol helpers
 │   │   ├── task/        # reusable task record helpers
 │   │   ├── testing/     # test helpers intended for package consumers
 │   │   └── index.ts     # package public API
 │   └── package.json     # explicit public exports
-└── cli/                 # @liushuang/trellis: user-facing CLI
+└── cli/                 # trellis-ivy: user-facing CLI
     ├── src/
     │   ├── cli/         # CLI entry point and argument parsing
     │   │   └── index.ts # Main CLI entry (Commander.js setup)

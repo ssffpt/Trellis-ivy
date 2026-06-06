@@ -3,17 +3,17 @@
 ## Phase 1 — Package Skeleton
 
 1. [x] Add `packages/core`.
-2. [x] Add `@liushuang/trellis-core` package metadata, ESM-only exports, `files`, scripts, and tsconfig.
+2. [x] Add `trellis-ivy-core` package metadata, ESM-only exports, `files`, scripts, and tsconfig.
 3. [x] Keep `exports` branches ordered as `types`, `import`, `default`; include `"./package.json"`.
 4. [x] Set `publishConfig.access: "public"`, `publishConfig.provenance: true`, and `sideEffects: false`.
 5. [x] Add library tsconfig flags: `declaration`, `declarationMap`, `stripInternal`, `isolatedModules`. `verbatimModuleSyntax` and `isolatedDeclarations` deferred — the current re-export-heavy public surface conflicts with both; revisit once API stabilizes.
 6. [x] Add root scripts for `core` build/test/typecheck (and aggregate scripts that build core before CLI).
 7. [x] Add `packageManager` to root `package.json`.
-8. [x] Add `@liushuang/trellis-core@workspace:*` dependency to `packages/cli`.
+8. [x] Add `trellis-ivy-core@workspace:*` dependency to `packages/cli`.
 
 ## Phase 2 — Channel Data Core
 
-1. [x] Define the `@liushuang/trellis-core/channel` public API lock before moving code.
+1. [x] Define the `trellis-ivy-core/channel` public API lock before moving code.
 2. [x] Export public APIs for create/send/post/read/watch, thread list/show, context add/delete/list, thread rename, channel title set/clear, `reduceThreads`, and `reduceChannelMetadata`.
 3. [x] Do not export `internal/store/*`, `appendEvent`, path helpers, lock helpers, `readLastSeq`, or seq sidecar helpers.
 4. [x] Move/copy channel event types, schema, context parsing with legacy `linkedContext` read support, CSV parsing, filter, and thread reducer into core.
@@ -45,7 +45,7 @@
 1. [x] Identified Trellis task record sources: CLI SOT lived in `packages/cli/src/utils/task-json.ts`; Python writer is `.trellis/scripts/common/task_store.py::cmd_create`. The 24-field shape and field order are now centralized in core.
 2. [x] Defined `TrellisTaskRecord` in `packages/core/src/task/schema.ts` as the canonical `task.json` shape; CLI `TaskJson` / `emptyTaskJson` re-export the core types for backwards compatibility.
 3. [x] `writeTaskRecord` validates and canonicalizes supplied records, then merges canonicalized known fields with existing on-disk JSON so unknown fields survive read/write round-trips. Verified by `test/task/records.test.ts::preserves unknown on-disk fields`, `validates the supplied record before writing`, and `writeTaskRecord rejects incomplete records before touching disk`.
-4. [x] Added zero-dep `taskRecordSchema` (`parse` / `safeParse`), `emptyTaskRecord`, `loadTaskRecord`, `writeTaskRecord`, `validateTaskDirName`, `isValidTaskDirName`, and `inferTaskPhase` exports under `@liushuang/trellis-core/task`. The root barrel `@liushuang/trellis-core` re-exports the same surface.
+4. [x] Added zero-dep `taskRecordSchema` (`parse` / `safeParse`), `emptyTaskRecord`, `loadTaskRecord`, `writeTaskRecord`, `validateTaskDirName`, `isValidTaskDirName`, and `inferTaskPhase` exports under `trellis-ivy-core/task`. The root barrel `trellis-ivy-core` re-exports the same surface.
 5. [x] `inferTaskPhase` derives phase from `status` only — `planning → plan`, `in_progress → implement`, `review → review`, `completed | done → completed`, anything else → `unknown`. There is no `current_phase` field.
 6. [x] Tests: `packages/core/test/task/{schema,records,paths,phase}.test.ts` (32 tests) covering canonical factory, schema parse/safeParse, required-field validation, dir name validation including `00-bootstrap-guidelines` / `00-join-*`, unknown-field preservation, corrupt existing-file overwrite refusal, write-time validation, and phase inference.
 
@@ -57,9 +57,9 @@
 
 ## Phase 6 — Versioning and Release Wiring
 
-1. [x] Keep `@liushuang/trellis-core` version synchronized with `@liushuang/trellis` via shared `packages/cli/scripts/bump-versions.js` (computes next version, writes both `package.json` files atomically, refuses to run if they start out of sync).
+1. [x] Keep `trellis-ivy-core` version synchronized with `trellis-ivy` via shared `packages/cli/scripts/bump-versions.js` (computes next version, writes both `package.json` files atomically, refuses to run if they start out of sync).
 2. [x] Updated CLI release scripts (`release`, `release:minor`, `release:major`, `release:beta`, `release:rc`, `release:promote`) to thin wrappers over `packages/cli/scripts/release.js`, which calls `bump-versions.js` once and stages both `packages/cli/package.json` and `packages/core/package.json`. Root `package.json` exposes the matching `release*` wrappers plus `release:check` / `release:plan` for ad-hoc preflight.
-3. [x] Packed CLI depends on the exact `@liushuang/trellis-core` version: source keeps `workspace:*`, pnpm rewrites it during `pnpm pack` / `pnpm publish` to the literal current version. `release-preflight.js verify-packed-cli` enforces this in CI (packs the CLI, extracts `package.json`, asserts `dependencies["@liushuang/trellis-core"]` equals the shared version, fails on `workspace:*` or a range).
+3. [x] Packed CLI depends on the exact `trellis-ivy-core` version: source keeps `workspace:*`, pnpm rewrites it during `pnpm pack` / `pnpm publish` to the literal current version. `release-preflight.js verify-packed-cli` enforces this in CI (packs the CLI, extracts `package.json`, asserts `dependencies["trellis-ivy-core"]` equals the shared version, fails on `workspace:*` or a range).
 4. [x] Concurrent release tracks preserved: `release-preflight.js npm-tag` derives the npm dist-tag from the shared version suffix (`*-beta.*` → `beta`, `*-rc.*` → `rc`, `*-alpha.*` → `alpha`, otherwise `latest`). `publish-plan` reuses the same value so core and CLI always publish under the same tag.
 5. [x] `.github/workflows/publish.yml` builds core then CLI via `pnpm build`, then publishes core first and CLI second, both using the dist-tag from `publish-plan`.
 6. [x] `.github/workflows/ci.yml` path filters include `packages/core/**`, `pnpm-workspace.yaml`, and root `package.json`. CI now runs `pnpm typecheck`, `pnpm lint`, `pnpm test`, `pnpm build` (root aggregates that cover both packages), pins pnpm to the root `packageManager` version (`10.32.1`), and verifies `dist` output for both core (`dist/index.js`, `dist/channel/index.js`, `dist/task/index.js`) and CLI (`dist/index.js`).
@@ -70,7 +70,7 @@
 11. [x] One npm dist-tag computed in `publish-plan` (via `computeNpmTag`) and exported through `$GITHUB_OUTPUT.tag`; both publish steps consume the same `steps.plan.outputs.tag`.
 12. [x] Publish is idempotent: `publish-plan` queries `npm view <pkg>@<version> version` for each package and emits `core_publish` / `cli_publish` booleans. Already-published versions are skipped with a log line; mismatches still fail loudly in `check-versions` before the plan step runs. A rerun for the same tag with core already on npm continues to publish CLI without republishing core.
 13. [x] Kept both `release.published` and `push.tags: v*` triggers — idempotency from (12) plus publish workflow concurrency on the tag makes duplicate triggers safe; the workflow header documents the rationale.
-14. [x] Added `release-preflight.js verify-npm --package all|core|cli` as the CI post-publish public registry visibility gate. It validates the exact published package version and computed npm dist-tag for both `@liushuang/trellis-core` and `@liushuang/trellis`.
+14. [x] Added `release-preflight.js verify-npm --package all|core|cli` as the CI post-publish public registry visibility gate. It validates the exact published package version and computed npm dist-tag for both `trellis-ivy-core` and `trellis-ivy`.
 15. [x] `.github/workflows/publish.yml` now runs `verify-npm --package all` after publish/skip steps so registry visibility issues fail in CI instead of being repaired by local publication.
 16. [x] `release.js` excludes both `docs-site` and `marketplace` from the automatic pre-release staging commit, matching the documented submodule commit ordering.
 17. [x] Added `.trellis/spec/cli/backend/trellis-core-sdk.md` and refreshed `release-process.md`, `directory-structure.md`, and backend `index.md` with core/CLI boundaries, CI-only publishing, dual-package versioning, beta/rc/GA lifecycle, and release preflight rules.
@@ -78,32 +78,32 @@
 
 ## Verification
 
-1. [x] `pnpm --filter @liushuang/trellis-core test -- test/task` — 56 tests pass (24 channel + 32 task; Vitest still ran the core suite).
-2. [x] `pnpm --filter @liushuang/trellis-core typecheck` — clean.
-3. [x] `pnpm --filter @liushuang/trellis-core lint` — clean (run via local `./node_modules/.bin/eslint` to avoid the host shell's global ESLint 8 binary).
-4. [x] `pnpm --filter @liushuang/trellis-core build` — emits dist + d.ts.
+1. [x] `pnpm --filter trellis-ivy-core test -- test/task` — 56 tests pass (24 channel + 32 task; Vitest still ran the core suite).
+2. [x] `pnpm --filter trellis-ivy-core typecheck` — clean.
+3. [x] `pnpm --filter trellis-ivy-core lint` — clean (run via local `./node_modules/.bin/eslint` to avoid the host shell's global ESLint 8 binary).
+4. [x] `pnpm --filter trellis-ivy-core build` — emits dist + d.ts.
 5. [ ] `pnpm --dir packages/core exec publint --strict` — deferred (publint not installed).
 6. [ ] `pnpm --dir packages/core exec attw --pack . --profile esm-only` — deferred (attw not installed).
 7. [x] `pnpm --dir packages/cli exec vitest run test/commands/channel.test.ts` — channel test file passes (9/9).
-8. [x] `pnpm --filter @liushuang/trellis typecheck` — clean.
+8. [x] `pnpm --filter trellis-ivy typecheck` — clean.
 9. [x] `cd packages/cli && pnpm exec eslint src/commands/channel test/commands/channel.test.ts` — clean for touched CLI channel files.
-10. [x] `pnpm --filter @liushuang/trellis build` — emits dist.
-11. [x] `rg -n "@liushuang/trellis-core/.*/internal|packages/core/src/.*/internal" packages/cli/src` — no deep imports of core internals from CLI.
-12. [x] `pnpm --filter @liushuang/trellis-core pack --pack-destination /tmp` — run indirectly via `release-preflight.js verify-packed-cli`; core tarball builds during root `pnpm build` step in the publish workflow.
-13. [x] `pnpm --filter @liushuang/trellis pack --pack-destination /tmp/trellis-pack-test` — produces `mindfoldhq-trellis-0.6.0-beta.12.tgz`.
-14. [x] Inspect the packed CLI `package.json`: `dependencies["@liushuang/trellis-core"]` resolves to the exact `0.6.0-beta.12`, not `workspace:*`. Encoded as automated check in `node packages/cli/scripts/release-preflight.js verify-packed-cli`.
+10. [x] `pnpm --filter trellis-ivy build` — emits dist.
+11. [x] `rg -n "trellis-ivy-core/.*/internal|packages/core/src/.*/internal" packages/cli/src` — no deep imports of core internals from CLI.
+12. [x] `pnpm --filter trellis-ivy-core pack --pack-destination /tmp` — run indirectly via `release-preflight.js verify-packed-cli`; core tarball builds during root `pnpm build` step in the publish workflow.
+13. [x] `pnpm --filter trellis-ivy pack --pack-destination /tmp/trellis-pack-test` — produces `mindfoldhq-trellis-0.6.0-beta.12.tgz`.
+14. [x] Inspect the packed CLI `package.json`: `dependencies["trellis-ivy-core"]` resolves to the exact `0.6.0-beta.12`, not `workspace:*`. Encoded as automated check in `node packages/cli/scripts/release-preflight.js verify-packed-cli`.
 15. [ ] Crash simulation: append succeeds but `.seq` update is skipped; next append repairs and does not duplicate seq.
 16. [x] Corrupt `.seq` repair: non-integer sidecar rebuilds from JSONL.
 17. [x] Ahead `.seq` repair: sidecar higher than JSONL tail does not create a seq gap.
 18. [x] Normal append path does not full-read `events.jsonl`; test/code review asserts tail-read helper usage.
 19. [x] `origin` accepts only `cli | api | worker`; `meta` must be a plain JSON object and reject null, arrays, and primitives.
-20. [x] Review fix: core no longer exposes legacy `LinkedContextEntry` or `metadataFromCreateEvent` through `@liushuang/trellis-core/channel`.
+20. [x] Review fix: core no longer exposes legacy `LinkedContextEntry` or `metadataFromCreateEvent` through `trellis-ivy-core/channel`.
 21. [x] Review fix: thread rename rejects missing source threads; thread read/context APIs reject non-threads channels.
 22. [x] Review fix: CLI context/title commands default `--as` to `main`, matching design examples while preserving explicit attribution.
-23. [x] Phase 4 follow-up: `packages/cli/src/utils/task-json.ts` re-exports from `@liushuang/trellis-core/task` instead of defining a duplicate SOT; CLI typecheck remains clean and existing `init` / `update` integration tests (81 tests) pass.
+23. [x] Phase 4 follow-up: `packages/cli/src/utils/task-json.ts` re-exports from `trellis-ivy-core/task` instead of defining a duplicate SOT; CLI typecheck remains clean and existing `init` / `update` integration tests (81 tests) pass.
 24. [x] Phase 6: `node packages/cli/scripts/release-preflight.js check-versions` — passes (core and CLI both `0.6.0-beta.12`).
 25. [x] Phase 6: `node packages/cli/scripts/release-preflight.js npm-tag` — prints `beta`.
-26. [x] Phase 6: `node packages/cli/scripts/release-preflight.js verify-packed-cli` — packs CLI, asserts `@liushuang/trellis-core` is pinned to `0.6.0-beta.12` (no `workspace:*` leak).
+26. [x] Phase 6: `node packages/cli/scripts/release-preflight.js verify-packed-cli` — packs CLI, asserts `trellis-ivy-core` is pinned to `0.6.0-beta.12` (no `workspace:*` leak).
 27. [x] Phase 6: `node packages/cli/scripts/release-preflight.js publish-plan` — emits per-package publish/skip decision against npm (correctly skipped CLI which is already on npm, would publish core). `publish-plan --json` keeps stdout as pure JSON.
 28. [x] Phase 6: `pnpm typecheck` — root aggregate clean (core + CLI).
 29. [x] Phase 6: `computeNext` unit-style check covering patch/minor/major/beta/rc/promote, stable→prerelease seeding, track-switch (rc→beta), and seed-format lift (`X.Y.Z-N` → `X.Y.Z-beta.0`) — all 10 cases pass.
@@ -115,7 +115,7 @@
 35. [x] Phase 6: `node --check packages/cli/scripts/{bump-versions.js,release-preflight.js,release.js}` — syntax clean for all release scripts.
 36. [x] Phase 6: `node --check packages/cli/scripts/check-docs-changelog.js` — syntax clean after reusing `computeNext` from `bump-versions.js`.
 37. [x] Phase 6 follow-up: `node --check packages/cli/scripts/release-preflight.js && node --check packages/cli/scripts/release.js` — syntax clean after adding `verify-npm` and excluding `marketplace`.
-38. [x] Phase 6 follow-up: `node packages/cli/scripts/release-preflight.js verify-npm --package all` — confirms `@liushuang/trellis-core@0.6.0-beta.13` and `@liushuang/trellis@0.6.0-beta.13` are visible on public npm under `beta`.
+38. [x] Phase 6 follow-up: `node packages/cli/scripts/release-preflight.js verify-npm --package all` — confirms `trellis-ivy-core@0.6.0-beta.13` and `trellis-ivy@0.6.0-beta.13` are visible on public npm under `beta`.
 39. [x] Phase 6 follow-up: `diff -u <(sed '1,5d' .codex/skills/create-manifest/SKILL.md) .claude/commands/trellis/create-manifest.md` — confirms the Codex skill body and Claude slash command body are identical apart from Codex frontmatter.
 40. [x] Phase 6 follow-up: `pnpm typecheck` — root aggregate clean after spec/release-preflight changes.
 41. [x] Phase 6 follow-up: `pnpm lint` — root aggregate clean.

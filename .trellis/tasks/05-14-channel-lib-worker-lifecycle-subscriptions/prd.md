@@ -2,7 +2,7 @@
 
 ## Goal
 
-把 `trellis channel` 的 worker lifecycle、投递策略、interrupt、分页读取和跨 channel 订阅整理成可进入 `@liushuang/trellis-core` 的设计。目标是让 CLI、外部 daemon、未来 SDK 消费方复用同一套 channel substrate，而不是各自解析 events.jsonl、pid 文件和 worker 状态。
+把 `trellis channel` 的 worker lifecycle、投递策略、interrupt、分页读取和跨 channel 订阅整理成可进入 `trellis-ivy-core` 的设计。目标是让 CLI、外部 daemon、未来 SDK 消费方复用同一套 channel substrate，而不是各自解析 events.jsonl、pid 文件和 worker 状态。
 
 ## Requirements
 
@@ -13,7 +13,7 @@
 - worker state 需要区分进程 lifecycle 和 turn activity，避免把“worker 活着”和“正在跑当前 turn”混成一个状态。
 - `readChannelEvents` 需要 cursor pagination API shape；默认行为不能破坏现有“读取全部”的调用方。
 - 需要一个跨 channel watch / fan-in API shape，支持 scope 内动态 channel discovery 和 per-channel cursor。
-- 设计必须遵守 `@liushuang/trellis-core` 边界：core 拥有可复用 domain/storage/reducer/API，CLI 只做参数解析、渲染和 exit code。
+- 设计必须遵守 `trellis-ivy-core` 边界：core 拥有可复用 domain/storage/reducer/API，CLI 只做参数解析、渲染和 exit code。
 - 不把外部业务身份、租户、权限模型写进 Trellis channel schema；这类数据通过 `meta` 透传。
 - 本 task 最终必须覆盖 issue 里的全部需求；允许按依赖顺序分阶段实现，但不能把 interrupt、worker registry、delivery failure、pagination 或 cross-channel watch 作为后续另开任务遗漏。
 

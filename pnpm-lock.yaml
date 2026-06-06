@@ -17,7 +17,7 @@ importers:
 
   packages/cli:
     dependencies:
-      '@liushuang/trellis-core':
+      'trellis-ivy-core':
         specifier: workspace:*
         version: link:../core
       chalk:

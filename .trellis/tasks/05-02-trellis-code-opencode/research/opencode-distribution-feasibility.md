@@ -150,8 +150,8 @@ For Trellis, there are three realistic distribution choices:
 
 | Choice | What Trellis Ships | Pros | Cons |
 |---|---|---|---|
-| Existing `trellis code` wrapper in `@liushuang/trellis` | No bundled OpenCode; resolves system `opencode` or a configured path | Smallest change, no binary redistribution, fastest dogfood path | Version skew; users must install OpenCode; global config/auth can leak into runs unless isolated |
-| Separate `@liushuang/trellis-code` package depending on pinned `opencode-ai` | Trellis bin plus pinned upstream wrapper/binary optional deps | Trellis controls tested OpenCode version and onboarding; still avoids a fork | Inherits optional-dependency/postinstall failure modes; larger install; must preserve MIT notices |
+| Existing `trellis code` wrapper in `trellis-ivy` | No bundled OpenCode; resolves system `opencode` or a configured path | Smallest change, no binary redistribution, fastest dogfood path | Version skew; users must install OpenCode; global config/auth can leak into runs unless isolated |
+| Separate `trellis-ivy-code` package depending on pinned `opencode-ai` | Trellis bin plus pinned upstream wrapper/binary optional deps | Trellis controls tested OpenCode version and onboarding; still avoids a fork | Inherits optional-dependency/postinstall failure modes; larger install; must preserve MIT notices |
 | Full fork or vendored binary build | Trellis builds and publishes modified OpenCode binaries | Maximum runtime/UI control | Owns Bun build matrix, binary packaging, upstream merges, security fixes, and fast release churn |
 
 ### CLI, SDK, Server, And Plugin Surfaces

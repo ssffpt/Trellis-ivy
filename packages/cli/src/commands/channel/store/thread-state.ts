@@ -2,14 +2,14 @@ export {
   reduceThreads,
   buildThreadAliasResolver,
   collectThreadTimeline,
-} from "@liushuang/trellis-core/channel";
+} from "trellis-ivy-core/channel";
 
 export type {
   ThreadState,
   ThreadAliasResolver,
-} from "@liushuang/trellis-core/channel";
+} from "trellis-ivy-core/channel";
 
-import type { ThreadState } from "@liushuang/trellis-core/channel";
+import type { ThreadState } from "trellis-ivy-core/channel";
 
 export function formatThreadBoard(states: ThreadState[]): string[] {
   if (states.length === 0) return ["(no threads)"];

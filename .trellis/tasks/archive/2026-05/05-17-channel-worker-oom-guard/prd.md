@@ -5,7 +5,7 @@
 Prevent local Trellis channel workers from exhausting user machines when
 resident agents accumulate or run too long. The first release should add a
 practical safety floor for CLI-managed workers without turning
-`@liushuang/trellis-core` into a provider-specific process manager.
+`trellis-ivy-core` into a provider-specific process manager.
 
 ## Requirements
 
@@ -24,7 +24,7 @@ practical safety floor for CLI-managed workers without turning
 - Keep `trellis channel run` behavior compatible: it already has a default
   timeout and should continue to preserve failed ephemeral channels for
   inspection.
-- Keep the `@liushuang/trellis-core` / CLI boundary intact:
+- Keep the `trellis-ivy-core` / CLI boundary intact:
   - core owns event schema, worker state projection, runtime contracts, and
     local liveness observation helpers;
   - CLI supervisor owns provider process launch, pid files, signals, and
@@ -88,7 +88,7 @@ Inspected sources:
 
 Confirmed facts:
 
-- `@liushuang/trellis-core` defines a provider-injected `WorkerRuntime`
+- `trellis-ivy-core` defines a provider-injected `WorkerRuntime`
   contract and event/state APIs. It does not launch Claude/Codex processes
   directly.
 - `spawnWorker()` in core calls `runtime.start()` and appends a `spawned`

@@ -21,7 +21,7 @@ tasks so each deliverable can be reviewed and verified independently.
 
 ## Requirements
 
-- Inspect current `@liushuang/trellis-core` and CLI channel implementation
+- Inspect current `trellis-ivy-core` and CLI channel implementation
   before proposing changes.
 - Separate what is already solved in `0.6.0-beta.15` from what is still open.
 - Keep Vine/product identity and subscription semantics out of Trellis core;

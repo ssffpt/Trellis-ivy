@@ -272,7 +272,7 @@ isCreateEvent(ev): ev is CreateChannelEvent
 isThreadEvent(ev): ev is ThreadChannelEvent
 metadataFromCreateEvent(ev?): ChannelMetadata
   // Internal legacy compatibility helper only. Do not export from
-  // @liushuang/trellis-core/channel and do not call from CLI renderers.
+  // trellis-ivy-core/channel and do not call from CLI renderers.
 
 watchEvents(name, filter: WatchFilter, opts?: {signal?, fromStart?, sinceSeq?, project?}): AsyncGenerator<ChannelEvent>
   // Default: from EOF (live tail). fromStart: from byte 0. sinceSeq: skip seq <= N.
@@ -353,7 +353,7 @@ type ChannelEventKind = "create" | "join" | "leave" | "message" | "thread" | "co
 
 **Author identity (`by`) shape**: `"main"`, `"<worker-name>"`, `"supervisor:<worker>"`, or `"cli:<command>"` (e.g. `cli:kill`).
 
-**Worker lifecycle / inbox / delivery contracts** (owned by `@liushuang/trellis-core`):
+**Worker lifecycle / inbox / delivery contracts** (owned by `trellis-ivy-core`):
 
 - `reduceWorkerRegistry(events, channel?)` is the SOT worker projection. Worker
   lifecycle (`starting`/`running`/`done`/`error`/`killed`/`crashed`) and turn
@@ -411,7 +411,7 @@ type ChannelEventKind = "create" | "join" | "leave" | "message" | "thread" | "co
 
 #### 1. Scope / Trigger
 
-- Trigger: `@liushuang/trellis-core` mutation APIs need replay safety for
+- Trigger: `trellis-ivy-core` mutation APIs need replay safety for
   daemon/API callers that may retry a logical command after a crash or lost
   receipt.
 - This is an event-log storage contract: the physical `events.jsonl` append

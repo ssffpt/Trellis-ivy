@@ -28,7 +28,7 @@
 
 ```bash
 # 1. Install
-npm install -g @liushuang/trellis@latest
+npm install -g trellis-ivy@latest
 
 # 2. Initialize project
 cd your-project

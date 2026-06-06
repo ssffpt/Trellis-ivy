@@ -34,18 +34,18 @@ Remove the promotional "Sound familiar? You'll never say these again!!" output p
 - Relevant code: `packages/cli/src/commands/init.ts`
 - Relevant tests: `packages/cli/test/commands/init.integration.test.ts`
 - Verification completed:
-  - `pnpm --filter @liushuang/trellis test test/commands/init.integration.test.ts`
+  - `pnpm --filter trellis-ivy test test/commands/init.integration.test.ts`
   - `pnpm lint`
   - `pnpm typecheck`
   - `pnpm test`
-  - Built the CLI with `pnpm --filter @liushuang/trellis build`, then ran the built CLI in a temp directory:
+  - Built the CLI with `pnpm --filter trellis-ivy build`, then ran the built CLI in a temp directory:
     `node packages/cli/dist/cli/index.js init --yes --claude --user actualtest`
     The command exited 0 and the captured output did not include the removed promotional block.
   - Re-ran after workflow/brainstorm template follow-up:
     - `pnpm lint`
     - `pnpm typecheck`
     - `pnpm test`
-    - `pnpm --filter @liushuang/trellis build`
+    - `pnpm --filter trellis-ivy build`
     - Built CLI actual init smoke test, exit 0, `PROMO_MATCHES=0`
 - Follow-up from review: the created task directory was initially named `04-28-04-28-remove-init-promo-output` because I passed a date-prefixed slug and `task.py create` automatically prepends `MM-DD-`. The directory has been renamed to `.trellis/tasks/04-28-remove-init-promo-output`, and workflow/brainstorm template docs now state that `--slug` must not include the date prefix. Current installed dogfood `trellis-brainstorm` skill copies were updated too, so the active project instructions match the shipped templates.
 - Spec update decision: no `.trellis/spec/` update needed for the init-output removal itself. The discovered workflow instruction ambiguity was fixed in `.trellis/workflow.md` and the shipped workflow/brainstorm templates.

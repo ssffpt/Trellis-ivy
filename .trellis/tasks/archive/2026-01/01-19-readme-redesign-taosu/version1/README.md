@@ -9,7 +9,7 @@
 
 English | [中文](./README-zh.md)
 
-[![npm version](https://img.shields.io/npm/v/@liushuang/trellis)](https://www.npmjs.com/package/@liushuang/trellis)
+[![npm version](https://img.shields.io/npm/v/trellis-ivy)](https://www.npmjs.com/package/trellis-ivy)
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
 [![Claude Code](https://img.shields.io/badge/Claude%20Code-Compatible-blueviolet)](https://claude.ai/code)
 [![Cursor](https://img.shields.io/badge/Cursor-Compatible-blue)](https://cursor.sh)
@@ -41,7 +41,7 @@ Trellis fixes this.
 ### Install
 
 ```bash
-npm install -g @liushuang/trellis@latest
+npm install -g trellis-ivy@latest
 ```
 
 ### Initialize

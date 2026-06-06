@@ -149,10 +149,10 @@
 展示**主要方式 + 1-2 个备选**：
 ```bash
 # 主要方式
-npx @liushuang/trellis init
+npx trellis-ivy init
 
 # 备选方式
-npm install -g @liushuang/trellis
+npm install -g trellis-ivy
 ```
 
 ---
@@ -266,7 +266,7 @@ One paragraph explaining workflow templates for AI development.
 
 ## Quick Start
 
-1. Initialize: `npx @liushuang/trellis init`
+1. Initialize: `npx trellis-ivy init`
 2. Start session: `/start`
 3. Develop with AI assistance
 4. Complete: `/finish-work`

@@ -6,7 +6,7 @@
 
 ## What happened
 
-社群报告（2026-05-09 13:43-13:44）：Windows 用户装 `@liushuang/trellis@beta` 失败：
+社群报告（2026-05-09 13:43-13:44）：Windows 用户装 `trellis-ivy@beta` 失败：
 
 1. `better-sqlite3` prebuild 从 GitHub releases 下 tarball **超时**（中国网络对 GitHub releases 不稳定）
 2. fallback 走 `node-gyp rebuild` 源码编译
@@ -39,7 +39,7 @@
 
 ## Acceptance Criteria
 
-- [ ] `npm install -g @liushuang/trellis@<this-tag>` 在不带 C 编译器的纯 Node 环境装上不报错
+- [ ] `npm install -g trellis-ivy@<this-tag>` 在不带 C 编译器的纯 Node 环境装上不报错
 - [ ] `tl mem list --platform opencode --global` 返回 0 sessions + stderr 警告（**warning fires once**）
 - [ ] `tl mem list` 不带 platform 限制时 Claude / Codex 正常返回，不被 OpenCode 影响
 - [ ] `pnpm test / lint / typecheck` 全绿

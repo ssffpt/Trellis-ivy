@@ -7,7 +7,7 @@ import {
   listChannelContext,
   listThreadContext,
   type ChannelScope,
-} from "@liushuang/trellis-core/channel";
+} from "trellis-ivy-core/channel";
 
 import { parseChannelScope } from "./store/schema.js";
 

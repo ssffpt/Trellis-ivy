@@ -34,7 +34,7 @@ If Node.js is not installed, ask the user to install it first.
 ### Step 1: Install Trellis CLI
 
 ```bash
-npm install -g @liushuang/trellis@latest
+npm install -g trellis-ivy@latest
 ```
 
 Verify installation:

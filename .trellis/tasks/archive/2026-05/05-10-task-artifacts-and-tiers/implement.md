@@ -17,9 +17,9 @@
 
 ```bash
 python3 -m py_compile .codex/hooks/inject-workflow-state.py .codex/hooks/session-start.py .claude/hooks/inject-workflow-state.py .claude/hooks/inject-subagent-context.py .claude/hooks/session-start.py .cursor/hooks/inject-workflow-state.py .cursor/hooks/inject-subagent-context.py .cursor/hooks/session-start.py .trellis/scripts/common/task_store.py .trellis/scripts/common/task_context.py .trellis/scripts/common/workflow_phase.py .trellis/scripts/task.py packages/cli/src/templates/shared-hooks/inject-workflow-state.py packages/cli/src/templates/shared-hooks/inject-subagent-context.py packages/cli/src/templates/shared-hooks/session-start.py packages/cli/src/templates/trellis/scripts/common/task_store.py packages/cli/src/templates/trellis/scripts/common/task_context.py packages/cli/src/templates/trellis/scripts/common/workflow_phase.py packages/cli/src/templates/trellis/scripts/task.py packages/cli/src/templates/codex/hooks/session-start.py packages/cli/src/templates/copilot/hooks/session-start.py
-pnpm --filter @liushuang/trellis test
-pnpm --filter @liushuang/trellis typecheck
-pnpm --filter @liushuang/trellis lint
+pnpm --filter trellis-ivy test
+pnpm --filter trellis-ivy typecheck
+pnpm --filter trellis-ivy lint
 git diff --check
 ```
 

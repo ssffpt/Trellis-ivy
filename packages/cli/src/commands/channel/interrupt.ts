@@ -1,7 +1,7 @@
 import {
   requestInterrupt,
   type ChannelScope,
-} from "@liushuang/trellis-core/channel";
+} from "trellis-ivy-core/channel";
 
 import { parseChannelScope } from "./store/schema.js";
 import { resolveChannelTextBody } from "./text-body.js";

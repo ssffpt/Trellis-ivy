@@ -1,6 +1,6 @@
 export {
   MEANINGFUL_EVENT_KINDS,
   matchesEventFilter,
-} from "@liushuang/trellis-core/channel";
+} from "trellis-ivy-core/channel";
 
-export type { ChannelEventFilter } from "@liushuang/trellis-core/channel";
+export type { ChannelEventFilter } from "trellis-ivy-core/channel";

@@ -4,7 +4,7 @@ import {
   resolveChannelRef,
   type ChannelScope,
   type ChannelType,
-} from "@liushuang/trellis-core/channel";
+} from "trellis-ivy-core/channel";
 
 import {
   parseChannelScope,

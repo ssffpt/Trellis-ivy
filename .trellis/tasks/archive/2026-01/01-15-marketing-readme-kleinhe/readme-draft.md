@@ -66,7 +66,7 @@
 
 ```bash
 # Install
-npm install -g @liushuang/trellis
+npm install -g trellis-ivy
 
 # Initialize in your project
 trellis init

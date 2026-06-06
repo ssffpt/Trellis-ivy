@@ -1,6 +1,6 @@
 # Research: skills.sh listing for Trellis (Cherry Studio integration angle)
 
-- **Query**: Whether and how to list `@liushuang/trellis` on skills.sh; relevance to Cherry Studio
+- **Query**: Whether and how to list `trellis-ivy` on skills.sh; relevance to Cherry Studio
 - **Scope**: external
 - **Date**: 2026-04-30
 
@@ -133,7 +133,7 @@ Pulled from skills.sh:
 | `golang-cli-cobra-viper` (bobmatnyc/claude-mpm-skills) | https://skills.sh/bobmatnyc/claude-mpm-skills/golang-cli-cobra-viper | `npx skills add https://github.com/bobmatnyc/claude-mpm-skills --skill golang-cli-cobra-viper` | Tech-stack-specific tutorial Skill. |
 | `tooling-engineer` (404kidwiz/claude-supercode-skills) | https://skills.sh/404kidwiz/claude-supercode-skills/tooling-engineer | `npx skills add https://github.com/404kidwiz/claude-supercode-skills --skill tooling-engineer` | Decision-tree-style guide. |
 
-**Pattern observation**: every listed dev-tooling skill is *advisory content* (instructions for an agent to follow), not a wrapper around an installable CLI. None of them say "install this npm package, then run it." This is a hint about positioning: Trellis's CLI itself is not what gets listed; what gets listed is a Skill that *teaches* an agent to use Trellis (e.g., "trellis-init" skill that tells the agent to run `npx @liushuang/trellis init`, what flags exist, what the spec layout means).
+**Pattern observation**: every listed dev-tooling skill is *advisory content* (instructions for an agent to follow), not a wrapper around an installable CLI. None of them say "install this npm package, then run it." This is a hint about positioning: Trellis's CLI itself is not what gets listed; what gets listed is a Skill that *teaches* an agent to use Trellis (e.g., "trellis-init" skill that tells the agent to run `npx trellis-ivy init`, what flags exist, what the spec layout means).
 
 The `trellis-meta` skill that already exists in this repo (`templates/claude/skills/trellis-meta/SKILL.md`) is exactly the right shape.
 

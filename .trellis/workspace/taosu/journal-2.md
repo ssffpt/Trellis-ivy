@@ -1400,7 +1400,7 @@ Found by comparing with PR #47 — original implementation had zero tests.
 | Manifest | 新增 `0.3.0.json` 聚合 beta.0~rc.6 changelog |
 | Tests | 新增 10 个测试（集成 #12、迁移边界、回归防护，369 total） |
 | Release Script | 新增 `release:promote` 脚本，预发布→正式版一键升级 |
-| Release | 执行 `pnpm release:promote`，CI 通过，npm 发布 `@liushuang/trellis@0.3.0` |
+| Release | 执行 `pnpm release:promote`，CI 通过，npm 发布 `trellis-ivy@0.3.0` |
 | Post-release Fix | `0.3.0.json` breaking flag 改为 false — rc 用户升级不再误显 breaking 警告 |
 | Docs | 两个 README 加入官网链接 (docs.trytrellis.app) |
 

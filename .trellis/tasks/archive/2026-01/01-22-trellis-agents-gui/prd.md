@@ -16,7 +16,7 @@ Add a GUI application (`trellis-agents`) to the Trellis project as a monorepo su
 trellis/                          # Root = CLI (unchanged)
 ├── src/                          # CLI source (keep as-is)
 ├── bin/                          # CLI binary (keep as-is)
-├── package.json                  # @liushuang/trellis (CLI)
+├── package.json                  # trellis-ivy (CLI)
 ├── tsconfig.json                 # CLI tsconfig (keep as-is)
 ├── .trellis/                     # Keep for dogfooding
 │
@@ -48,7 +48,7 @@ trellis/                          # Root = CLI (unchanged)
 │       │       └── main.tsx
 │       ├── resources/            # App icons
 │       ├── electron-builder.json
-│       ├── package.json          # @liushuang/trellis-agents
+│       ├── package.json          # trellis-ivy-agents
 │       ├── tsconfig.json
 │       ├── vite.config.ts
 │       └── tailwind.config.ts
@@ -70,8 +70,8 @@ trellis/                          # Root = CLI (unchanged)
   ```json
   {
     "scripts": {
-      "dev:gui": "pnpm --filter @liushuang/trellis-agents dev",
-      "build:gui": "pnpm --filter @liushuang/trellis-agents build"
+      "dev:gui": "pnpm --filter trellis-ivy-agents dev",
+      "build:gui": "pnpm --filter trellis-ivy-agents build"
     }
   }
   ```
@@ -93,7 +93,7 @@ Create a working Electron + React + Vite application with:
 **Package.json:**
 ```json
 {
-  "name": "@liushuang/trellis-agents",
+  "name": "trellis-ivy-agents",
   "version": "0.1.0",
   "main": "dist/main/index.js",
   "scripts": {

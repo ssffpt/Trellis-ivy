@@ -8,7 +8,7 @@ import {
   type ChannelScope,
   type ContextChannelEvent,
   type ThreadChannelEvent,
-} from "@liushuang/trellis-core/channel";
+} from "trellis-ivy-core/channel";
 
 import {
   parseChannelScope,

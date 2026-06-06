@@ -36,10 +36,10 @@ describe("upgrade command", () => {
       buildUpgradeCommand({ tag: "beta" }, "0.5.12", "darwin"),
     ).toMatchObject({
       command: "npm",
-      args: ["install", "-g", "@liushuang/trellis@beta"],
+      args: ["install", "-g", "trellis-ivy@beta"],
       spawnOptions: { stdio: "inherit", shell: false },
-      displayCommand: "npm install -g @liushuang/trellis@beta",
-      target: "@liushuang/trellis@beta",
+      displayCommand: "npm install -g trellis-ivy@beta",
+      target: "trellis-ivy@beta",
       tag: "beta",
       binaryCheckCommand: "which trellis",
     });
@@ -50,10 +50,10 @@ describe("upgrade command", () => {
       buildUpgradeCommand({ tag: "beta" }, "0.5.12", "win32"),
     ).toMatchObject({
       command: "cmd.exe",
-      args: ["/d", "/s", "/c", "npm install -g @liushuang/trellis@beta"],
+      args: ["/d", "/s", "/c", "npm install -g trellis-ivy@beta"],
       spawnOptions: { stdio: "inherit", shell: false },
-      displayCommand: "npm install -g @liushuang/trellis@beta",
-      target: "@liushuang/trellis@beta",
+      displayCommand: "npm install -g trellis-ivy@beta",
+      target: "trellis-ivy@beta",
       tag: "beta",
       binaryCheckCommand: "where trellis",
     });
@@ -67,7 +67,7 @@ describe("upgrade command", () => {
 
     expect(runner).not.toHaveBeenCalled();
     expect(log).toHaveBeenCalledWith(
-      expect.stringContaining("Run: npm install -g @liushuang/trellis@latest"),
+      expect.stringContaining("Run: npm install -g trellis-ivy@latest"),
     );
 
     log.mockRestore();
@@ -81,7 +81,7 @@ describe("upgrade command", () => {
 
     expect(runner).toHaveBeenCalledWith(
       "npm",
-      ["install", "-g", "@liushuang/trellis@latest"],
+      ["install", "-g", "trellis-ivy@latest"],
       { stdio: "inherit", shell: false },
     );
     expect(log).toHaveBeenCalledWith(

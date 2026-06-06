@@ -12,7 +12,7 @@
 </p>
 
 <p align="center">
-<strong>分支声明：</strong>这是 <code>@liushuang/trellis</code> —— 原始 Trellis 项目的个人分支，用于自定义工作流实验。
+<strong>分支声明：</strong>这是 <code>trellis-ivy</code> —— 原始 Trellis 项目的个人分支，用于自定义工作流实验。
 </p>
 
 <p align="center">
@@ -25,8 +25,8 @@
 </p>
 
 <p align="center">
-<a href="https://www.npmjs.com/package/@liushuang/trellis"><img src="https://img.shields.io/npm/v/@liushuang/trellis.svg?style=flat-square&color=2563eb" alt="npm version" /></a>
-<a href="https://www.npmjs.com/package/@liushuang/trellis"><img src="https://img.shields.io/npm/dw/@liushuang/trellis?style=flat-square&color=cb3837&label=downloads" alt="npm downloads" /></a>
+<a href="https://www.npmjs.com/package/trellis-ivy"><img src="https://img.shields.io/npm/v/trellis-ivy.svg?style=flat-square&color=2563eb" alt="npm version" /></a>
+<a href="https://www.npmjs.com/package/trellis-ivy"><img src="https://img.shields.io/npm/dw/trellis-ivy?style=flat-square&color=cb3837&label=downloads" alt="npm downloads" /></a>
 <a href="https://github.com/mindfold-ai/Trellis/blob/main/LICENSE"><img src="https://img.shields.io/badge/license-AGPL--3.0-16a34a.svg?style=flat-square" alt="license" /></a>
 <a href="https://github.com/mindfold-ai/Trellis/stargazers"><img src="https://img.shields.io/github/stars/mindfold-ai/Trellis?style=flat-square&color=eab308" alt="stars" /></a>
 <a href="https://docs.trytrellis.app/zh"><img src="https://img.shields.io/badge/docs-trytrellis.app-0f766e?style=flat-square" alt="docs" /></a>
@@ -70,7 +70,7 @@
 
 ```bash
 # 1. 安装 Trellis
-npm install -g @liushuang/trellis@latest
+npm install -g trellis-ivy@latest
 
 # 2. 在仓库里初始化
 trellis init -u your-name

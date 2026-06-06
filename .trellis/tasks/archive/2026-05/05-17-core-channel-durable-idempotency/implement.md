@@ -39,10 +39,10 @@
 ## Validation Commands
 
 ```bash
-pnpm --filter @liushuang/trellis-core test -- test/channel/idempotency.test.ts
-pnpm --filter @liushuang/trellis-core lint
-pnpm --filter @liushuang/trellis-core typecheck
-pnpm --filter @liushuang/trellis-core build
+pnpm --filter trellis-ivy-core test -- test/channel/idempotency.test.ts
+pnpm --filter trellis-ivy-core lint
+pnpm --filter trellis-ivy-core typecheck
+pnpm --filter trellis-ivy-core build
 ```
 
 ## Rollback Point
