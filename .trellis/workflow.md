@@ -151,8 +151,8 @@ Phase 3: Finish  → verify, update spec, commit, and wrap up
 
 ### Request Triage
 
-- Simple conversation or small task: ask only whether this turn should create a Trellis task. If the user says no, skip Trellis for this session.
-- Complex task: ask whether you may create a Trellis task and enter planning. If the user says no, do not do broad inline implementation; explain, clarify scope, or suggest a smaller split.
+- Simple conversation or small task: explicitly ask the user "May I create a Trellis task for this?" and wait for a clear "yes" before creating. If the user says no or gives an unclear answer, skip Trellis for this session.
+- Complex task: explicitly ask the user "May I create a Trellis task and enter the planning phase?" and wait for a clear "yes" before creating. If the user says no or gives an unclear answer, do not do broad inline implementation; explain, clarify scope, or suggest a smaller split.
 - User approval to create a task is not approval to start implementation. Planning still happens first.
 
 ### Planning Artifacts
@@ -175,8 +175,8 @@ Create new children with `task.py create "<title>" --slug <name> --parent <paren
 
 [workflow-state:no_task]
 No active task. First classify the current turn and ask for task-creation consent before creating any Trellis task.
-Simple conversation / small task: ask only whether this turn should create a Trellis task. If the user says no, skip Trellis for this session.
-Complex task: ask the user if you can create a Trellis task and enter the planning phase. If the user says no, explain, clarify scope, or suggest a smaller split.
+Simple conversation / small task: explicitly ask the user "May I create a Trellis task for this?" and wait for a clear "yes" before creating. If the user says no or gives an unclear answer, skip Trellis for this session.
+Complex task: explicitly ask the user "May I create a Trellis task and enter the planning phase?" and wait for a clear "yes" before creating. If the user says no or gives an unclear answer, explain, clarify scope, or suggest a smaller split.
 [/workflow-state:no_task]
 
 ### Phase 1: Plan
