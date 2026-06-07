@@ -12,7 +12,7 @@
 </p>
 
 <p align="center">
-<strong>分支声明：</strong>这是 <code>trellis-ivy</code> —— 原始 Trellis 项目的个人分支，用于自定义工作流实验。
+<strong>分支声明：</strong>这是 <code>Trellis-ivy</code> —— 原始 Trellis 项目的个人分支，用于自定义工作流实验。
 </p>
 
 <p align="center">

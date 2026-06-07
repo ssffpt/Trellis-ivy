@@ -12,7 +12,7 @@
 </p>
 
 <p align="center">
-<strong>Fork Notice:</strong> This is <code>trellis-ivy</code> — a personal fork of the original Trellis project for custom workflow experiments.
+<strong>Fork Notice:</strong> This is <code>Trellis-ivy</code> — a personal fork of the original Trellis project for custom workflow experiments.
 </p>
 
 <p align="center">
