@@ -1,107 +1,165 @@
-# Trellis Brainstorm
+# Trellis 头脑风暴
 
-## Non-Negotiable Interview Contract
+## 不可妥协的访谈契约
 
-Interview me relentlessly about every aspect of this plan until we reach a shared understanding. Walk down each branch of the design tree, resolving dependencies between decisions one-by-one. For each question, provide your recommended answer.
+就这个计划的每个方面对我进行不懈的追问，直到我们达成共同的理解。沿着设计树的每个分支逐一排查，逐个解决决策之间的依赖关系。对于每个问题，给出你的推荐答案。
 
-Ask the questions one at a time.
+每次只问一个问题。
 
-## Non-Negotiable Evidence Rule
+## 不可妥协的证据规则
 
-If a question can be answered by exploring the codebase, explore the codebase instead.
+如果某个问题可以通过探索代码库来回答，那就直接去探索代码库。
 
-This is mandatory. Before asking the user a question, first check whether the answer is already available in code, tests, configs, docs, existing specs, or task history.
+这是强制性的。在向用户提问之前，先检查答案是否已经存在于代码、测试、配置、文档、现有规范或任务历史中。
 
-Do not ask the user to confirm facts that the repository can answer. Ask only for product intent, preference, scope, risk tolerance, or decisions that remain ambiguous after inspection.
+不要请用户确认代码库能回答的事实。只询问关于产品意图、偏好、范围、风险承受能力或在检查后仍然不明确的事项。
 
 ---
 
-Use this skill during Phase 1 planning to turn the user's request into clear requirements and planning artifacts.
+在第一阶段规划期间使用此技能，将用户的请求转化为清晰的需求和规划产物。
 
-## Preconditions
+## 前置条件
 
-Use this skill only after task-creation consent has been given and the user is ready to enter Trellis planning.
+仅在已获得任务创建同意且用户准备好进入 Trellis 规划时使用此技能。
 
-If no task exists yet, create one:
+如果还没有任务，创建一个：
 
 ```bash
-TASK_DIR=$({{PYTHON_CMD}} ./.trellis/scripts/task.py create "<short task title>" --slug <slug>)
+TASK_DIR=$({{PYTHON_CMD}} ./.trellis/scripts/task.py create "<简短的任务标题>" --slug <slug>)
 ```
 
-Use a concise title from the user's request. Use a slug without a date prefix. `task.py create` adds the `MM-DD-` directory prefix automatically.
+使用用户请求中的简洁标题。使用不带日期前缀的 slug。`task.py create` 会自动添加 `MM-DD-` 目录前缀。
 
-`task.py create` creates the default `prd.md`. Update that file with the current understanding before asking follow-up questions.
+`task.py create` 会创建默认的 `prd.md`。在提出后续问题之前，先用当前的理解更新该文件。
 
-## Planning Flow
+## 反模式："这个太简单了，不需要设计"
 
-1. Capture the user's request and initial known facts in `prd.md`.
-2. Inspect available evidence before asking questions:
-   - code, tests, fixtures, and configs
-   - README files, docs, existing specs, and domain notes
-   - related Trellis tasks, research files, and session history when present
-3. Separate what you found into:
-   - confirmed facts
-   - product intent still needed from the user
-   - scope or risk decisions still needed from the user
-   - likely out-of-scope items
-4. Ask the single highest-value remaining question.
-5. Include your recommended answer with the question.
-6. After each user answer, update `prd.md` before continuing.
-7. For complex tasks, create or update `design.md` and `implement.md` before implementation starts.
+每个项目都要经过规划流程。一个配置变更、一个单函数工具、一个待办列表——全都需要。
 
-Do not invent a project-specific product/spec hierarchy. If the repository already has product, domain, or spec docs, use them. If it does not, proceed with the evidence that exists.
+"简单"的项目恰恰是未经检验的假设造成最多浪费的地方。设计可以很简短（几句话就够了），但你必须先展示出来并获得用户批准。
 
-## Question Rules
+## UI 改动处理策略
 
-Ask only one question per message.
+- **简单 UI 改动**（如调整文案、修改颜色、按钮状态变更）：使用下方"UI 描述格式"中的结构化描述（表格+状态机），无需生成原型。
+- **复杂 UI 改动**（新增页面、复杂布局调整、交互流程变更）：AI 应主动提议用户"此任务涉及 UI 改动，建议先做一个 HTML 原型确认视觉方向，您看可以吗？"。用户同意后生成原型，用户拒绝则用结构化表格描述。
 
-Each question must include:
+原型保存路径：`$TASK_DIR/prototype.html`（与 `prd.md` 同目录）。原型使用纯 HTML + Tailwind CDN，独立于项目技术栈，仅作一次性视觉参考。
 
-- the decision needed
-- why the answer matters
-- your recommended answer
-- the trade-off if the user chooses differently
+---
 
-Do not ask process questions such as whether to search, inspect files, or continue brainstorming. Do the evidence work directly. Ask the user only when the remaining issue is a product decision, preference, scope boundary, or risk tolerance choice.
+<HARD-GATE>
+在你展示设计方案并获得用户明确批准之前，不要调用任何实现技能、编写任何代码、创建任何文件或采取任何实现行动。
+这适用于所有项目，无论看起来多简单。
+</HARD-GATE>
 
-## Artifact Rules
+---
 
-`prd.md` records requirements and acceptance:
+## 规划流程
 
-- goal and user value
-- confirmed facts
-- requirements
-- acceptance criteria
-- out of scope
-- open questions that still block planning
+1. 在 `prd.md` 中记录用户的请求和初始已知事实。
+2. 在提问之前先检查可用证据：
+   - 代码、测试、夹具和配置
+   - README 文件、文档、现有规范和领域说明
+   - 如有，相关的 Trellis 任务、研究文件和会话历史
+3. 将发现的内容分为：
+   - 已确认的事实
+   - 仍需要从用户处了解的产品意图
+   - 仍需要用户决定的范围或风险决策
+   - 可能超出范围的事项
+4. **提出 2-3 种方案。** 在展示单一设计之前，先探索不同的实现路径。对每种方案说明：
+   - 方案的核心思路
+   - 优点和缺点
+   - 你的推荐及理由
+   以对话方式展示选项，先展示你推荐的方案并解释原因。
+5. **涉及 UI 改动时，若已生成原型并获用户确认，必须将关键视觉和交互决策以结构化格式写回 `prd.md`。** HTML 原型本身不作为实现依据，仅 `prd.md` 中的结构化描述才是 AI 编码时的参考。
+6. 提出剩余问题中最有价值的一个。
+7. 在问题中包含你的推荐答案。
+8. 每次用户回答后，更新 `prd.md`，然后继续。
+9. 对于复杂任务，在开始实现之前创建或更新 `design.md` 和 `implement.md`。
 
-`design.md` records technical design for complex tasks:
+不要编造项目特定的产品/规范层级。如果仓库中已有产品、领域或规范文档，请使用它们。如果没有，则基于现有证据继续。
 
-- architecture and boundaries
-- data flow and contracts
-- compatibility and migration notes
-- important trade-offs
-- operational or rollback considerations
+## 提问规则
 
-`implement.md` records execution planning for complex tasks:
+每次消息只问一个问题。
 
-- ordered implementation checklist
-- validation commands
-- risky files or rollback points
-- follow-up checks before `task.py start`
+每个问题必须包含：
 
-Lightweight tasks may have only `prd.md`. Complex tasks must have `prd.md`, `design.md`, and `implement.md` before `task.py start`.
+- 需要做出的决定
+- 为什么这个答案很重要
+- 你的推荐答案
+- 如果用户选择不同方案的权衡
 
-`implement.md` is not a replacement for `implement.jsonl`. Use JSONL files only for manifest-style spec and research references when the task needs them.
+不要问流程性问题，例如是否搜索、检查文件或继续头脑风暴。直接完成证据工作。仅在剩余问题是关于产品决策、偏好、范围边界或风险承受能力选择时才询问用户。
 
-## Quality Bar
+## 产物规则
 
-Before declaring planning ready:
+`prd.md` 记录需求和验收标准：
 
-- `prd.md` contains testable acceptance criteria.
-- Repository-answerable questions have already been answered through inspection.
-- Remaining open questions are genuinely about user intent or scope.
-- Complex tasks have `design.md` and `implement.md`.
-- The user has reviewed the final planning artifacts or explicitly approved proceeding.
+- 目标和用户价值
+- 已确认的事实
+- 需求
+- 验收标准
+- 超出范围的事项
+- 仍然阻碍规划的开放问题
 
-Do not start implementation until the user approves or asks for implementation.
+`design.md` 记录复杂任务的技术设计：
+
+- 架构和边界
+- 数据流和契约
+- 兼容性和迁移说明
+- 重要权衡
+- 运营或回滚考虑
+
+`implement.md` 记录复杂任务的执行计划：
+
+- 有序的待办清单
+- 验证命令
+- 高风险文件或回滚点
+- `task.py start` 之前的后续检查
+
+轻量级任务可能只需要 `prd.md`。复杂任务在 `task.py start` 之前必须拥有 `prd.md`、`design.md` 和 `implement.md`。
+
+`implement.md` 不能替代 `implement.jsonl`。仅当任务需要时，才使用 JSONL 文件保存清单式规范和研究引用。
+
+## UI 描述格式
+
+涉及界面改动时，用以下结构描述，不要只用自然语言：
+
+### 布局网格
+| 区域 | 内容 | 宽度 | 对齐 |
+|---|---|---|---|
+
+### 交互状态
+| 状态 | 触发条件 | 效果 |
+|---|---|---|
+
+### 间距规范
+- 卡片间距：16px
+- 内边距：24px
+- 圆角：8px
+
+## 质量门槛
+
+在宣布规划完成之前：
+
+- `prd.md` 包含可测试的验收标准。
+- 代码库可回答的问题已通过检查得到答案。
+- 剩余的开放问题确实是关于用户意图或范围的。
+- 复杂任务拥有 `design.md` 和 `implement.md`。
+- **已提出 2-3 种方案并让用户做出选择。**
+- **用户已明确批准规划产物。**
+- **涉及 UI 改动时，原型已确认且关键视觉/交互参数已同步到 `prd.md`。**
+
+在用户明确批准之前，不要开始实现。如果用户说"开始吧"、"就这么做"、"ok"或类似的话，视为明确批准。不要用"默认继续"来替代明确批准。
+
+## 规格自检
+
+在最终提交规划产物之前，以全新的视角审视它们：
+
+1. **占位符扫描：** 有没有"待定"、TODO、未完成的章节或模糊的需求？修复它们。
+2. **内部一致性：** 各章节之间有矛盾吗？架构和功能描述匹配吗？
+3. **范围检查：** 这是否聚焦到可以用一个实现计划覆盖，还是需要进一步拆分？
+4. **模糊性检查：** 有没有需求可以被两种方式理解？如果有，选择一种并明确写出来。
+
+发现问题就直接内联修复。修好继续推进。
