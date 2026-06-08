@@ -7,6 +7,7 @@ import {
   resolveCommands,
   resolveSkills,
   resolveBundledSkills,
+  resolveAgents,
   applyPullBasedPreludeMarkdown,
   normalizeCopilotMarkdownAgents,
   writeSkills,
@@ -51,8 +52,12 @@ export async function configureCopilot(cwd: string): Promise<void> {
   // to Copilot's YAML tool list format before writing into .github/agents.
   const { getAllAgents: getCursorAgents } =
     await import("../templates/cursor/index.js");
+  const cursorCtx = AI_TOOLS.cursor.templateContext;
   for (const agent of applyPullBasedPreludeMarkdown(
-    normalizeCopilotMarkdownAgents(getCursorAgents()),
+    normalizeCopilotMarkdownAgents([
+      ...getCursorAgents(),
+      ...resolveAgents(cursorCtx),
+    ]),
   )) {
     await writeFile(
       path.join(agentsDir, `${agent.name}.agent.md`),

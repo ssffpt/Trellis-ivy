@@ -75,7 +75,11 @@ TASK_DIR=$({{PYTHON_CMD}} ./.trellis/scripts/task.py create "<简短的任务标
 6. 提出剩余问题中最有价值的一个。
 7. 在问题中包含你的推荐答案。
 8. 每次用户回答后，更新 `prd.md`，然后继续。
-9. 对于复杂任务，在开始实现之前创建或更新 `design.md` 和 `implement.md`。
+9. **PRD 门禁审核**：`prd.md` 内容稳定后，调度 `trellis-review` agent 对 `prd.md` 进行独立审核。审核不通过时 AI 自动修复并重新审核（最多 2 轮）。审核通过后继续。
+10. 对于复杂任务，创建或更新 `design.md` 和 `implement.md`。
+11. **Design 门禁审核**（仅复杂任务）：`design.md` 完成后，调度 `trellis-review` agent 对 `design.md` 进行独立审核。审核不通过时 AI 自动修复并重新审核（最多 2 轮）。审核通过后才能进入实现阶段。
+
+轻量级任务（仅需 `prd.md`）可跳过步骤 10-11 的 Design 门禁，但 PRD 门禁（步骤 9）始终执行。
 
 不要编造项目特定的产品/规范层级。如果仓库中已有产品、领域或规范文档，请使用它们。如果没有，则基于现有证据继续。
 
@@ -122,6 +126,13 @@ TASK_DIR=$({{PYTHON_CMD}} ./.trellis/scripts/task.py create "<简短的任务标
 
 `implement.md` 不能替代 `implement.jsonl`。仅当任务需要时，才使用 JSONL 文件保存清单式规范和研究引用。
 
+`review.md` 记录门禁审核结果和修复历史：
+
+- 四个审核维度的状态（✅/⚠️/❌）
+- 每轮修复记录
+- 最终审核结论
+- 遗留问题（如有）
+
 ## UI 描述格式
 
 涉及界面改动时，用以下结构描述，不要只用自然语言：
@@ -147,6 +158,8 @@ TASK_DIR=$({{PYTHON_CMD}} ./.trellis/scripts/task.py create "<简短的任务标
 - 代码库可回答的问题已通过检查得到答案。
 - 剩余的开放问题确实是关于用户意图或范围的。
 - 复杂任务拥有 `design.md` 和 `implement.md`。
+- **PRD 已通过 `trellis-review` agent 门禁审核（`review.md` 最终状态为 ✅）。**
+- **复杂任务的 `design.md` 也已通过 `trellis-review` agent 门禁审核。**
 - **已提出 2-3 种方案并让用户做出选择。**
 - **用户已明确批准规划产物。**
 - **涉及 UI 改动时，原型已确认且关键视觉/交互参数已同步到 `prd.md`。**

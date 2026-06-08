@@ -6,6 +6,7 @@ import {
   resolveCommands,
   resolveSkills,
   resolveBundledSkills,
+  resolveAgents,
   wrapWithCommandFrontmatter,
   writeSkills,
   writeAgents,
@@ -45,7 +46,7 @@ export async function configureQoder(cwd: string): Promise<void> {
   );
   await writeAgents(
     path.join(configRoot, "agents"),
-    applyPullBasedPreludeMarkdown(getAllAgents()),
+    applyPullBasedPreludeMarkdown([...getAllAgents(), ...resolveAgents(ctx)]),
   );
   await writeSharedHooks(path.join(configRoot, "hooks"), "qoder");
 

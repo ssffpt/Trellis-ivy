@@ -7,6 +7,7 @@ import { toPosix } from "../utils/posix.js";
 import {
   collectSkillTemplates,
   replacePythonCommandLiterals,
+  resolveAgents,
   resolveBundledSkills,
   resolveCommands,
   resolveSkills,
@@ -95,6 +96,10 @@ export function collectOpenCodeTemplates(): Map<string, string> {
     resolveBundledSkills(ctx),
   )) {
     files.set(filePath, content);
+  }
+  // trellis-review from common/agents/
+  for (const agent of resolveAgents(ctx)) {
+    files.set(`.opencode/agents/${agent.name}.md`, agent.content);
   }
   return files;
 }

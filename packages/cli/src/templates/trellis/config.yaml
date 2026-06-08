@@ -103,7 +103,7 @@ channel:
 # main Codex agent edit code directly because Codex sub-agents run with
 # `fork_turns="none"` isolation and can't inherit the parent session's
 # task context. Set to "sub-agent" to opt into the legacy dispatch model
-# (main agent spawns trellis-implement / trellis-check / trellis-research
+# (main agent spawns trellis-implement / trellis-check / trellis-research / trellis-review
 # sub-agents).
 #
 # codex:

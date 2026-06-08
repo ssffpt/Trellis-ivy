@@ -8,7 +8,9 @@ import {
   resolveCommands,
   resolveSkills,
   resolveBundledSkills,
+  resolveAgents,
   writeSkills,
+  writeAgents,
   writeSharedHooks,
   replacePythonCommandLiterals,
 } from "./shared.js";
@@ -77,6 +79,9 @@ export async function configureClaude(cwd: string): Promise<void> {
 
   // Copy platform-specific files (agents, settings) — hooks come from shared-hooks
   await copyDirFiltered(sourcePath, destPath, ["commands", "hooks"]);
+
+  // trellis-review from common/agents/ with Claude-specific frontmatter
+  await writeAgents(path.join(destPath, "agents"), resolveAgents(ctx));
 
   // Shared hook scripts (same source as 7 other platforms)
   await writeSharedHooks(path.join(destPath, "hooks"), "claude");

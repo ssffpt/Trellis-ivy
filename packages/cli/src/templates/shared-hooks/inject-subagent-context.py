@@ -57,11 +57,12 @@ FILE_TASK_JSON = "task.json"
 AGENT_IMPLEMENT = "trellis-implement"
 AGENT_CHECK = "trellis-check"
 AGENT_RESEARCH = "trellis-research"
+AGENT_REVIEW = "trellis-review"
 
 # Agents that require a task directory
-AGENTS_REQUIRE_TASK = (AGENT_IMPLEMENT, AGENT_CHECK)
+AGENTS_REQUIRE_TASK = (AGENT_IMPLEMENT, AGENT_CHECK, AGENT_REVIEW)
 # All supported agents
-AGENTS_ALL = (AGENT_IMPLEMENT, AGENT_CHECK, AGENT_RESEARCH)
+AGENTS_ALL = (AGENT_IMPLEMENT, AGENT_CHECK, AGENT_RESEARCH, AGENT_REVIEW)
 
 
 def find_repo_root(start_path: str) -> str | None:
@@ -507,6 +508,55 @@ To get structured package info, run: `python3 ./{DIR_WORKFLOW}/scripts/get_conte
     return "\n\n".join(context_parts)
 
 
+def get_review_context(repo_root: str, task_dir: str | None) -> str:
+    """
+    Context for Review Agent — task artifacts for PRD/Design gate review.
+    """
+    context_parts = []
+
+    if task_dir:
+        prd_content = read_file_content(repo_root, f"{task_dir}/prd.md")
+        if prd_content:
+            context_parts.append(
+                f"=== {task_dir}/prd.md (Requirements) ===\n{prd_content}"
+            )
+
+        design_content = read_file_content(repo_root, f"{task_dir}/design.md")
+        if design_content:
+            context_parts.append(
+                f"=== {task_dir}/design.md (Technical Design) ===\n{design_content}"
+            )
+
+    return "\n\n".join(context_parts)
+
+
+def build_review_prompt(original_prompt: str, context: str) -> str:
+    """Build complete prompt for Review"""
+    return f"""<!-- trellis-hook-injected -->
+# Review Agent Task
+
+You are the Review Agent performing a quality gate review.
+
+## Your Context
+
+{context}
+
+---
+
+## Your Task
+
+{original_prompt}
+
+---
+
+## Workflow
+
+1. **Read target document** - Identify whether reviewing prd.md or design.md
+2. **Evaluate 4 dimensions** - Completeness, consistency, feasibility, scope
+3. **Fix and re-review** - Fix issues directly, up to 2 retry rounds
+4. **Write review.md** - Output checklist-style report"""
+
+
 def build_research_prompt(original_prompt: str, context: str) -> str:
     """Build complete prompt for Research"""
     return f"""# Research Agent Task
@@ -739,6 +789,10 @@ def main():
         # Research can work without task directory
         context = get_research_context(repo_root, task_dir)
         new_prompt = build_research_prompt(original_prompt, context)
+    elif subagent_type == AGENT_REVIEW:
+        assert task_dir is not None  # validated above (in AGENTS_REQUIRE_TASK)
+        context = get_review_context(repo_root, task_dir)
+        new_prompt = build_review_prompt(original_prompt, context)
     else:
         sys.exit(0)
 

@@ -8,6 +8,7 @@
  *   common/
  *   ├── commands/        # Templates that stay as slash commands
  *   ├── skills/          # Single-file templates that become auto-triggered skills
+ *   ├── agents/          # Sub-agent body templates (frontmatter added per-platform)
  *   └── bundled-skills/  # Multi-file built-in skills with references/assets
  */
 
@@ -56,6 +57,7 @@ export interface CommonBundledSkill {
 // Cached results — files don't change during a CLI run
 let cachedCommands: CommonTemplate[] | undefined;
 let cachedSkills: CommonTemplate[] | undefined;
+let cachedAgents: CommonTemplate[] | undefined;
 let cachedBundledSkills: CommonBundledSkill[] | undefined;
 
 /**
@@ -80,6 +82,19 @@ export function getSkillTemplates(): CommonTemplate[] {
     content: readTemplate(`skills/${file}`),
   }));
   return cachedSkills;
+}
+
+/**
+ * Get all agent templates (sub-agent definitions, body only — no frontmatter).
+ * Frontmatter is added per-platform by wrapWithAgentFrontmatter() in shared.ts.
+ * Results are cached after first call.
+ */
+export function getAgentTemplates(): CommonTemplate[] {
+  cachedAgents ??= listMarkdownFiles("agents").map((file) => ({
+    name: file.replace(/\.md$/, ""),
+    content: readTemplate(`agents/${file}`),
+  }));
+  return cachedAgents;
 }
 
 function listDirectories(dir: string): string[] {

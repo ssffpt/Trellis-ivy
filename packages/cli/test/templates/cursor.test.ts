@@ -3,6 +3,8 @@ import fs from "node:fs";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
 import { getAllAgents } from "../../src/templates/cursor/index.js";
+import { resolveAgents } from "../../src/configurators/shared.js";
+import { AI_TOOLS } from "../../src/types/ai-tools.js";
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const repoRoot = path.resolve(__dirname, "../../../..");
@@ -18,6 +20,15 @@ describe("cursor getAllAgents", () => {
     const agents = getAllAgents();
     const names = agents.map((a) => a.name).sort();
     expect(names).toEqual(EXPECTED_AGENT_NAMES);
+  });
+});
+
+describe("cursor combined agents (per-platform + common)", () => {
+  it("includes trellis-review from common/agents/", () => {
+    const ctx = AI_TOOLS.cursor.templateContext;
+    const commonAgents = resolveAgents(ctx);
+    const names = commonAgents.map((a) => a.name);
+    expect(names).toContain("trellis-review");
   });
 });
 

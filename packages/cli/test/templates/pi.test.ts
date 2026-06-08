@@ -72,12 +72,13 @@ export {
 }
 
 describe("pi templates", () => {
-  it("provides the three Trellis sub-agent definitions", () => {
+  it("provides the four Trellis sub-agent definitions", () => {
     const agents = getAllAgents();
     expect(agents.map((agent) => agent.name).sort()).toEqual([
       "trellis-check",
       "trellis-implement",
       "trellis-research",
+      "trellis-review",
     ]);
 
     for (const agent of agents) {

@@ -63,9 +63,9 @@ function buildContextKey(platformName, kind, value) {
   return safeValue ? `${platformName}_${safeValue}` : `${platformName}_${hashValue(value)}`
 }
 
-// Matches `trellis-implement`, `trellis-check`, `trellis-research` exactly.
+// Matches `trellis-implement`, `trellis-check`, `trellis-research`, `trellis-review` exactly.
 // Used by chat.message plugins to skip injection inside Trellis sub-agent turns.
-const TRELLIS_SUBAGENT_RE = /^trellis-(implement|check|research)$/
+const TRELLIS_SUBAGENT_RE = /^trellis-(implement|check|research|review)$/
 
 /**
  * Return true when the OpenCode `chat.message` input represents a Trellis

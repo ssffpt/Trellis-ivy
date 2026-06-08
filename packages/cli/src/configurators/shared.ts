@@ -5,7 +5,7 @@
  * configurators cannot import from index.ts).
  */
 
-import type { TemplateContext } from "../types/ai-tools.js";
+import type { CliFlag, TemplateContext } from "../types/ai-tools.js";
 
 /**
  * Module-level resolved Python command, set by the init flow after probing.
@@ -271,6 +271,144 @@ const COMMAND_DESCRIPTIONS: Record<string, string> = {
     "Wrap up the current session: quality gate, commit reminder, archive, journal.",
 };
 
+// ---------------------------------------------------------------------------
+// Agent frontmatter configuration — per-platform metadata for sub-agents
+// ---------------------------------------------------------------------------
+
+interface AgentFmBase {
+  /** Agent description (plain text, no YAML-special chars expected). */
+  description: string;
+  /** Comma-separated tool list (e.g. "Read, Write, Edit, Bash, Glob, Grep"). */
+  tools?: string;
+  /** Emit description as YAML literal block (`|`) instead of inline. Default true. */
+  multilineDesc?: boolean;
+}
+
+interface AgentFmOpenCode {
+  description: string;
+  mode: "subagent";
+  permission: Record<string, string>;
+}
+
+type AgentFmConfig = AgentFmBase | AgentFmOpenCode;
+
+function isOpenCodeFm(fm: AgentFmConfig): fm is AgentFmOpenCode {
+  return "mode" in fm;
+}
+
+/**
+ * Per-platform frontmatter configuration for each agent.
+ *
+ * Platforms not listed (kilo, antigravity, windsurf, codex, kiro, copilot,
+ * droid) either don't use markdown agents or handle them via other mechanisms.
+ */
+const AGENT_FRONTMATTER: Record<
+  string,
+  Partial<Record<CliFlag, AgentFmConfig>>
+> = {
+  "trellis-review": {
+    claude: {
+      description:
+        "PRD/Design 门禁审核 Agent。独立审核需求文档和技术设计的质量，输出清单式审核报告，发现问题后自动修复并重审。",
+      tools: "Read, Write, Edit, Bash, Glob",
+    },
+    cursor: {
+      description:
+        "PRD/Design 门禁审核 Agent。独立审核需求文档和技术设计的质量，输出清单式审核报告，发现问题后自动修复并重审。",
+      tools: "Read, Write, Edit, Bash, Glob",
+      multilineDesc: false,
+    },
+    codebuddy: {
+      description:
+        "PRD/Design 门禁审核 Agent。独立审核需求文档和技术设计的质量，输出清单式审核报告，发现问题后自动修复并重审。",
+      tools: "Read, Write, Edit, Bash, Glob",
+    },
+    qoder: {
+      description:
+        "PRD/Design 门禁审核 Agent。独立审核需求文档和技术设计的质量，输出清单式审核报告，发现问题后自动修复并重审。",
+      tools: "Read, Write, Edit, Bash, Glob",
+    },
+    gemini: {
+      description:
+        "PRD/Design 门禁审核 Agent。独立审核需求文档和技术设计的质量，输出清单式审核报告，发现问题后自动修复并重审。",
+      tools: "Read, Write, Edit, Bash, Glob",
+    },
+    opencode: {
+      description:
+        "PRD/Design 门禁审核 Agent。独立审核需求文档和技术设计的质量，输出清单式审核报告，发现问题后自动修复并重审。",
+      mode: "subagent",
+      permission: {
+        read: "allow",
+        write: "allow",
+        edit: "allow",
+        bash: "allow",
+        glob: "allow",
+      },
+    },
+  },
+};
+
+/**
+ * Generate YAML frontmatter string for an agent, per platform conventions.
+ *
+ * - Standard platforms: `name`, `description`, optional `tools`
+ * - OpenCode: `description`, `mode: subagent`, `permission:` map (no `name`)
+ */
+export function wrapWithAgentFrontmatter(
+  name: string,
+  content: string,
+  platform: CliFlag,
+): string {
+  const fmConfig = AGENT_FRONTMATTER[name]?.[platform];
+  if (!fmConfig) {
+    throw new Error(
+      `Missing agent frontmatter config for "${name}" on platform "${platform}". ` +
+        `Add it to AGENT_FRONTMATTER in shared.ts.`,
+    );
+  }
+
+  const lines: string[] = [];
+
+  if (isOpenCodeFm(fmConfig)) {
+    lines.push(`description: |`);
+    lines.push(`  ${fmConfig.description}`);
+    lines.push(`mode: ${fmConfig.mode}`);
+    lines.push(`permission:`);
+    for (const [key, value] of Object.entries(fmConfig.permission)) {
+      lines.push(`  ${key}: ${value}`);
+    }
+  } else {
+    lines.push(`name: ${name}`);
+    if (fmConfig.multilineDesc === false) {
+      lines.push(`description: ${fmConfig.description}`);
+    } else {
+      lines.push(`description: |`);
+      lines.push(`  ${fmConfig.description}`);
+    }
+    if (fmConfig.tools) {
+      lines.push(`tools: ${fmConfig.tools}`);
+    }
+  }
+
+  return `---\n${lines.join("\n")}\n---\n\n${content}`;
+}
+
+/**
+ * Resolve agent templates from common/agents/ with platform-specific frontmatter.
+ *
+ * Reads body templates from `common/agents/`, resolves placeholders, then wraps
+ * each with the appropriate frontmatter for the target platform.
+ */
+export function resolveAgents(ctx: TemplateContext): ResolvedTemplate[] {
+  return getAgentTemplates().map((tmpl) => {
+    const resolved = resolvePlaceholders(tmpl.content, ctx);
+    return {
+      name: tmpl.name,
+      content: wrapWithAgentFrontmatter(tmpl.name, resolved, ctx.cliFlag),
+    };
+  });
+}
+
 /** Wrap resolved command content with YAML frontmatter (name + description). */
 export function wrapWithCommandFrontmatter(
   name: string,
@@ -294,6 +432,7 @@ import path from "node:path";
 import { ensureDir, writeFile } from "../utils/file-writer.js";
 import {
   type CommonTemplate,
+  getAgentTemplates,
   getBundledSkillTemplates,
   getCommandTemplates,
   getSkillTemplates,

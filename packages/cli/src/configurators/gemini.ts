@@ -6,6 +6,7 @@ import {
   resolveCommands,
   resolveSkillsNeutral,
   resolveBundledSkills,
+  resolveAgents,
   writeSkills,
   writeAgents,
   writeSharedHooks,
@@ -52,7 +53,7 @@ export async function configureGemini(cwd: string): Promise<void> {
   );
   await writeAgents(
     path.join(configRoot, "agents"),
-    applyPullBasedPreludeMarkdown(getAllAgents()),
+    applyPullBasedPreludeMarkdown([...getAllAgents(), ...resolveAgents(ctx)]),
   );
   await writeSharedHooks(path.join(configRoot, "hooks"), "gemini");
 
