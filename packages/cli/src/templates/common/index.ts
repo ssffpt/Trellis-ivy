@@ -161,3 +161,15 @@ export function getReviewChecklist(): string | null {
     return null;
   }
 }
+
+/**
+ * Get the check checklist content for inlining into check agent body.
+ * Returns null if check-checklist.md is missing (non-fatal for builds).
+ */
+export function getCheckChecklist(): string | null {
+  try {
+    return readTemplate("agents/check-checklist.md");
+  } catch {
+    return null;
+  }
+}

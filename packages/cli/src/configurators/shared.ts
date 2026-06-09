@@ -346,6 +346,47 @@ const AGENT_FRONTMATTER: Record<
       },
     },
   },
+  "trellis-check": {
+    claude: {
+      description:
+        "编码后质量审核 Agent。对代码变更进行 6 维度审核（功能正确性、回归安全、安全基线、跨层一致性、性能影响、规范合规），发现问题后自动修复并验证。",
+      tools: "Read, Write, Edit, Bash, Glob, Grep",
+    },
+    cursor: {
+      description:
+        "编码后质量审核 Agent。对代码变更进行 6 维度审核（功能正确性、回归安全、安全基线、跨层一致性、性能影响、规范合规），发现问题后自动修复并验证。",
+      tools: "Read, Write, Edit, Bash, Glob, Grep",
+      multilineDesc: false,
+    },
+    codebuddy: {
+      description:
+        "编码后质量审核 Agent。对代码变更进行 6 维度审核（功能正确性、回归安全、安全基线、跨层一致性、性能影响、规范合规），发现问题后自动修复并验证。",
+      tools: "Read, Write, Edit, Bash, Glob, Grep",
+    },
+    qoder: {
+      description:
+        "编码后质量审核 Agent。对代码变更进行 6 维度审核（功能正确性、回归安全、安全基线、跨层一致性、性能影响、规范合规），发现问题后自动修复并验证。",
+      tools: "Read, Write, Edit, Bash, Glob, Grep",
+    },
+    gemini: {
+      description:
+        "编码后质量审核 Agent。对代码变更进行 6 维度审核（功能正确性、回归安全、安全基线、跨层一致性、性能影响、规范合规），发现问题后自动修复并验证。",
+      tools: "Read, Write, Edit, Bash, Glob, Grep",
+    },
+    opencode: {
+      description:
+        "编码后质量审核 Agent。对代码变更进行 6 维度审核（功能正确性、回归安全、安全基线、跨层一致性、性能影响、规范合规），发现问题后自动修复并验证。",
+      mode: "subagent",
+      permission: {
+        read: "allow",
+        write: "allow",
+        edit: "allow",
+        bash: "allow",
+        glob: "allow",
+        grep: "allow",
+      },
+    },
+  },
 };
 
 /**
@@ -400,12 +441,20 @@ export function wrapWithAgentFrontmatter(
  * each with the appropriate frontmatter for the target platform.
  */
 export function resolveAgents(ctx: TemplateContext): ResolvedTemplate[] {
-  const checklist = getReviewChecklist();
+  const reviewChecklist = getReviewChecklist();
+  const checkChecklist = getCheckChecklist();
   return getAgentTemplates().map((tmpl) => {
     let resolved = resolvePlaceholders(tmpl.content, ctx);
     // Inline review checklist into review agent body
-    if (checklist && resolved.includes("{{REVIEW_CHECKLIST}}")) {
-      resolved = resolved.replace("{{REVIEW_CHECKLIST}}", checklist.trim());
+    if (reviewChecklist && resolved.includes("{{REVIEW_CHECKLIST}}")) {
+      resolved = resolved.replace(
+        "{{REVIEW_CHECKLIST}}",
+        reviewChecklist.trim(),
+      );
+    }
+    // Inline check checklist into check agent body
+    if (checkChecklist && resolved.includes("{{CHECK_CHECKLIST}}")) {
+      resolved = resolved.replace("{{CHECK_CHECKLIST}}", checkChecklist.trim());
     }
     return {
       name: tmpl.name,
@@ -440,6 +489,7 @@ import {
   getAgentTemplates,
   getBundledSkillTemplates,
   getReviewChecklist,
+  getCheckChecklist,
   getCommandTemplates,
   getSkillTemplates,
 } from "../templates/common/index.js";
