@@ -90,10 +90,12 @@ export function getSkillTemplates(): CommonTemplate[] {
  * Results are cached after first call.
  */
 export function getAgentTemplates(): CommonTemplate[] {
-  cachedAgents ??= listMarkdownFiles("agents").map((file) => ({
-    name: file.replace(/\.md$/, ""),
-    content: readTemplate(`agents/${file}`),
-  }));
+  cachedAgents ??= listMarkdownFiles("agents")
+    .filter((file) => !file.endsWith("-checklist.md"))
+    .map((file) => ({
+      name: file.replace(/\.md$/, ""),
+      content: readTemplate(`agents/${file}`),
+    }));
   return cachedAgents;
 }
 
@@ -146,4 +148,16 @@ export function getBundledSkillTemplates(): CommonBundledSkill[] {
     files: listBundledSkillFiles(name),
   }));
   return cachedBundledSkills;
+}
+
+/**
+ * Get the review checklist content for inlining into review agent body.
+ * Returns null if review-checklist.md is missing (non-fatal for builds).
+ */
+export function getReviewChecklist(): string | null {
+  try {
+    return readTemplate("agents/review-checklist.md");
+  } catch {
+    return null;
+  }
 }

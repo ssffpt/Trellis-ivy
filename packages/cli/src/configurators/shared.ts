@@ -400,8 +400,13 @@ export function wrapWithAgentFrontmatter(
  * each with the appropriate frontmatter for the target platform.
  */
 export function resolveAgents(ctx: TemplateContext): ResolvedTemplate[] {
+  const checklist = getReviewChecklist();
   return getAgentTemplates().map((tmpl) => {
-    const resolved = resolvePlaceholders(tmpl.content, ctx);
+    let resolved = resolvePlaceholders(tmpl.content, ctx);
+    // Inline review checklist into review agent body
+    if (checklist && resolved.includes("{{REVIEW_CHECKLIST}}")) {
+      resolved = resolved.replace("{{REVIEW_CHECKLIST}}", checklist.trim());
+    }
     return {
       name: tmpl.name,
       content: wrapWithAgentFrontmatter(tmpl.name, resolved, ctx.cliFlag),
@@ -434,6 +439,7 @@ import {
   type CommonTemplate,
   getAgentTemplates,
   getBundledSkillTemplates,
+  getReviewChecklist,
   getCommandTemplates,
   getSkillTemplates,
 } from "../templates/common/index.js";
