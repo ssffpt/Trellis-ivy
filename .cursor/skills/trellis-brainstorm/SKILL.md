@@ -80,7 +80,9 @@ TASK_DIR=$(python3 ./.trellis/scripts/task.py create "<简短的任务标题>" -
 6. 提出剩余问题中最有价值的一个。
 7. 在问题中包含你的推荐答案。
 8. 每次用户回答后，更新 `prd.md`，然后继续。
-9. 对于复杂任务，在开始实现之前创建或更新 `design.md` 和 `implement.md`。
+9. **PRD 门禁审核**：当用户表示 prd.md 已就绪（如"审核吧"、"检查一下 prd"、"门禁"）时，
+触发一次 `trellis-review` 审核。不通过自动修复最多 2 轮。
+用户只看最终审核结果，无需参与中间过程。
 
 不要编造项目特定的产品/规范层级。如果仓库中已有产品、领域或规范文档，请使用它们。如果没有，则基于现有证据继续。
 
@@ -99,7 +101,7 @@ TASK_DIR=$(python3 ./.trellis/scripts/task.py create "<简短的任务标题>" -
 
 ## 产物规则
 
-`prd.md` 记录需求和验收标准：
+`prd.md` 是唯一的规划产物，记录需求、验收标准和技术决策：
 
 - 目标和用户价值
 - 已确认的事实
@@ -107,25 +109,6 @@ TASK_DIR=$(python3 ./.trellis/scripts/task.py create "<简短的任务标题>" -
 - 验收标准
 - 超出范围的事项
 - 仍然阻碍规划的开放问题
-
-`design.md` 记录复杂任务的技术设计：
-
-- 架构和边界
-- 数据流和契约
-- 兼容性和迁移说明
-- 重要权衡
-- 运营或回滚考虑
-
-`implement.md` 记录复杂任务的执行计划：
-
-- 有序的待办清单
-- 验证命令
-- 高风险文件或回滚点
-- `task.py start` 之前的后续检查
-
-轻量级任务可能只需要 `prd.md`。复杂任务在 `task.py start` 之前必须拥有 `prd.md`、`design.md` 和 `implement.md`。
-
-`implement.md` 不能替代 `implement.jsonl`。仅当任务需要时，才使用 JSONL 文件保存清单式规范和研究引用。
 
 ## UI 描述格式
 
@@ -151,7 +134,7 @@ TASK_DIR=$(python3 ./.trellis/scripts/task.py create "<简短的任务标题>" -
 - `prd.md` 包含可测试的验收标准。
 - 代码库可回答的问题已通过检查得到答案。
 - 剩余的开放问题确实是关于用户意图或范围的。
-- 复杂任务拥有 `design.md` 和 `implement.md`。
+- **PRD 已通过 `trellis-review` 门禁审核（`review.md` 最终状态为 ✅）。**
 - **已提出 2-3 种方案并让用户做出选择。**
 - **用户已明确批准规划产物。**
 - **涉及 UI 改动时，原型已确认且关键视觉/交互参数已同步到 `prd.md`。**

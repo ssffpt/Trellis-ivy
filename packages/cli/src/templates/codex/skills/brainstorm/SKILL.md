@@ -52,7 +52,8 @@ Use a concise title from the user's request. Use a slug without a date prefix. `
 4. Ask the single highest-value remaining question.
 5. Include your recommended answer with the question.
 6. After each user answer, update `prd.md` before continuing.
-7. For complex tasks, add 技术决策 section to prd.md before implementation starts.
+7. **PRD Gate Review**: When the user signals prd.md is ready (e.g., "review it", "check prd", "gate"), trigger a `trellis-review` audit. Auto-fix up to 2 rounds if it fails. The user only sees the final review result, no intermediate process.
+8. For complex tasks, add 技术决策 section to prd.md before implementation starts.
 
 Do not invent a project-specific product/spec hierarchy. If the repository already has product, domain, or spec docs, use them. If it does not, proceed with the evidence that exists.
 
@@ -91,6 +92,7 @@ Before declaring planning ready:
 - Repository-answerable questions have already been answered through inspection.
 - Remaining open questions are genuinely about user intent or scope.
 - Complex tasks have 技术决策 section in prd.md (≤50 lines, structured subsections, no implementation details).
+- **PRD has passed `trellis-review` gate audit (`review.md` final status is ✅).**
 - The user has reviewed the final planning artifacts or explicitly approved proceeding.
 
 Do not start implementation until the user approves or asks for implementation.
