@@ -9,8 +9,6 @@ The Trellis task system is stored entirely under `.trellis/tasks/` in the user p
 ├── 04-28-example-task/
 │   ├── task.json
 │   ├── prd.md
-│   ├── design.md
-│   ├── implement.md
 │   ├── implement.jsonl
 │   ├── check.jsonl
 │   └── research/
@@ -21,9 +19,7 @@ The Trellis task system is stored entirely under `.trellis/tasks/` in the user p
 | File | Purpose |
 | --- | --- |
 | `task.json` | Task metadata: status, assignee, priority, branch, parent/child tasks, and similar fields. |
-| `prd.md` | Requirements, constraints, and acceptance criteria. Lightweight tasks may be PRD-only. |
-| `design.md` | Technical design for complex tasks: boundaries, contracts, data flow, compatibility, tradeoffs. |
-| `implement.md` | Execution plan for complex tasks: ordered checklist, validation commands, review gates, rollback points. |
+| `prd.md` | Requirements, constraints, acceptance criteria, and technical decisions (技术决策) for complex tasks. Lightweight tasks may be PRD-only. |
 | `implement.jsonl` | List of spec/research files the implement agent must read first. |
 | `check.jsonl` | List of spec/research files the check agent must read first. |
 | `research/` | Research artifacts. Complex findings should not live only in chat. |
@@ -54,7 +50,7 @@ Use a parent task when a request has multiple independently verifiable deliverab
 - The map of child tasks and their responsibility boundaries.
 - Cross-child acceptance criteria and final integration review.
 
-Use child tasks for deliverables that can move through planning, implementation, check, and archive independently. If one child depends on another, write that dependency in the child `prd.md` / `implement.md`; do not rely on tree position to imply ordering.
+Use child tasks for deliverables that can move through planning, implementation, check, and archive independently. If one child depends on another, write that dependency in the child `prd.md`; do not rely on tree position to imply ordering.
 
 Create new children with:
 
@@ -71,7 +67,7 @@ python3 ./.trellis/scripts/task.py remove-subtask <parent-dir> <child-dir>
 
 `children` on the parent is a historical list. When a child is archived, Trellis keeps that child name in the parent so progress like `[2/3 done]` remains meaningful after completed children move to `archive/`.
 
-The AI should not treat phase numbers as task status. Task progress is mainly determined by `status`, artifact presence (`prd.md`, optional `design.md` / `implement.md`), whether JSONL context is configured for sub-agent mode, and the phase descriptions in `workflow.md`.
+The AI should not treat phase numbers as task status. Task progress is mainly determined by `status`, artifact presence (`prd.md`, optional 技术决策 section for complex tasks), whether JSONL context is configured for sub-agent mode, and the phase descriptions in `workflow.md`.
 
 ## Active Task
 
@@ -87,7 +83,7 @@ If the platform or shell environment has no stable session identity, `task.py st
 
 ## JSONL Context
 
-`implement.jsonl` and `check.jsonl` are context manifests for sub-agents to read first. They do not replace `implement.md`; `implement.md` is the human-readable execution plan.
+`implement.jsonl` and `check.jsonl` are context manifests for sub-agents to read first. They complement `prd.md` by listing spec/research files to inject.
 
 Format:
 

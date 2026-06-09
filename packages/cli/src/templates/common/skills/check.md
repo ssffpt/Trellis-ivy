@@ -13,11 +13,9 @@ git status
 
 ## 步骤 2：读取任务产物与适用规范
 
-读取 `task.json` 的 `check_depth` 字段（**不存在时默认 `"full"`**）。按顺序读取当前任务产物：
+读取 `task.json` 的 `check_depth` 字段（**不存在时默认 `"full"`**）。读取当前任务产物：
 
 - `prd.md`
-- `design.md`（如存在）
-- `implement.md`（如存在）
 
 ```bash
 python3 ./.trellis/scripts/get_context.py --mode packages
@@ -47,8 +45,7 @@ cat .trellis/spec/<package>/<layer>/index.md
 ### 1. 功能正确性
 
 - [ ] 每个 PRD 验收标准是否都有对应的实现？
-- [ ] implement.md 中的 checklist 是否逐项完成？
-- [ ] 新增/修改的行为是否符合 design.md 的契约？
+- [ ] 新增/修改的行为是否符合 prd.md 技术决策章节的契约？
 - [ ] 边界条件和异常路径是否处理？
 
 ### 2. 回归安全

@@ -8,9 +8,7 @@ Read the relevant development guidelines before starting your task.
 Execute these steps:
 
 1. **Read current task artifacts**:
-   - `prd.md` for requirements and acceptance criteria
-   - `design.md` if present for technical design
-   - `implement.md` if present for execution order and validation plan
+   - `prd.md` for requirements, acceptance criteria, and technical decisions
 
 2. **Discover packages and their spec layers**:
    ```bash

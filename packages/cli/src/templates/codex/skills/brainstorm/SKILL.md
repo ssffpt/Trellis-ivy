@@ -52,7 +52,7 @@ Use a concise title from the user's request. Use a slug without a date prefix. `
 4. Ask the single highest-value remaining question.
 5. Include your recommended answer with the question.
 6. After each user answer, update `prd.md` before continuing.
-7. For complex tasks, create or update `design.md` and `implement.md` before implementation starts.
+7. For complex tasks, add 技术决策 section to prd.md before implementation starts.
 
 Do not invent a project-specific product/spec hierarchy. If the repository already has product, domain, or spec docs, use them. If it does not, proceed with the evidence that exists.
 
@@ -71,7 +71,7 @@ Do not ask process questions such as whether to search, inspect files, or contin
 
 ## Artifact Rules
 
-`prd.md` records requirements and acceptance:
+`prd.md` records requirements, acceptance criteria, and technical decisions:
 
 - goal and user value
 - confirmed facts
@@ -79,25 +79,9 @@ Do not ask process questions such as whether to search, inspect files, or contin
 - acceptance criteria
 - out of scope
 - open questions that still block planning
+- 技术决策 section (complex tasks only, ≤50 lines, structured by subsections: 架构边界/关键数据流/兼容性与迁移/权衡与选择理由, no implementation details)
 
-`design.md` records technical design for complex tasks:
-
-- architecture and boundaries
-- data flow and contracts
-- compatibility and migration notes
-- important trade-offs
-- operational or rollback considerations
-
-`implement.md` records execution planning for complex tasks:
-
-- ordered implementation checklist
-- validation commands
-- risky files or rollback points
-- follow-up checks before `task.py start`
-
-Lightweight tasks may have only `prd.md`. Complex tasks must have `prd.md`, `design.md`, and `implement.md` before `task.py start`.
-
-`implement.md` is not a replacement for `implement.jsonl`. Use JSONL files only for manifest-style spec and research references when the task needs them.
+Lightweight tasks may have only `prd.md`. Complex tasks must have `prd.md` with 技术决策 section before `task.py start`.
 
 ## Quality Bar
 
@@ -106,7 +90,7 @@ Before declaring planning ready:
 - `prd.md` contains testable acceptance criteria.
 - Repository-answerable questions have already been answered through inspection.
 - Remaining open questions are genuinely about user intent or scope.
-- Complex tasks have `design.md` and `implement.md`.
+- Complex tasks have 技术决策 section in prd.md (≤50 lines, structured subsections, no implementation details).
 - The user has reviewed the final planning artifacts or explicitly approved proceeding.
 
 Do not start implementation until the user approves or asks for implementation.
