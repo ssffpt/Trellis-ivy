@@ -1,93 +1,93 @@
-# Code Quality Check
+# 代码质量检查
 
-Comprehensive quality verification for recently written code. Combines spec compliance, cross-layer safety, and pre-commit checks.
+针对最近编写的代码进行全面质量验证。结合规范合规性、跨层安全性与提交前检查。
 
 ---
 
-## Step 1: Identify What Changed
+## 步骤 1：识别变更内容
 
 ```bash
 git diff --name-only HEAD
 git status
 ```
 
-## Step 2: Read Task Artifacts and Applicable Specs
+## 步骤 2：读取任务产物与适用规范
 
-Read the current task artifacts in order:
+按顺序读取当前任务产物：
 
 - `prd.md`
-- `design.md` if present
-- `implement.md` if present
+- `design.md`（如存在）
+- `implement.md`（如存在）
 
 ```bash
 python3 ./.trellis/scripts/get_context.py --mode packages
 ```
 
-For each changed package/layer, read the spec index and follow its **Quality Check** section:
+针对每个发生变更的包/层，阅读规范索引并遵循其**质量检查**章节：
 
 ```bash
 cat .trellis/spec/<package>/<layer>/index.md
 ```
 
-Read the specific guideline files referenced — the index is a pointer, not the goal.
+阅读所引用的具体指南文件——索引只是指针，而非目标本身。
 
-## Step 3: Run Project Checks
+## 步骤 3：运行项目检查
 
-Run the project's lint, type-check, and test commands. Fix any failures before proceeding.
+运行项目的 lint、类型检查和测试命令。在继续之前修复所有失败项。
 
-## Step 4: Review Against Checklist
+## 步骤 4：对照检查清单审查
 
-### Code Quality
+### 代码质量
 
-- [ ] Linter passes?
-- [ ] Type checker passes (if applicable)?
-- [ ] Tests pass?
-- [ ] No debug logging left in?
-- [ ] No suppressed warnings or type-safety bypasses?
+- [ ] Linter 通过？
+- [ ] 类型检查通过（如适用）？
+- [ ] 测试通过？
+- [ ] 没有遗留的调试日志？
+- [ ] 没有抑制的警告或类型安全绕过？
 
-### Test Coverage
+### 测试覆盖
 
-- [ ] New function → unit test added?
-- [ ] Bug fix → regression test added?
-- [ ] Changed behavior → existing tests updated?
+- [ ] 新增函数 → 是否添加了单元测试？
+- [ ] Bug 修复 → 是否添加了回归测试？
+- [ ] 行为变更 → 是否更新了现有测试？
 
-### Spec Sync
+### 规范同步
 
-- [ ] Does `.trellis/spec/` need updates? (new patterns, conventions, lessons learned)
+- [ ] `.trellis/spec/` 是否需要更新？（新模式、约定、经验教训）
 
-> "If I fixed a bug or discovered something non-obvious, should I document it so future me won't hit the same issue?" → If YES, update the relevant spec doc.
+> "如果我修复了一个 bug 或发现了某些非显而易见的事情，是否应该记录下来，以免将来的自己遇到同样的问题？" → 如果是，更新相关规范文档。
 
-## Step 5: Cross-Layer Dimensions (if applicable)
+## 步骤 5：跨层维度（如适用）
 
-Skip this step if your change is confined to a single layer.
+如果变更仅限于单层，跳过此步骤。
 
-### A. Data Flow (changes touch 3+ layers)
+### A. 数据流（变更触及 3 层以上）
 
-- [ ] Read flow traces correctly: Storage → Service → API → UI
-- [ ] Write flow traces correctly: UI → API → Service → Storage
-- [ ] Types/schemas correctly passed between layers?
-- [ ] Errors properly propagated to caller?
+- [ ] 读取流追踪正确：存储 → 服务 → API → UI
+- [ ] 写入流追踪正确：UI → API → 服务 → 存储
+- [ ] 类型/模式在各层之间正确传递？
+- [ ] 错误是否正确传播给调用方？
 
-### B. Code Reuse (modifying constants, creating utilities)
+### B. 代码复用（修改常量、创建工具函数）
 
-- [ ] Searched for existing similar code before creating new?
+- [ ] 创建新代码前搜索了现有类似代码？
   ```bash
   grep -r "pattern" src/
   ```
-- [ ] If 2+ places define same value → extracted to shared constant?
-- [ ] After batch modification, all occurrences updated?
+- [ ] 如果 2 处以上定义了相同值 → 提取到共享常量？
+- [ ] 批量修改后，所有出现位置都已更新？
 
-### C. Import/Dependency (creating new files)
+### C. 导入/依赖（创建新文件）
 
-- [ ] Correct import paths (relative vs absolute)?
-- [ ] No circular dependencies?
+- [ ] 导入路径正确（相对路径 vs 绝对路径）？
+- [ ] 没有循环依赖？
 
-### D. Same-Layer Consistency
+### D. 同层一致性
 
-- [ ] Other places using the same concept are consistent?
+- [ ] 其他使用相同概念的地方是否一致？
 
 ---
 
-## Step 6: Report and Fix
+## 步骤 6：报告并修复
 
-Report violations found and fix them directly. Re-run project checks after fixes.
+报告发现的违规项并直接修复。修复后重新运行项目检查。
