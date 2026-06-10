@@ -1,66 +1,66 @@
-# Finish Work
+# 完成工作
 
-Wrap up the current session: archive the active task (and any other completed-but-unarchived tasks the user wants to clean up) and record the session journal. Code commits are NOT done here — those happen in workflow Phase 3.4 before you invoke this command.
+收尾当前会话：归档活跃任务（以及用户希望一并清理的其他已完成但未归档的任务），并记录会话日志。代码提交**不在此处**完成——那应在工作流 Phase 3.4 中、调用本命令之前完成。
 
-## Step 1: Survey current state
+## 步骤 1：查看当前状态
 
 ```bash
 {{PYTHON_CMD}} ./.trellis/scripts/get_context.py --mode record
 ```
 
-This prints:
+输出内容包括：
 
-- **My active tasks** — review whether any besides the current one are actually done (code merged, AC met) and should be archived this round.
-- **Git status** — quick visual on what's dirty.
-- **Recent commits** — you'll need their hashes in Step 4 for `--commit`.
+- **我的活跃任务** — 检查除当前任务外，是否有其他任务已实际完成（代码已合并、验收标准已满足），需要在本轮一并归档。
+- **Git 状态** — 快速查看工作区是否有未提交内容。
+- **最近提交** — 步骤 4 的 `--commit` 参数需要用到这些哈希值。
 
-If `--mode record` surfaces other completed tasks not tied to the current session, surface them to the user with a one-shot confirmation: "These N tasks look done — archive them too in this round? [y/N]". Default is no; the current active task is always archived in Step 3 regardless.
+若 `--mode record` 发现有其他已完成但未与当前会话关联的任务，向用户发起一次性确认："以下 N 个任务看起来已完成——是否在本轮一并归档？[y/N]"。默认为否；当前活跃任务无论如何都会在步骤 3 中归档。
 
-## Step 2: Sanity check — classify dirty paths
+## 步骤 2：健全性检查——分类脏文件
 
-Run:
+运行：
 
 ```bash
 git status --porcelain
 ```
 
-Filter out paths under `.trellis/workspace/` and `.trellis/tasks/` — those are managed by `add_session.py` and `task.py archive` auto-commits and will appear dirty as part of this skill's own work.
+过滤掉 `.trellis/workspace/` 和 `.trellis/tasks/` 路径下的文件——这些由 `add_session.py` 和 `task.py archive` 自动提交管理，在本技能运行过程中本就会显示为脏状态。
 
-For each remaining dirty path, decide whether it belongs to **the current task** or to **other parallel work** (e.g., another terminal window editing the same repo). Heuristics:
+对其余每个脏文件，判断它属于**当前任务**还是**其他并行工作**（例如另一个终端窗口正在编辑同一仓库）。判断依据：
 
-- Paths referenced in the current task's `prd.md` / `implement.jsonl` / `check.jsonl` → current task
-- Paths in code areas matching the task's stated scope, or that you remember editing this session → current task
-- Paths in unrelated areas you have no recollection of touching this session → other parallel work
+- 在当前任务的 `prd.md` / `implement.jsonl` / `check.jsonl` 中有引用的路径 → 当前任务
+- 代码区域与任务声明的范围匹配，或本会话中有编辑记忆的路径 → 当前任务
+- 本会话完全没有印象触碰过的不相关区域 → 其他并行工作
 
-Then route:
+路由规则：
 
-- **Any remaining path looks like current-task work** — bail out with:
-  > "Working tree has uncommitted code changes from this task: `<list>`. Return to workflow Phase 3.4 to commit them before running `{{CMD_REF:finish-work}}`."
+- **有路径像是当前任务的工作** — 中止并提示：
+  > "工作区存在本任务未提交的代码变更：`<列表>`。请返回工作流 Phase 3.4 完成提交后再运行 `{{CMD_REF:finish-work}}`。"
 
-  Do NOT run `git commit` here. Do NOT prompt the user to commit. The user goes back to Phase 3.4 and the AI drives the batched commit there.
-- **All remaining paths look unrelated** (other parallel-window work) — report them once and continue to Step 3:
-  > "FYI, dirty files outside this task's scope — leaving them for the other window: `<list>`."
-- **Genuinely unsure** — ask the user once: "Are `<list>` this task's work I forgot to commit, or another window's? (commit / ignore)" — then route per their answer.
+  **不要**在此执行 `git commit`，也**不要**提示用户提交。用户返回 Phase 3.4，由 AI 驱动批量提交。
+- **所有剩余路径均看起来不相关**（其他窗口的工作）— 告知一次后继续步骤 3：
+  > "提示：以下脏文件不在本任务范围内，留给其他窗口处理：`<列表>`。"
+- **确实不确定** — 向用户询问一次："`<列表>` 是本任务忘记提交的内容，还是另一个窗口的工作？（commit / ignore）"——然后按回答路由。
 
-## Step 3: Archive task(s)
+## 步骤 3：归档任务
 
 ```bash
 {{PYTHON_CMD}} ./.trellis/scripts/task.py archive <task-name>
 ```
 
-At minimum: the current active task (if any). Plus any extra tasks the user confirmed in Step 1. Each archive produces a `chore(task): archive ...` commit via the script's auto-commit.
+至少归档当前活跃任务（如有）。加上步骤 1 中用户确认的额外任务。每次归档会通过脚本自动产生一条 `chore(task): archive ...` 提交。
 
-If there is no active task and the user did not confirm any cleanup archives, skip this step.
+若无活跃任务且用户未确认任何额外归档，跳过此步骤。
 
-## Step 4: Record session journal
+## 步骤 4：记录会话日志
 
 ```bash
 {{PYTHON_CMD}} ./.trellis/scripts/add_session.py \
-  --title "Session Title" \
+  --title "会话标题" \
   --commit "hash1,hash2" \
-  --summary "Brief summary"
+  --summary "简要摘要"
 ```
 
-Use the work-commit hashes produced in Phase 3.4 (visible in Step 1's `Recent commits` list, or via `git log --oneline`) for `--commit`. Do not include the archive commit hashes from Step 3. This produces a `chore: record journal` commit.
+`--commit` 使用 Phase 3.4 产生的工作提交哈希值（可在步骤 1 的"最近提交"列表或 `git log --oneline` 中查看）。不要包含步骤 3 产生的归档提交哈希值。此步骤会产生一条 `chore: record journal` 提交。
 
-Final git log order: `<work commits from 3.4>` → `chore(task): archive ...` (one or more) → `chore: record journal`.
+最终 git log 顺序：`<3.4 的工作提交>` → `chore(task): archive ...`（一条或多条）→ `chore: record journal`。

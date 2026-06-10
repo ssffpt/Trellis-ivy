@@ -67,6 +67,7 @@ from common.task_context import (
 # Command: start / finish
 # =============================================================================
 
+
 def cmd_start(args: argparse.Namespace) -> int:
     """Set active task."""
     repo_root = get_repo_root()
@@ -81,7 +82,9 @@ def cmd_start(args: argparse.Namespace) -> int:
 
     if not full_path.is_dir():
         print(colored(f"Error: Task not found: {task_input}", Colors.RED))
-        print("Hint: Use task name (e.g., 'my-task') or full path (e.g., '.trellis/tasks/01-31-my-task')")
+        print(
+            "Hint: Use task name (e.g., 'my-task') or full path (e.g., '.trellis/tasks/01-31-my-task')"
+        )
         return 1
 
     # Convert to relative path for storage
@@ -97,16 +100,20 @@ def cmd_start(args: argparse.Namespace) -> int:
         # Hook didn't inject TRELLIS_CONTEXT_ID (common on Windows + Claude Code,
         # --continue resume path, fork distribution, hooks disabled, etc.). Skip
         # per-session pointer write; AI continues based on conversation context.
-        print(colored(
-            "ℹ Session identity not available; active-task pointer not persisted "
-            "this session (degraded mode). AI continues based on conversation context.",
-            Colors.YELLOW,
-        ))
-        print(colored(
-            "Hint: run inside an AI IDE/session that exposes session identity, "
-            "or set TRELLIS_CONTEXT_ID before running task.py start.",
-            Colors.YELLOW,
-        ))
+        print(
+            colored(
+                "ℹ Session identity not available; active-task pointer not persisted "
+                "this session (degraded mode). AI continues based on conversation context.",
+                Colors.YELLOW,
+            )
+        )
+        print(
+            colored(
+                "Hint: run inside an AI IDE/session that exposes session identity, "
+                "or set TRELLIS_CONTEXT_ID before running task.py start.",
+                Colors.YELLOW,
+            )
+        )
 
         # Still flip task.json status: planning → in_progress so downstream phases proceed.
         if task_json_path.is_file():
@@ -114,7 +121,11 @@ def cmd_start(args: argparse.Namespace) -> int:
             if data and data.get("status") == "planning":
                 data["status"] = "in_progress"
                 if write_json(task_json_path, data):
-                    print(colored("✓ Status: planning → in_progress (degraded)", Colors.GREEN))
+                    print(
+                        colored(
+                            "✓ Status: planning → in_progress (degraded)", Colors.GREEN
+                        )
+                    )
             run_task_hooks("after_start", task_json_path, repo_root)
         return 0
 
@@ -131,13 +142,256 @@ def cmd_start(args: argparse.Namespace) -> int:
                     print(colored("✓ Status: planning → in_progress", Colors.GREEN))
 
         print()
-        print(colored("The hook will now inject context from this task's jsonl files.", Colors.BLUE))
+        print(
+            colored(
+                "The hook will now inject context from this task's jsonl files.",
+                Colors.BLUE,
+            )
+        )
 
         run_task_hooks("after_start", task_json_path, repo_root)
         return 0
     else:
         print(colored("Error: Failed to set current task", Colors.RED))
         return 1
+
+
+# =============================================================================
+# Command: worktree-create / worktree-merge / worktree-discard
+# =============================================================================
+
+
+def cmd_worktree_create(args: argparse.Namespace) -> int:
+    """Create a git worktree for the active task and record its path in task.json."""
+    import subprocess
+
+    repo_root = get_repo_root()
+    task_input = args.dir
+
+    full_path = resolve_task_dir(task_input, repo_root)
+    if not full_path.is_dir():
+        print(colored(f"Error: Task not found: {task_input}", Colors.RED))
+        return 1
+
+    task_json_path = full_path / FILE_TASK_JSON
+    data = read_json(task_json_path)
+    if not data:
+        print(colored("Error: Cannot read task.json", Colors.RED))
+        return 1
+
+    task_name = data.get("name", full_path.name)
+    branch_name = f"trellis/{task_name}"
+    worktree_path = repo_root / ".trellis" / "worktrees" / task_name
+
+    # Idempotent: if worktree_path already exists and is registered, skip.
+    if worktree_path.exists():
+        print(colored(f"ℹ Worktree already exists: {worktree_path}", Colors.YELLOW))
+        return 0
+
+    # Determine base ref: use task's base_branch if set, otherwise current HEAD.
+    base_ref = data.get("base_branch") or "HEAD"
+
+    result = subprocess.run(
+        ["git", "worktree", "add", "-b", branch_name, str(worktree_path), base_ref],
+        cwd=str(repo_root),
+        capture_output=True,
+        text=True,
+    )
+    if result.returncode != 0:
+        print(colored(f"Error: git worktree add failed:\n{result.stderr}", Colors.RED))
+        return 1
+
+    # Persist worktree_path and branch into task.json.
+    rel_worktree = worktree_path.relative_to(repo_root).as_posix()
+    data["worktree_path"] = rel_worktree
+    data["branch"] = branch_name
+    if not data.get("meta"):
+        data["meta"] = {}
+    data["meta"]["worktree_mode"] = True
+    write_json(task_json_path, data)
+
+    print(colored(f"✓ Worktree created: {rel_worktree}", Colors.GREEN))
+    print(colored(f"  Branch: {branch_name}", Colors.BLUE))
+    print(colored(f"  Base:   {base_ref}", Colors.BLUE))
+    return 0
+
+
+def cmd_worktree_merge(args: argparse.Namespace) -> int:
+    """Merge the task's worktree branch back to the base branch and clean up."""
+    import subprocess
+
+    repo_root = get_repo_root()
+    task_input = args.dir
+
+    full_path = resolve_task_dir(task_input, repo_root)
+    if not full_path.is_dir():
+        print(colored(f"Error: Task not found: {task_input}", Colors.RED))
+        return 1
+
+    task_json_path = full_path / FILE_TASK_JSON
+    data = read_json(task_json_path)
+    if not data:
+        print(colored("Error: Cannot read task.json", Colors.RED))
+        return 1
+
+    worktree_rel = data.get("worktree_path")
+    branch_name = data.get("branch")
+    base_branch = data.get("base_branch") or "main"
+
+    if not worktree_rel or not branch_name:
+        print(
+            colored(
+                "Error: No worktree registered for this task. Run worktree-create first.",
+                Colors.RED,
+            )
+        )
+        return 1
+
+    worktree_path = repo_root / worktree_rel
+
+    # Dry-run check first (unless --no-dry-run).
+    if not getattr(args, "no_dry_run", False):
+        result = subprocess.run(
+            ["git", "merge", "--no-commit", "--no-ff", branch_name],
+            cwd=str(repo_root),
+            capture_output=True,
+            text=True,
+        )
+        # Always abort the dry-run merge attempt.
+        subprocess.run(
+            ["git", "merge", "--abort"], cwd=str(repo_root), capture_output=True
+        )
+        if result.returncode != 0:
+            print(colored("✗ Dry-run merge failed — conflicts detected:", Colors.RED))
+            print(result.stdout or result.stderr)
+            print(colored("Worktree preserved for manual resolution.", Colors.YELLOW))
+            return 1
+        print(colored("✓ Dry-run merge: no conflicts.", Colors.GREEN))
+
+    # Record current branch so we can restore on failure.
+    current = subprocess.run(
+        ["git", "branch", "--show-current"],
+        cwd=str(repo_root),
+        capture_output=True,
+        text=True,
+    )
+    original_branch = current.stdout.strip() if current.returncode == 0 else None
+
+    # Actual merge on base branch.
+    checkout = subprocess.run(
+        ["git", "checkout", base_branch],
+        cwd=str(repo_root),
+        capture_output=True,
+        text=True,
+    )
+    if checkout.returncode != 0:
+        print(
+            colored(
+                f"Error: Cannot checkout {base_branch}:\n{checkout.stderr}", Colors.RED
+            )
+        )
+        return 1
+
+    task_name = data.get("name", full_path.name)
+    merge = subprocess.run(
+        [
+            "git",
+            "merge",
+            "--no-ff",
+            branch_name,
+            "-m",
+            f"merge: {task_name} ({branch_name})",
+        ],
+        cwd=str(repo_root),
+        capture_output=True,
+        text=True,
+    )
+    if merge.returncode != 0:
+        # Restore original branch before reporting failure.
+        if original_branch:
+            subprocess.run(
+                ["git", "checkout", original_branch],
+                cwd=str(repo_root),
+                capture_output=True,
+            )
+        print(colored(f"✗ Merge failed:\n{merge.stderr}", Colors.RED))
+        print(colored("Worktree preserved for manual resolution.", Colors.YELLOW))
+        return 1
+
+    print(colored(f"✓ Merged {branch_name} → {base_branch}", Colors.GREEN))
+
+    # Clean up worktree and branch.
+    wt_rm = subprocess.run(
+        ["git", "worktree", "remove", "--force", str(worktree_path)],
+        cwd=str(repo_root),
+        capture_output=True,
+        text=True,
+    )
+    if wt_rm.returncode != 0:
+        print(colored(f"⚠ Worktree remove failed: {wt_rm.stderr}", Colors.YELLOW))
+        print(colored("Worktree may need manual cleanup.", Colors.YELLOW))
+
+    br_rm = subprocess.run(
+        ["git", "branch", "-d", branch_name],
+        cwd=str(repo_root),
+        capture_output=True,
+        text=True,
+    )
+    if br_rm.returncode != 0:
+        print(colored(f"⚠ Branch delete failed: {br_rm.stderr}", Colors.YELLOW))
+
+    data["worktree_path"] = None
+    write_json(task_json_path, data)
+
+    if wt_rm.returncode == 0:
+        print(colored(f"✓ Worktree removed and branch deleted.", Colors.GREEN))
+    return 0
+
+
+def cmd_worktree_discard(args: argparse.Namespace) -> int:
+    """Remove the worktree and local branch without merging (discard changes)."""
+    import subprocess
+
+    repo_root = get_repo_root()
+    task_input = args.dir
+
+    full_path = resolve_task_dir(task_input, repo_root)
+    if not full_path.is_dir():
+        print(colored(f"Error: Task not found: {task_input}", Colors.RED))
+        return 1
+
+    task_json_path = full_path / FILE_TASK_JSON
+    data = read_json(task_json_path)
+    if not data:
+        print(colored("Error: Cannot read task.json", Colors.RED))
+        return 1
+
+    worktree_rel = data.get("worktree_path")
+    branch_name = data.get("branch")
+
+    if not worktree_rel:
+        print(colored("ℹ No worktree registered for this task.", Colors.YELLOW))
+        return 0
+
+    worktree_path = repo_root / worktree_rel
+
+    subprocess.run(
+        ["git", "worktree", "remove", "--force", str(worktree_path)],
+        cwd=str(repo_root),
+        capture_output=True,
+    )
+    if branch_name:
+        subprocess.run(
+            ["git", "branch", "-D", branch_name],
+            cwd=str(repo_root),
+            capture_output=True,
+        )
+
+    data["worktree_path"] = None
+    write_json(task_json_path, data)
+
+    print(colored(f"✓ Worktree discarded: {worktree_rel}", Colors.GREEN))
+    return 0
 
 
 def cmd_finish(args: argparse.Namespace) -> int:
@@ -184,6 +438,7 @@ def cmd_current(args: argparse.Namespace) -> int:
 # Command: list
 # =============================================================================
 
+
 def cmd_list(args: argparse.Namespace) -> int:
     """List active tasks."""
     repo_root = get_repo_root()
@@ -195,7 +450,12 @@ def cmd_list(args: argparse.Namespace) -> int:
 
     if filter_mine:
         if not developer:
-            print(colored("Error: No developer set. Run init_developer.py first", Colors.RED), file=sys.stderr)
+            print(
+                colored(
+                    "Error: No developer set. Run init_developer.py first", Colors.RED
+                ),
+                file=sys.stderr,
+            )
             return 1
         print(colored(f"My tasks (assignee: {developer}):", Colors.BLUE))
     else:
@@ -237,7 +497,9 @@ def cmd_list(args: argparse.Namespace) -> int:
         if filter_mine:
             print(f"{prefix}{dir_name}/ ({t.status}){pkg_tag}{progress}{marker}")
         else:
-            print(f"{prefix}{dir_name}/ ({t.status}){pkg_tag}{progress} [{colored(t.assignee or '-', Colors.CYAN)}]{marker}")
+            print(
+                f"{prefix}{dir_name}/ ({t.status}){pkg_tag}{progress} [{colored(t.assignee or '-', Colors.CYAN)}]{marker}"
+            )
         count += 1
 
         # Print children indented
@@ -264,6 +526,7 @@ def cmd_list(args: argparse.Namespace) -> int:
 # =============================================================================
 # Command: list-archive
 # =============================================================================
+
 
 def cmd_list_archive(args: argparse.Namespace) -> int:
     """List archived tasks."""
@@ -298,6 +561,7 @@ def cmd_list_archive(args: argparse.Namespace) -> int:
 # =============================================================================
 # Help
 # =============================================================================
+
 
 def show_usage() -> None:
     """Show usage help."""
@@ -351,6 +615,7 @@ Examples:
 # Main Entry
 # =============================================================================
 
+
 def main() -> int:
     """CLI entry point."""
     # Deprecation guard: `init-context` was removed in v0.5.0-beta.12.
@@ -372,7 +637,10 @@ def main() -> int:
             "sub-agent-capable platforms and curated by the AI during planning when needed.",
             file=sys.stderr,
         )
-        print("See .trellis/workflow.md planning artifact guidance or run:", file=sys.stderr)
+        print(
+            "See .trellis/workflow.md planning artifact guidance or run:",
+            file=sys.stderr,
+        )
         print(
             "  python3 ./.trellis/scripts/get_context.py --mode phase --step 1",
             file=sys.stderr,
@@ -396,7 +664,9 @@ def main() -> int:
     p_create.add_argument("--assignee", "-a", help="Assignee developer")
     p_create.add_argument("--priority", "-p", default="P2", help="Priority (P0-P3)")
     p_create.add_argument("--description", "-d", help="Task description")
-    p_create.add_argument("--parent", help="Parent task directory (establishes subtask link)")
+    p_create.add_argument(
+        "--parent", help="Parent task directory (establishes subtask link)"
+    )
     p_create.add_argument("--package", help="Package name for monorepo projects")
 
     # add-context
@@ -420,8 +690,9 @@ def main() -> int:
 
     # current
     p_current = subparsers.add_parser("current", help="Show active task")
-    p_current.add_argument("--source", action="store_true",
-                           help="Show active task source")
+    p_current.add_argument(
+        "--source", action="store_true", help="Show active task source"
+    )
 
     # finish
     subparsers.add_parser("finish", help="Clear active task")
@@ -444,7 +715,9 @@ def main() -> int:
     # archive
     p_archive = subparsers.add_parser("archive", help="Archive task")
     p_archive.add_argument("name", help="Task directory or name")
-    p_archive.add_argument("--no-commit", action="store_true", help="Skip auto git commit after archive")
+    p_archive.add_argument(
+        "--no-commit", action="store_true", help="Skip auto git commit after archive"
+    )
 
     # list
     p_list = subparsers.add_parser("list", help="List tasks")
@@ -457,9 +730,32 @@ def main() -> int:
     p_addsub.add_argument("child_dir", help="Child task directory")
 
     # remove-subtask
-    p_rmsub = subparsers.add_parser("remove-subtask", help="Unlink child task from parent")
+    p_rmsub = subparsers.add_parser(
+        "remove-subtask", help="Unlink child task from parent"
+    )
     p_rmsub.add_argument("parent_dir", help="Parent task directory")
     p_rmsub.add_argument("child_dir", help="Child task directory")
+
+    # worktree-create
+    p_wt_create = subparsers.add_parser(
+        "worktree-create", help="Create git worktree for task"
+    )
+    p_wt_create.add_argument("dir", help="Task directory")
+
+    # worktree-merge
+    p_wt_merge = subparsers.add_parser(
+        "worktree-merge", help="Merge worktree branch back to base branch"
+    )
+    p_wt_merge.add_argument("dir", help="Task directory")
+    p_wt_merge.add_argument(
+        "--no-dry-run", action="store_true", help="Skip conflict pre-check"
+    )
+
+    # worktree-discard
+    p_wt_discard = subparsers.add_parser(
+        "worktree-discard", help="Remove worktree without merging"
+    )
+    p_wt_discard.add_argument("dir", help="Task directory")
 
     # list-archive
     p_listarch = subparsers.add_parser("list-archive", help="List archived tasks")
@@ -487,6 +783,9 @@ def main() -> int:
         "remove-subtask": cmd_remove_subtask,
         "list": cmd_list,
         "list-archive": cmd_list_archive,
+        "worktree-create": cmd_worktree_create,
+        "worktree-merge": cmd_worktree_merge,
+        "worktree-discard": cmd_worktree_discard,
     }
 
     if args.command in commands:

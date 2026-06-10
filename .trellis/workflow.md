@@ -182,16 +182,19 @@ Complex task: explicitly ask the user "May I create a Trellis task and enter the
 ### Phase 1: Plan
 - 1.0 Create task `[required · once]` (only after task-creation consent)
 - 1.1 Requirement exploration `[required · repeatable]` (`prd.md`; complex tasks also need `design.md` + `implement.md`)
+- 1.15 Premise challenge `[conditional · once]` (complex tasks only; dispatch `trellis-premise-challenger`; brainstorm responds to each challenge before proceeding)
 - 1.2 Research `[optional · repeatable]`
 - 1.3 Configure context `[conditional · once]` — Claude Code, Cursor, OpenCode, Codex, Kiro, Gemini, Qoder, CodeBuddy, Copilot, Droid, Pi
 - 1.4 Activate task `[required · once]` (review gate, then `task.py start`; status → in_progress)
-- 1.5 Completion criteria
+- 1.5 Create worktree `[optional · once]` (ask user; if enabled: `task.py worktree-create`; subagents run inside worktree)
+- 1.6 Completion criteria
 
 <!-- Per-turn breadcrumb: shown throughout Phase 1 (status='planning') -->
 
 [workflow-state:planning]
 Load `trellis-brainstorm`; stay in planning.
 Lightweight: `prd.md` can be enough. Complex: finish `prd.md`, `design.md`, and `implement.md`; ask for review before `task.py start`.
+Complex tasks: dispatch `trellis-premise-challenger` (step 1.15) after `prd.md` initial draft; brainstorm must respond (adopt/reject+reason) to every challenge item before activating the task. Lightweight tasks skip this step.
 Multi-deliverable scope: consider a parent task plus independently verifiable child tasks; dependencies must be written in child artifacts, not implied by tree position.
 Sub-agent mode: curate `implement.jsonl` and `check.jsonl` as spec/research manifests before start.
 [/workflow-state:planning]
@@ -212,7 +215,8 @@ Inline mode: skip jsonl curation; Phase 2 reads artifacts/specs via `trellis-bef
 ### Phase 2: Execute
 - 2.1 Implement `[required · repeatable]`
 - 2.2 Quality check `[required · repeatable]`
-- 2.3 Rollback `[on demand]`
+- 2.3 Merge worktree `[conditional · once]` (worktree mode only: `task.py worktree-merge` after check passes)
+- 2.4 Rollback `[on demand]`
 
 <!-- Per-turn breadcrumb: shown while status='in_progress'.
      Scope: all of Phase 2 + Phase 3.1-3.4 (status stays 'in_progress' from
@@ -223,8 +227,8 @@ Inline mode: skip jsonl curation; Phase 2 reads artifacts/specs via `trellis-bef
 Sub-agent dispatch protocol applies to all platforms and all sub-agents, including class-2 Codex/Copilot/Gemini/Qoder and `trellis-research`: every dispatch prompt starts with `Active task: <task path from task.py current>` before role-specific instructions.
 
 [workflow-state:in_progress]
-Tools: `trellis-implement` / `trellis-research` are sub-agent types only (Task/Agent tool, NOT Skill; there is no skill by these names). `trellis-update-spec` is a skill. `trellis-check` exists as both; prefer the Agent form when verifying after code changes.
-Flow: `trellis-implement` -> `trellis-check` -> `trellis-update-spec` -> commit (Phase 3.4) -> `/trellis:finish-work`.
+Tools: `trellis-implement` / `trellis-research` are sub-agent types only (Task/Agent tool, NOT Skill; there is no skill by these names). `trellis-update-spec` is a skill. `trellis-check` exists as both; prefer the Agent form when verifying after code changes. `trellis-check` in Agent form runs as an independent process (does NOT share context with implement — reads only artifacts + diff, outputs CHML review list, does NOT fix code directly).
+Flow: `trellis-implement` -> `trellis-check` (independent process, reads only artifacts + diff) -> if fix-required: back to `trellis-implement`; max 3 review rounds, escalate to user if exceeded -> `trellis-update-spec` -> commit (Phase 3.4) -> `/trellis:finish-work`.
 Main-session default: dispatch implement/check sub-agents. Sub-agent self-exemption: if already running as `trellis-implement`, do NOT spawn another `trellis-implement` or `trellis-check`; if already running as `trellis-check`, do NOT spawn another `trellis-check` or `trellis-implement`. Dispatch is main session only.
 Dispatch prompt starts with `Active task: <task path from task.py current>`. Read context: jsonl entries -> `prd.md` -> `design.md if present` -> `implement.md if present`.
 [/workflow-state:in_progress]
@@ -274,7 +278,8 @@ When a user request matches one of these intents inside an active task, route fi
 [Claude Code, Cursor, OpenCode, codex-sub-agent, Kiro, Gemini, Qoder, CodeBuddy, Copilot, Droid, Pi]
 
 - Planning or unclear requirements -> `trellis-brainstorm`.
-- `in_progress` implementation/check -> dispatch `trellis-implement` / `trellis-check`.
+- Complex task prd.md draft complete -> `trellis-premise-challenger` (step 1.15).
+- `in_progress` implementation -> dispatch `trellis-implement`; after implement, dispatch `trellis-check` (independent process, reads only artifacts + diff).
 - Repeated debugging -> `trellis-break-loop`; spec updates -> `trellis-update-spec`.
 
 [/Claude Code, Cursor, OpenCode, codex-sub-agent, Kiro, Gemini, Qoder, CodeBuddy, Copilot, Droid, Pi]
@@ -347,6 +352,39 @@ When considering a parent/child split:
 - Start the child task that owns the next deliverable. Do not start the parent unless the parent itself has direct implementation work.
 
 Return to this step whenever requirements change and revise the relevant artifact.
+
+#### 1.15 Premise challenge `[conditional · once]`
+
+复杂任务专属步骤。轻量任务（prd-only）或用户明确说明无需前提挑战时跳过。
+
+在 `prd.md` 初稿完成后、PRD 门禁（trellis-review）之前运行：
+
+[Claude Code, Cursor, OpenCode, codex-sub-agent, Kiro, Gemini, Qoder, CodeBuddy, Copilot, Droid, Pi]
+
+派发前提挑战子 agent：
+
+- **Agent type**: `trellis-premise-challenger`
+- **Task description**: 读取当前任务的 `prd.md`，输出 `premise-challenges.md` 质疑清单
+- **Dispatch prompt guard**: 告知该 agent 它是 `trellis-premise-challenger`，只输出清单，不修改 `prd.md`
+
+[/Claude Code, Cursor, OpenCode, codex-sub-agent, Kiro, Gemini, Qoder, CodeBuddy, Copilot, Droid, Pi]
+
+**派发完成后，brainstorm（主会话）必须逐条回应**：
+
+对 `premise-challenges.md` 中每条质疑，在 `prd.md` Notes 节追加回应：
+
+```markdown
+## 前提挑战回应
+- P1：[采纳/拒绝] — <理由>
+- P2：[采纳/拒绝] — <理由>
+```
+
+- 采纳的质疑 → 修改 `prd.md` 对应内容
+- 拒绝的质疑 → 写明理由，继续推进
+
+**所有质疑均有明确回应后**，方可进入步骤 1.2 / 1.3 / 1.4。
+
+跳过条件：轻量任务（prd-only），或用户明确说明无需前提挑战。
 
 #### 1.2 Research `[optional · repeatable]`
 
@@ -444,7 +482,41 @@ After this command succeeds, the breadcrumb auto-switches to `[workflow-state:in
 
 If `task.py start` errors with a session-identity message (no context key from hook input, `TRELLIS_CONTEXT_ID`, or platform-native session env), follow the hint in the error to set up session identity, then retry.
 
-#### 1.5 Completion criteria
+#### 1.5 Create worktree `[optional · once]`
+
+询问用户是否开启 worktree 模式。开启后，`trellis-implement` / `trellis-check` subagent 均在 worktree 内执行，互不干扰，失败可回滚。
+
+**何时推荐开启**：复杂任务、预计改动文件较多、或希望 implement 失败时保留现场。
+
+[Claude Code, Cursor, OpenCode, codex-sub-agent, Kiro, Gemini, Qoder, CodeBuddy, Copilot, Droid, Pi]
+
+如用户同意，执行：
+
+```bash
+python3 ./.trellis/scripts/task.py worktree-create <task-dir>
+```
+
+成功后 `task.json` 会写入 `worktree_path`（如 `.trellis/worktrees/<task-name>`）和 `branch`（如 `trellis/<task-name>`），以及 `meta.worktree_mode = true`。
+
+**在 worktree 模式下派发 subagent 时**，dispatch prompt 开头附加一行：
+
+```
+Working directory: <worktree_path>
+```
+
+让 subagent 明确知道它应该在 worktree 目录内操作，而不是主工作区。
+
+[/Claude Code, Cursor, OpenCode, codex-sub-agent, Kiro, Gemini, Qoder, CodeBuddy, Copilot, Droid, Pi]
+
+[codex-inline, Kilo, Antigravity, Windsurf]
+
+Skip this step. Worktree mode is not supported in inline execution mode.
+
+[/codex-inline, Kilo, Antigravity, Windsurf]
+
+跳过条件：用户选择不开启，或轻量任务。
+
+#### 1.6 Completion criteria
 
 | Condition | Required |
 |------|:---:|
@@ -525,17 +597,27 @@ The platform prelude auto-handles the context load requirement:
 
 [Claude Code, Cursor, OpenCode, codex-sub-agent, Kiro, Gemini, Qoder, CodeBuddy, Copilot, Droid, Pi]
 
-Spawn the check sub-agent:
+以**独立进程**派发审查 agent，与 `trellis-implement` 隔离——不共享上下文，只看产物：
 
 - **Agent type**: `trellis-check`
-- **Task description**: Review all code changes against specs and task artifacts; fix any findings directly; ensure lint and type-check pass
-- **Dispatch prompt guard**: Tell the spawned agent it is already the `trellis-check` sub-agent and must review/fix directly, not spawn another `trellis-check` / `trellis-implement`.
+- **Task description**: 独立审查代码变更，读取 prd.md + git diff + spec，输出 check-report.md 问题清单；不修改代码
+- **Dispatch prompt guard**: 告知该 agent 它是独立 `trellis-check`，不读 implement 的中间过程，只读任务产物和代码变更
 
-The check agent's job:
-- Review code changes against specs
-- Review code changes against `prd.md`, `design.md` if present, and `implement.md` if present
-- Auto-fix issues it finds
-- Run lint and typecheck to verify
+审查 agent 的输入（agent 自行读取，主会话不传递上下文）：
+- `prd.md` / `design.md`（如有）
+- `git diff` + `git status`
+- `check.jsonl` 中引用的 spec 文件
+
+审查 agent 输出 `{TASK_DIR}/check-report.md`，CHML 格式：
+- **C / H / M 问题** → 主会话收到 `[需修复]` 后，重新派发 `trellis-implement` 修复，然后再次派发 `trellis-check` 重审
+- **仅 L 或无问题** → `[放行]`，继续 Phase 3
+- **轮次上限 3 轮**：第 3 轮仍有 C/H/M → trellis-check 输出 `[超出轮次上限]`，主会话暂停并请用户决策
+
+循环示意：
+```
+trellis-implement → trellis-check → [需修复] → trellis-implement → trellis-check → ... → [放行]
+                                      (最多 3 轮，超限上报用户)
+```
 
 [/Claude Code, Cursor, OpenCode, codex-sub-agent, Kiro, Gemini, Qoder, CodeBuddy, Copilot, Droid, Pi]
 
@@ -550,7 +632,34 @@ If issues are found → fix → re-check, until green.
 
 [/codex-inline, Kilo, Antigravity, Windsurf]
 
-#### 2.3 Rollback `[on demand]`
+#### 2.3 Merge worktree `[conditional · once]`
+
+*仅 worktree 模式下执行。若未开启 worktree，跳过本节直接进入 2.4。*
+
+**前提**：2.2 trellis-check 已输出 `[放行]`（无 C/H/M 问题）。
+
+执行 merge：
+
+```bash
+python .trellis/scripts/task.py worktree-merge <TASK_DIR>
+```
+
+- 命令会先做 dry-run 冲突预检；若有冲突，输出冲突文件列表并中止，需手动解决后重跑。
+- merge 成功后，worktree 分支自动删除，工作目录切回主分支。
+
+若 merge 失败或冲突无法自动解决：
+
+1. 记录冲突文件到 `{TASK_DIR}/merge-conflicts.md`
+2. 通知用户手动解决，或执行 worktree-discard 放弃本次 worktree：
+   ```bash
+   python .trellis/scripts/task.py worktree-discard <TASK_DIR>
+   ```
+
+merge 完成后继续 Phase 3。
+
+---
+
+#### 2.4 Rollback `[on demand]`
 
 - `check` reveals a prd defect → return to Phase 1, fix `prd.md`, then redo 2.1
 - Implementation went wrong → revert code, redo 2.1
