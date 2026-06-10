@@ -1,61 +1,61 @@
-# Spec Task Planning
+# 规范任务规划
 
-Use a single agent as the default execution model. The agent may create Trellis tasks for traceability, but the skill should not require a specific platform, CLI, or parallel worker model.
+默认使用单代理作为执行模型。代理可以创建 Trellis 任务以实现可追溯性，但技能不应要求特定的平台、CLI 或并行工作模型。
 
-## Decomposition
+## 分解
 
-Create spec work units around real ownership boundaries:
+围绕真实的所有权边界创建规范工作单元：
 
-- One package when a package has its own conventions.
-- One layer when the same package has distinct frontend, backend, CLI, worker, or shared-library rules.
-- One cross-cutting guide when a pattern spans packages and is not owned by one layer.
+- 当一个包有自己的约定时，为它创建一个工作单元。
+- 当同一个包有不同的前端、后端、CLI、工作进程或共享库规则时，为每个层级创建一个工作单元。
+- 当一个模式跨越多个包且不属于某个层级时，创建一个跨领域指南。
 
-Avoid artificial decomposition. A small library usually needs one focused spec pass, not several tasks.
+避免人为分解。一个小型库通常只需要一次聚焦的规范编写，而非多个任务。
 
-## Task Shape
+## 任务格式
 
-When a Trellis task is useful, write a concise PRD with these sections:
+当 Trellis 任务有用时，编写包含以下章节的简洁 PRD：
 
 ```markdown
-# Fill <package-or-layer> Trellis Specs
+# 填充 <包或层级> Trellis 规范
 
-## Goal
-Write project-specific `.trellis/spec/` guidance for <scope>.
+## 目标
+为 <范围> 编写项目专属的 `.trellis/spec/` 指导。
 
-## Scope
-- Spec directory:
-- Source directories to inspect:
-- Tests to inspect:
-- Out of scope:
+## 范围
+- 规范目录：
+- 需要检查的源码目录：
+- 需要检查的测试：
+- 不在范围内：
 
-## Architecture Context
-Summarize the concrete findings from repository analysis.
+## 架构上下文
+总结仓库分析的具体发现。
 
-## Files To Create Or Update
+## 需要创建或更新的文件
 - `.trellis/spec/.../index.md`
 - `.trellis/spec/.../<topic>.md`
 
-## Rules
-- Adapt the spec file set to the real codebase.
-- Use real source examples with file paths.
-- Remove template-only sections that do not apply.
-- Do not modify product source code unless the task explicitly asks for it.
+## 规则
+- 根据实际代码库调整规范文件集。
+- 使用带文件路径的真实源码示例。
+- 移除不适用的纯模板章节。
+- 除非任务明确要求，否则不要修改产品源码。
 
-## Acceptance Criteria
-- [ ] Specs contain concrete examples and anti-patterns from the repository.
-- [ ] No placeholder text remains.
-- [ ] Index files match the final spec files.
-- [ ] Claims are backed by source files, tests, or project docs.
+## 验收标准
+- [ ] 规范包含来自仓库的具体示例和反模式。
+- [ ] 无占位文本残留。
+- [ ] 索引文件与最终规范文件匹配。
+- [ ] 所有声明有源文件、测试或项目文档作为支撑。
 ```
 
-## Optional Helper Agents
+## 可选辅助代理
 
-If the host supports subagents, helpers can inspect independent packages or run verification. They are optional. The main agent still owns integration and final quality.
+如果宿主支持子代理，辅助代理可以检查独立的包或运行验证。它们是可选的。主代理仍然负责集成和最终质量。
 
-Helper tasks must have clear ownership:
+辅助任务必须有明确的所有权：
 
-- Read-only research tasks may inspect any source needed for the assigned scope.
-- Write tasks should own disjoint spec directories.
-- Verification tasks should check placeholder removal, broken links, and consistency.
+- 只读研究任务可以检查分配范围内所需的任何源码。
+- 写入任务应拥有不相交的规范目录。
+- 验证任务应检查占位符移除、断开的链接和一致性。
 
-Do not encode helper-agent names, vendor-specific commands, or platform-specific routing in the skill. Put only the required work and acceptance criteria in the task.
+不要在技能中编码辅助代理名称、供应商特定命令或平台特定路由。只在任务中放入所需的工作和验收标准。
