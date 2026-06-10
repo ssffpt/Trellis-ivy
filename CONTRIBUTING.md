@@ -6,7 +6,7 @@ Thanks for your interest in contributing to Trellis! This document provides guid
 
 ### Reporting Bugs
 
-Before creating a bug report, please check [existing issues](https://github.com/mindfold-ai/Trellis/issues) to avoid duplicates.
+Before creating a bug report, please check [existing issues](https://github.com/ssffpt/Trellis-ivy/issues) to avoid duplicates.
 
 When reporting a bug, include:
 - Trellis version (`trellis --version`)

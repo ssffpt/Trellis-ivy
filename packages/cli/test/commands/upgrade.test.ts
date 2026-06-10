@@ -97,7 +97,7 @@ describe("upgrade command", () => {
     const runner = vi.fn(() => ({ status: 1, signal: null }));
 
     await expect(upgrade({ tag: "latest" }, runner)).rejects.toThrow(
-      /npm install failed with exit code 1\.[\s\S]*Troubleshooting:[\s\S]*Manual command: npm install -g @liushuang\/trellis@latest[\s\S]*npm config get prefix[\s\S]*which trellis/,
+      /npm install failed with exit code 1\.[\s\S]*Troubleshooting:[\s\S]*Manual command: npm install -g trellis-ivy@latest[\s\S]*npm config get prefix[\s\S]*which trellis/,
     );
 
     log.mockRestore();
