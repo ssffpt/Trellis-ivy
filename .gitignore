@@ -186,3 +186,9 @@ tmp/
 tmp1/
 .playwright-mcp
 .gitnexus
+
+.mimocode
+.claude
+.agent
+.codex
+.cursor

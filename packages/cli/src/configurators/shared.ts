@@ -309,38 +309,37 @@ const AGENT_FRONTMATTER: Record<
   "trellis-review": {
     claude: {
       description:
-        "PRD/Design 门禁审核 Agent。独立审核需求文档和技术设计的质量，输出清单式审核报告，发现问题后自动修复并重审。",
-      tools: "Read, Write, Edit, Bash, Glob",
+        "PRD/Design 门禁审核 Agent。独立审核需求文档和技术设计的质量，输出清单式审核报告。只审不改，禁止修改 prd.md / design.md / implement.md。",
+      tools: "Read, Write, Bash, Glob",
     },
     cursor: {
       description:
-        "PRD/Design 门禁审核 Agent。独立审核需求文档和技术设计的质量，输出清单式审核报告，发现问题后自动修复并重审。",
-      tools: "Read, Write, Edit, Bash, Glob",
+        "PRD/Design 门禁审核 Agent。独立审核需求文档和技术设计的质量，输出清单式审核报告。只审不改，禁止修改 prd.md / design.md / implement.md。",
+      tools: "Read, Write, Bash, Glob",
       multilineDesc: false,
     },
     codebuddy: {
       description:
-        "PRD/Design 门禁审核 Agent。独立审核需求文档和技术设计的质量，输出清单式审核报告，发现问题后自动修复并重审。",
-      tools: "Read, Write, Edit, Bash, Glob",
+        "PRD/Design 门禁审核 Agent。独立审核需求文档和技术设计的质量，输出清单式审核报告。只审不改，禁止修改 prd.md / design.md / implement.md。",
+      tools: "Read, Write, Bash, Glob",
     },
     qoder: {
       description:
-        "PRD/Design 门禁审核 Agent。独立审核需求文档和技术设计的质量，输出清单式审核报告，发现问题后自动修复并重审。",
-      tools: "Read, Write, Edit, Bash, Glob",
+        "PRD/Design 门禁审核 Agent。独立审核需求文档和技术设计的质量，输出清单式审核报告。只审不改，禁止修改 prd.md / design.md / implement.md。",
+      tools: "Read, Write, Bash, Glob",
     },
     gemini: {
       description:
-        "PRD/Design 门禁审核 Agent。独立审核需求文档和技术设计的质量，输出清单式审核报告，发现问题后自动修复并重审。",
-      tools: "Read, Write, Edit, Bash, Glob",
+        "PRD/Design 门禁审核 Agent。独立审核需求文档和技术设计的质量，输出清单式审核报告。只审不改，禁止修改 prd.md / design.md / implement.md。",
+      tools: "Read, Write, Bash, Glob",
     },
     opencode: {
       description:
-        "PRD/Design 门禁审核 Agent。独立审核需求文档和技术设计的质量，输出清单式审核报告，发现问题后自动修复并重审。",
+        "PRD/Design 门禁审核 Agent。独立审核需求文档和技术设计的质量，输出清单式审核报告。只审不改，禁止修改 prd.md / design.md / implement.md。",
       mode: "subagent",
       permission: {
         read: "allow",
         write: "allow",
-        edit: "allow",
         bash: "allow",
         glob: "allow",
       },
@@ -781,16 +780,57 @@ export async function writeSharedHooks(
 // Pull-based sub-agent prelude (for class-2 platforms whose hook can't
 // inject sub-agent prompts: gemini, qoder, codex, copilot)
 //
-// Only implement & check need task-level context (task artifacts + jsonl specs).
+// implement & check need task-level context (task artifacts + jsonl specs).
+// review & premise-challenger need task path + prd.md only (no jsonl).
 // research is orthogonal: it searches the spec tree and doesn't depend on an
 // active task. Hook-based platforms mirror this (their `get_research_context`
 // injects a spec-tree overview, not prd/jsonl). We leave research untouched.
 // ---------------------------------------------------------------------------
 
-export type SubAgentType = "implement" | "check";
+export type SubAgentType =
+  | "implement"
+  | "check"
+  | "review"
+  | "premise-challenger";
+
+/** Build the "find active task path" step — shared across all sub-agent types. */
+function buildFindTaskPathStep(): string {
+  return `### Step 1: Find the active task path
+
+Try in order — stop at the first one that yields a task path:
+
+1. **Look at the dispatch prompt** you received from the main agent. If its first line is \`Active task: <path>\` (e.g. \`Active task: .trellis/tasks/04-17-foo\`), use that path. The main agent is required to include this line on class-2 platforms.
+2. **Run** \`python3 ./.trellis/scripts/task.py current --source\` and read the \`Current task:\` line.
+3. **If both fail** (no \`Active task:\` line in the prompt and \`task.py current\` returns no task), ask the user which task to work on; do NOT guess.`;
+}
 
 /** Build the standard "load Trellis context first" prelude block. */
 export function buildPullBasedPrelude(agentType: SubAgentType): string {
+  const findTaskStep = buildFindTaskPathStep();
+
+  // review and premise-challenger only need prd.md (+ design.md if present).
+  // They have no JSONL manifest — do not reference implement.jsonl / check.jsonl.
+  if (agentType === "review" || agentType === "premise-challenger") {
+    return replacePythonCommandLiterals(`## Required: Load Trellis Context First
+
+This platform does NOT auto-inject task context via hook. Before doing anything else, you MUST load context yourself.
+
+${findTaskStep}
+
+### Step 2: Load task documents from the resolved path
+
+1. Read \`<task-path>/prd.md\` (requirements and acceptance criteria).
+2. Read \`<task-path>/design.md\` if present (technical design).
+3. If \`<task-path>/premise-challenges.md\` exists, read it as well (needed for review dimension 5).
+
+If the resolved task path has no \`prd.md\`, ask the user what to work on; do NOT proceed without context.
+
+---
+
+`);
+  }
+
+  // implement and check: full context load including JSONL spec manifests.
   // JSONL filenames stay as implement.jsonl / check.jsonl — they are internal
   // context buckets keyed by role (not by platform-visible agent name).
   const jsonl = agentType === "check" ? "check.jsonl" : "implement.jsonl";
@@ -799,13 +839,7 @@ export function buildPullBasedPrelude(agentType: SubAgentType): string {
 
 This platform does NOT auto-inject task context via hook. Before doing anything else, you MUST load context yourself.
 
-### Step 1: Find the active task path
-
-Try in order — stop at the first one that yields a task path:
-
-1. **Look at the dispatch prompt** you received from the main agent. If its first line is \`Active task: <path>\` (e.g. \`Active task: .trellis/tasks/04-17-foo\`), use that path. The main agent is required to include this line on class-2 platforms.
-2. **Run** \`python3 ./.trellis/scripts/task.py current --source\` and read the \`Current task:\` line.
-3. **If both fail** (no \`Active task:\` line in the prompt and \`task.py current\` returns no task), ask the user which task to work on; do NOT guess.
+${findTaskStep}
 
 ### Step 2: Load task context from the resolved path
 
@@ -859,10 +893,18 @@ export function injectPullBasedPreludeToml(
  */
 export function detectSubAgentType(name: string): SubAgentType | null {
   const base = name.replace(/\.(md|toml|prompt\.md)$/, "");
-  if (base === "trellis-implement" || base === "trellis-check") {
-    return base === "trellis-implement" ? "implement" : "check";
+  switch (base) {
+    case "trellis-implement":
+      return "implement";
+    case "trellis-check":
+      return "check";
+    case "trellis-review":
+      return "review";
+    case "trellis-premise-challenger":
+      return "premise-challenger";
+    default:
+      return null;
   }
-  return null;
 }
 
 /** Shared transform: given a list of agents, prepend pull-based prelude to

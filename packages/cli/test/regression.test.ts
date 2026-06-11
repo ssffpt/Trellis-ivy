@@ -4960,8 +4960,9 @@ describe("regression: cross-platform-thinking-guide dead code removed (0.3.1)", 
 describe("regression: class-2 platforms use pull-based sub-agent context", () => {
   // Class 2: gemini, qoder, codex, copilot — hooks can't reliably inject
   // sub-agent prompts, so sub-agents Read jsonl/prd themselves.
-  // implement/check get the pull-based prelude; research does not (it
-  // searches the spec tree and has no task-level context dependency).
+  // implement/check get the full prelude (jsonl + prd); review/premise-challenger
+  // get a prd-only prelude. research does not get a prelude (it searches the spec
+  // tree and has no task-level context dependency).
   const class2 = [
     {
       id: "qoder" as const,
@@ -4969,6 +4970,8 @@ describe("regression: class-2 platforms use pull-based sub-agent context", () =>
       preludeAgents: [
         ".qoder/agents/trellis-implement.md",
         ".qoder/agents/trellis-check.md",
+        ".qoder/agents/trellis-review.md",
+        ".qoder/agents/trellis-premise-challenger.md",
       ],
       nonPreludeAgents: [".qoder/agents/trellis-research.md"],
     },
@@ -4978,6 +4981,8 @@ describe("regression: class-2 platforms use pull-based sub-agent context", () =>
       preludeAgents: [
         ".gemini/agents/trellis-implement.md",
         ".gemini/agents/trellis-check.md",
+        ".gemini/agents/trellis-review.md",
+        ".gemini/agents/trellis-premise-challenger.md",
       ],
       nonPreludeAgents: [".gemini/agents/trellis-research.md"],
     },
@@ -4996,6 +5001,8 @@ describe("regression: class-2 platforms use pull-based sub-agent context", () =>
       preludeAgents: [
         ".github/agents/trellis-implement.agent.md",
         ".github/agents/trellis-check.agent.md",
+        ".github/agents/trellis-review.agent.md",
+        ".github/agents/trellis-premise-challenger.agent.md",
       ],
       nonPreludeAgents: [".github/agents/trellis-research.agent.md"],
     },

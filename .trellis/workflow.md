@@ -183,9 +183,10 @@ Complex task: explicitly ask the user "May I create a Trellis task and enter the
 - 1.0 Create task `[required · once]` (only after task-creation consent)
 - 1.1 Requirement exploration `[required · repeatable]` (`prd.md`; complex tasks also need `design.md` + `implement.md`)
 - 1.15 Premise challenge `[conditional · once]` (complex tasks only; dispatch `trellis-premise-challenger`; brainstorm responds to each challenge before proceeding)
+- 1.16 PRD review gate `[required · once]` (dispatch `trellis-review`; must pass before `task.py start`)
 - 1.2 Research `[optional · repeatable]`
 - 1.3 Configure context `[conditional · once]` — Claude Code, Cursor, OpenCode, Codex, Kiro, Gemini, Qoder, CodeBuddy, Copilot, Droid, Pi
-- 1.4 Activate task `[required · once]` (review gate, then `task.py start`; status → in_progress)
+- 1.4 Activate task `[required · once]` (`task.py start`; status → in_progress; only after step 1.16 passes)
 - 1.5 Create worktree `[optional · once]` (ask user; if enabled: `task.py worktree-create`; subagents run inside worktree)
 - 1.6 Completion criteria
 
@@ -193,8 +194,8 @@ Complex task: explicitly ask the user "May I create a Trellis task and enter the
 
 [workflow-state:planning]
 Load `trellis-brainstorm`; stay in planning.
-Lightweight: `prd.md` can be enough. Complex: finish `prd.md`, `design.md`, and `implement.md`; ask for review before `task.py start`.
-Complex tasks: dispatch `trellis-premise-challenger` (step 1.15) after `prd.md` initial draft; brainstorm must respond (adopt/reject+reason) to every challenge item before activating the task. Lightweight tasks skip this step.
+Lightweight: `prd.md` can be enough. Complex: finish `prd.md`, `design.md`, and `implement.md`; dispatch `trellis-review` gate (step 1.16) before `task.py start`.
+Complex tasks: dispatch `trellis-premise-challenger` (step 1.15) after `prd.md` initial draft; brainstorm must respond (adopt/reject+reason) to every challenge item; then dispatch `trellis-review` (step 1.16) — task cannot start until review passes (zero C/H/M). Lightweight tasks skip both steps.
 Multi-deliverable scope: consider a parent task plus independently verifiable child tasks; dependencies must be written in child artifacts, not implied by tree position.
 Sub-agent mode: curate `implement.jsonl` and `check.jsonl` as spec/research manifests before start.
 [/workflow-state:planning]
@@ -278,7 +279,7 @@ When a user request matches one of these intents inside an active task, route fi
 [Claude Code, Cursor, OpenCode, codex-sub-agent, Kiro, Gemini, Qoder, CodeBuddy, Copilot, Droid, Pi]
 
 - Planning or unclear requirements -> `trellis-brainstorm`.
-- Complex task prd.md draft complete -> `trellis-premise-challenger` (step 1.15).
+- Complex task prd.md draft complete -> `trellis-premise-challenger` (step 1.15), then `trellis-review` gate (step 1.16).
 - `in_progress` implementation -> dispatch `trellis-implement`; after implement, dispatch `trellis-check` (independent process, reads only artifacts + diff).
 - Repeated debugging -> `trellis-break-loop`; spec updates -> `trellis-update-spec`.
 
@@ -382,9 +383,30 @@ Return to this step whenever requirements change and revise the relevant artifac
 - 采纳的质疑 → 修改 `prd.md` 对应内容
 - 拒绝的质疑 → 写明理由，继续推进
 
-**所有质疑均有明确回应后**，方可进入步骤 1.2 / 1.3 / 1.4。
+**所有质疑均有明确回应后**，方可进入步骤 1.16（PRD 门禁审核）。
 
 跳过条件：轻量任务（prd-only），或用户明确说明无需前提挑战。
+
+#### 1.16 PRD review gate `[required · once]`
+
+**前提**：`prd.md` 初稿完成（复杂任务还需要 `design.md`），且步骤 1.15 前提挑战均已回应（若适用）。
+
+[Claude Code, Cursor, OpenCode, codex-sub-agent, Kiro, Gemini, Qoder, CodeBuddy, Copilot, Droid, Pi]
+
+派发 PRD 门禁审核子 agent：
+
+- **Agent type**: `trellis-review`
+- **Task description**: 对当前任务的 `prd.md`（及 `design.md` 如有）进行 5 维度质量审核，输出 `review.md` 问题清单；不修改任何规划文档
+- **Dispatch prompt guard**: 告知该 agent 它是独立 `trellis-review`，只输出审核报告，不修改 `prd.md` / `design.md` / `implement.md`
+
+[/Claude Code, Cursor, OpenCode, codex-sub-agent, Kiro, Gemini, Qoder, CodeBuddy, Copilot, Droid, Pi]
+
+**门禁结果处理**：
+
+- **放行（零 C/H/M）**：进入步骤 1.2 / 1.3 / 1.4
+- **未放行（有 C/H/M 问题）**：brainstorm 根据 `review.md` 修复 `prd.md` / `design.md`，然后再次派发 `trellis-review` 重审，最多 3 轮；第 3 轮仍未放行则暂停，请用户决策
+
+**跳过条件**：轻量任务（prd-only 且无需门禁），或用户明确跳过。复杂任务必须通过此门禁后方可运行 `task.py start`。
 
 #### 1.2 Research `[optional · repeatable]`
 
@@ -470,13 +492,13 @@ Skip this step. Context is loaded directly by the `trellis-before-dev` skill in 
 
 #### 1.4 Activate task `[required · once]`
 
-After artifact review, flip the task status to `in_progress`:
+After all planning artifacts are complete and the PRD review gate (step 1.16) has passed, flip the task status to `in_progress`:
 
 ```bash
 python3 ./.trellis/scripts/task.py start <task-dir>
 ```
 
-For lightweight tasks, `prd.md` can be enough. For complex tasks, `prd.md`, `design.md`, and `implement.md` must exist and be reviewed before start. On sub-agent-capable platforms, curate jsonl manifests when extra spec or research context is needed; seed-only manifests are tolerated by consumers.
+For lightweight tasks, `prd.md` can be enough (step 1.16 may be skipped for lightweight tasks). For complex tasks, `prd.md`, `design.md`, and `implement.md` must exist and step 1.16 (`trellis-review`) must have passed (zero C/H/M) before start. On sub-agent-capable platforms, curate jsonl manifests when extra spec or research context is needed; seed-only manifests are tolerated by consumers.
 
 After this command succeeds, the breadcrumb auto-switches to `[workflow-state:in_progress]`, and the rest of Phase 2 / 3 follows.
 
