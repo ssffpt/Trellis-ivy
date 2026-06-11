@@ -39,7 +39,6 @@ git diff HEAD
 
 - `prd.md`（验收标准）
 - `design.md`（如有，技术契约）
-- `implement.md`（如有，执行 checklist）
 - `check.jsonl` 中引用的规范文件
 
 ### 步骤 3：运行机械检查

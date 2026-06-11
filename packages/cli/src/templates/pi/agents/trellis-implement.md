@@ -19,7 +19,7 @@ tools: Read, Write, Edit, Bash, Glob, Grep
 ## 核心职责
 
 1. 理解当前任务需求。
-2. 阅读 `prd.md`、`design.md`（如果存在）和 `implement.md`（如果存在）。
+2. 阅读 `prd.md` 和 `design.md`（如果存在）。
 3. 阅读并遵循任务 `implement.jsonl` 中列出的规格和研究文件。
 4. 使用现有项目模式实现请求的变更。
 5. 运行与所修改代码相关的 lint、typecheck 和聚焦测试。

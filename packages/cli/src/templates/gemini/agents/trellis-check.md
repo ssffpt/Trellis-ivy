@@ -29,7 +29,6 @@ description: |
 - `.trellis/spec/` - 开发规范
 - 任务 `prd.md` - 需求文档
 - 任务 `design.md` - 技术设计（如有）
-- 任务 `implement.md` - 执行计划（如有）
 - Pre-commit checklist 质量标准
 
 ---
@@ -50,7 +49,6 @@ git diff HEAD
 
 - `prd.md`（验收标准）
 - `design.md`（如有，技术契约）
-- `implement.md`（如有，执行 checklist）
 - `.trellis/spec/` 中的规范文件
 
 ### 步骤 3：运行机械检查

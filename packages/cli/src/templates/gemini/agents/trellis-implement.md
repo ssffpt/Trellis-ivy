@@ -22,12 +22,11 @@ description: |
 - `.trellis/spec/` - 开发规范
 - 任务 `prd.md` - 需求文档
 - 任务 `design.md` - 技术设计（如果存在）
-- 任务 `implement.md` - 执行计划（如果存在）
 
 ## 核心职责
 
 1. **理解规范** - 阅读 `.trellis/spec/` 中的相关规范文件
-2. **理解任务产物** - 阅读 prd.md、design.md（如果存在）和 implement.md（如果存在）
+2. **理解任务产物** - 阅读 prd.md 和 design.md（如果存在）
 3. **实现功能** - 按照规范和任务产物编写代码
 4. **自检** - 确保代码质量
 5. **报告结果** - 报告完成状态
@@ -53,11 +52,10 @@ description: |
 
 ### 2. 理解需求
 
-阅读任务的 prd.md、design.md（如果存在）和 implement.md（如果存在）：
+阅读任务的 prd.md 和 design.md（如果存在）：
 
 - 核心需求是什么
 - 技术设计的关键点
-- 实现顺序、验证命令和回滚点
 
 ### 3. 实现功能
 

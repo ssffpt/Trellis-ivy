@@ -2537,7 +2537,6 @@ describe("regression: current-task path normalization", () => {
     expect(rawOutput).toContain("Implementation/check context order");
     expect(rawOutput).toContain("prd.md");
     expect(rawOutput).toContain("design.md if present");
-    expect(rawOutput).toContain("implement.md if present");
     expect(rawOutput).not.toContain("if you stay in the main session");
     expect(rawOutput).not.toContain("Next required action: dispatch");
     expect(rawOutput).not.toContain("If there is an active task, ask whether");
@@ -5642,10 +5641,8 @@ describe("regression: sub-agent context injection fallback (0.5.3)", () => {
   function expectTaskArtifactContract(content: string): void {
     expect(content).toContain("prd.md");
     expect(content).toContain("design.md");
-    expect(content).toContain("implement.md");
     expect(content).not.toMatch(/prd\.md`?\s+(?:if present|if exists)/i);
     expect(content).toMatch(/design\.md[^\n.]*(?:if present|if exists)/i);
-    expect(content).toMatch(/implement\.md[^\n.]*(?:if present|if exists)/i);
   }
 
   for (const { platform, rel, agent } of CLASS1_MD_AGENT_FILES) {

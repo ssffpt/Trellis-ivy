@@ -22,7 +22,7 @@ tools: Read, Write, Bash, Glob, Grep, mcp__exa__web_search_exa, mcp__exa__get_co
 检查你的输入中是否存在 `<!-- trellis-hook-injected -->` 标记。
 
 - **如果标记存在**：任务产物、规范和研究文件已自动加载。直接开始审查工作。
-- **如果标记不存在**：hook 注入未触发（Windows + Claude Code、`--continue` resume、fork 发行版、hooks 被禁用等）。从调度提示的第一行 `Active task: <path>` 获取任务路径，然后读取 `<task-path>/check.jsonl`、各列出的文件、`<task-path>/prd.md`、`<task-path>/design.md`（如存在）和 `<task-path>/implement.md`（如存在），再开始工作。
+- **如果标记不存在**：hook 注入未触发（Windows + Claude Code、`--continue` resume、fork 发行版、hooks 被禁用等）。从调度提示的第一行 `Active task: <path>` 获取任务路径，然后读取 `<task-path>/check.jsonl`、各列出的文件、`<task-path>/prd.md`、`<task-path>/design.md`（如存在），再开始工作。
 
 ## 独立对抗原则
 
@@ -37,7 +37,6 @@ tools: Read, Write, Bash, Glob, Grep, mcp__exa__web_search_exa, mcp__exa__get_co
 - `.trellis/spec/` - 开发规范
 - 任务 `prd.md` - 需求文档
 - 任务 `design.md` - 技术设计（如存在）
-- 任务 `implement.md` - 执行计划（如存在）
 - Pre-commit checklist
 
 ---
@@ -58,7 +57,6 @@ git diff HEAD                # 查看具体变更
 
 - `prd.md`（验收标准）
 - `design.md`（如有，技术契约）
-- `implement.md`（如有，执行 checklist）
 - `check.jsonl` 中引用的 `.trellis/spec/` 规范文件
 
 ### 步骤 3：运行机械检查

@@ -21,7 +21,6 @@ Read the current task artifacts in order:
 
 - `prd.md`
 - `design.md` if present
-- `implement.md` if present
 
 ```bash
 python3 ./.trellis/scripts/get_context.py --mode packages

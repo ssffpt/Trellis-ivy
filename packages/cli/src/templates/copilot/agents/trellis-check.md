@@ -42,7 +42,6 @@ git diff HEAD
 
 - `prd.md`（验收标准）
 - `design.md`（如有，技术契约）
-- `implement.md`（如有，执行 checklist）
 - `check.jsonl` 中引用的 `.trellis/spec/` 规范文件
 
 ```bash

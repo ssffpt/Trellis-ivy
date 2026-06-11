@@ -32,7 +32,6 @@ tools: Read, Write, Edit, Bash, Glob, Grep, mcp__exa__web_search_exa, mcp__exa__
 - `.trellis/spec/` - 开发规范
 - Task `prd.md` - 需求文档（验收标准）
 - Task `design.md` - 技术设计（如有，技术契约）
-- Task `implement.md` - 执行计划（如有，执行 checklist）
 - Pre-commit checklist - 质量标准
 
 ---
@@ -53,7 +52,6 @@ git diff HEAD
 
 - `prd.md`（验收标准）
 - `design.md`（如有，技术契约）
-- `implement.md`（如有，执行 checklist）
 - `.trellis/spec/` 规范文件
 
 ### 步骤 3：运行机械检查（客观门禁，独立于审查维度）
