@@ -76,8 +76,15 @@ TASK_DIR=$({{PYTHON_CMD}} ./.trellis/scripts/task.py create "<简短的任务标
 7. 在问题中包含你的推荐答案。
 8. 每次用户回答后，更新 `prd.md`，然后继续。
 9. **PRD 门禁审核**：当用户表示 prd.md 已就绪（如"审核吧"、"检查一下 prd"、"门禁"）时，
-触发一次 `trellis-review` 审核。不通过自动修复最多 2 轮。
-用户只看最终审核结果，无需参与中间过程。
+调度 `trellis-review` agent 审核当前任务目录下的 prd.md。审核流程如下：
+
+   1. 调用 `trellis-review` agent，传入任务目录路径
+   2. 审核 agent 输出问题清单到 `$TASK_DIR/review.md`（只审不改）
+   3. 若存在 C/H/M 级问题，由当前会话的规划 agent 修复 prd.md
+   4. 修复后再次调度 `trellis-review` 重新审核
+   5. **最多 3 轮**。第 3 轮仍有 C/H/M → 暂停并请用户决策
+
+   用户只看最终审核结果，无需参与中间过程。
 
 不要编造项目特定的产品/规范层级。如果仓库中已有产品、领域或规范文档，请使用它们。如果没有，则基于现有证据继续。
 
