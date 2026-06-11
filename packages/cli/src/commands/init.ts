@@ -1841,8 +1841,7 @@ export async function init(options: InitOptions): Promise<void> {
 
   // Non-native workflow is user-managed local content. Drop the
   // `.trellis/workflow.md` hash entry so `trellis update` classifies it as
-  // modified and does not silently restore native bytes. See design.md
-  // "Durable-state contract".
+  // modified and does not silently restore native bytes.
   if (workflowMdOverride !== undefined && workflowId !== NATIVE_WORKFLOW_ID) {
     removeHash(cwd, PATHS.WORKFLOW_GUIDE_FILE);
   }

@@ -2458,7 +2458,6 @@ describe("regression: current-task path normalization", () => {
     expect(ctx.startsWith("<session-context>")).toBe(true);
     expect(ctx).toContain("Trellis compact SessionStart context");
     expect(ctx).toContain("Task context order for implementation/check");
-    expect(ctx).toContain("design.md if present");
     expect(ctx).not.toContain("<sub-agent-notice>");
   });
 
@@ -2536,7 +2535,6 @@ describe("regression: current-task path normalization", () => {
     expect(rawOutput).toContain("Status: IN_PROGRESS");
     expect(rawOutput).toContain("Implementation/check context order");
     expect(rawOutput).toContain("prd.md");
-    expect(rawOutput).toContain("design.md if present");
     expect(rawOutput).not.toContain("if you stay in the main session");
     expect(rawOutput).not.toContain("Next required action: dispatch");
     expect(rawOutput).not.toContain("If there is an active task, ask whether");
@@ -3292,7 +3290,6 @@ print(len(entries))
     expect(match).toBeTruthy();
     const body = match?.[1] ?? "";
     expect(body).toMatch(/Lightweight: `prd\.md` can be enough/);
-    expect(body).toMatch(/Complex: finish `prd\.md`, `design\.md`, and `implement\.md`/);
     expect(body).toMatch(/implement\.jsonl|check\.jsonl/);
   });
 
@@ -5640,9 +5637,7 @@ describe("regression: sub-agent context injection fallback (0.5.3)", () => {
 
   function expectTaskArtifactContract(content: string): void {
     expect(content).toContain("prd.md");
-    expect(content).toContain("design.md");
     expect(content).not.toMatch(/prd\.md`?\s+(?:if present|if exists)/i);
-    expect(content).toMatch(/design\.md[^\n.]*(?:if present|if exists)/i);
   }
 
   for (const { platform, rel, agent } of CLASS1_MD_AGENT_FILES) {

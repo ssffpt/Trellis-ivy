@@ -22,21 +22,20 @@ tools: Read, Write, Edit, Bash, Glob, Grep, mcp__exa__web_search_exa, mcp__exa__
 检查输入中是否存在 `<!-- trellis-hook-injected -->` 标记。
 
 - **如果标记存在**：任务产物、规范和研究文件已自动加载到上方。直接开始审查工作。
-- **如果标记缺失**：hook 注入未触发（Windows + Claude Code、`--continue` 恢复、fork 分发、hooks 禁用等场景）。从调度提示的第一行 `Active task: <path>` 中提取任务路径，然后读取 `<task-path>/check.jsonl`、`<task-path>/prd.md`、`<task-path>/design.md`（如有）后再开始工作。
+- **如果标记缺失**：hook 注入未触发（Windows + Claude Code、`--continue` 恢复、fork 分发、hooks 禁用等场景）。从调度提示的第一行 `Active task: <path>` 中提取任务路径，然后读取 `<task-path>/check.jsonl` 和 `<task-path>/prd.md` 后再开始工作。
 
 ## 独立对抗原则
 
 你的上下文是全新的——你不知道 implement 过程中发生了什么，你只看产物。这是刻意设计的：共享上下文的审查等于自我合理化。
 
 - **不读** implement agent 的任何中间过程或思考记录。
-- 只读任务产物（prd.md / design.md / spec）和代码变更（git diff）。
+- 只读任务产物（prd.md / spec）和代码变更（git diff）。
 
 ## 上下文
 
 审查前需读取：
 - `.trellis/spec/` - 开发规范
 - 任务 `prd.md` - 需求文档
-- 任务 `design.md` - 技术设计（如有）
 - 提交前检查清单
 
 ## 审查流程
@@ -54,7 +53,6 @@ git diff HEAD                # 查看具体变更
 按顺序读取（不读 implement 的中间过程）：
 
 - `prd.md`（验收标准）
-- `design.md`（如有，技术契约）
 - `check.jsonl` 中引用的 `.trellis/spec/` 规范文件
 
 ### 步骤 3：运行机械检查

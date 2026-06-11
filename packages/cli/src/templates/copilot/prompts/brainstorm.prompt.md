@@ -52,7 +52,6 @@ Use a concise title from the user's request. Use a slug without a date prefix. `
 5. Include your recommended answer with the question.
 6. After each user answer, update `prd.md` before continuing.
 7. **PRD Gate Review**: When the user signals prd.md is ready (e.g., "review it", "check prd", "gate"), trigger a `trellis-review` audit. Auto-fix up to 2 rounds if it fails. The user only sees the final review result, no intermediate process.
-8. For complex tasks, create or update `design.md` before implementation starts.
 
 Do not invent a project-specific product/spec hierarchy. If the repository already has product, domain, or spec docs, use them. If it does not, proceed with the evidence that exists.
 
@@ -80,15 +79,7 @@ Do not ask process questions such as whether to search, inspect files, or contin
 - out of scope
 - open questions that still block planning
 
-`design.md` records technical design for complex tasks:
-
-- architecture and boundaries
-- data flow and contracts
-- compatibility and migration notes
-- important trade-offs
-- operational or rollback considerations
-
-Lightweight tasks may have only `prd.md`. Standard tasks must have `prd.md` and `design.md` before `task.py start`.
+Lightweight tasks may have only `prd.md`. Standard tasks must have `prd.md` before `task.py start`.
 
 ## Quality Bar
 
@@ -97,7 +88,6 @@ Before declaring planning ready:
 - `prd.md` contains testable acceptance criteria.
 - Repository-answerable questions have already been answered through inspection.
 - Remaining open questions are genuinely about user intent or scope.
-- Standard tasks have `design.md`.
 - **PRD has passed `trellis-review` gate audit (`review.md` final status is ✅).**
 - The user has reviewed the final planning artifacts or explicitly approved proceeding.
 

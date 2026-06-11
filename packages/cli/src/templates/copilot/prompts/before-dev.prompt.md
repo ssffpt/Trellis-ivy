@@ -8,7 +8,6 @@ Execute these steps:
 
 1. **Read current task artifacts**:
    - `prd.md` for requirements and acceptance criteria
-   - `design.md` if present for technical design
 
 2. **Discover packages and their spec layers**:
    ```bash

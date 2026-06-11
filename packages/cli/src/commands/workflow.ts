@@ -6,8 +6,7 @@
  * - Hash boundary: after writing native content, refresh the
  *   `.trellis/workflow.md` entry in `.template-hashes.json`. After writing
  *   any non-native content, remove that entry. This prevents `trellis update`
- *   from silently restoring native bytes over a user-selected variant
- *   (see design.md "Durable-state contract").
+ *   from silently restoring native bytes over a user-selected variant.
  *
  * - Modified-file protection: if the on-disk workflow has been edited (hash
  *   mismatch and it isn't already byte-identical to the chosen template),

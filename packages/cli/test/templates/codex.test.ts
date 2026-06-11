@@ -123,7 +123,6 @@ describe("codex session-start.py compact SessionStart context", () => {
     const content = fs.readFileSync(hookPath, "utf-8");
     expect(content).toContain("Trellis compact SessionStart context");
     expect(content).toContain("Task context order for implementation/check");
-    expect(content).toContain("design.md if present");
     expect(content).not.toContain("<sub-agent-notice>");
     expect(content).not.toContain("guides (inlined");
     expect(content).not.toContain("Project spec indexes are listed by path below");

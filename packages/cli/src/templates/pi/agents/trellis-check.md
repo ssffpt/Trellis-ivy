@@ -21,7 +21,7 @@ tools: Read, Bash, Glob, Grep
 你的上下文是全新的——你不知道 implement 过程中发生了什么，你只看产物。这是刻意设计的：共享上下文的审查等于自我合理化。
 
 - **不读** implement agent 的任何中间过程或思考记录。
-- 只读任务产物（prd.md / design.md / spec）和代码变更（git diff）。
+- 只读任务产物（prd.md / spec）和代码变更（git diff）。
 
 ## 审查流程
 
@@ -38,7 +38,6 @@ git diff HEAD
 按顺序读取（不读 implement 的中间过程）：
 
 - `prd.md`（验收标准）
-- `design.md`（如有，技术契约）
 - `check.jsonl` 中引用的规范文件
 
 ### 步骤 3：运行机械检查

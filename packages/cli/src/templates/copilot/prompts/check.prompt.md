@@ -17,10 +17,9 @@ git status
 
 ## Step 2: Read Task Artifacts and Applicable Specs
 
-Read the current task artifacts in order:
+Read the current task artifacts:
 
 - `prd.md`
-- `design.md` if present
 
 ```bash
 python3 ./.trellis/scripts/get_context.py --mode packages

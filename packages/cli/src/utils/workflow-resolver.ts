@@ -34,8 +34,7 @@ import {
  * Treated as Trellis-managed for hash-tracking: when this id is selected by
  * `init --workflow` or `trellis workflow`, `.trellis/workflow.md` stays in
  * `.template-hashes.json`. Any other id is user-managed local workflow and
- * must be removed from the hash file (the durable-state contract in
- * design.md "Durable-state contract").
+ * must be removed from the hash file.
  */
 export const NATIVE_WORKFLOW_ID = "native";
 

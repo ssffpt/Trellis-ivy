@@ -23,7 +23,7 @@ tools: Read, Write, Edit, Bash, Glob, Grep, mcp__exa__web_search_exa, mcp__exa__
 你的上下文是全新的——你不知道 implement 过程中发生了什么，你只看产物。这是刻意设计的：共享上下文的审查等于自我合理化。
 
 - **不读** implement agent 的任何中间过程或思考记录。
-- 只读任务产物（prd.md / design.md / spec）和代码变更（git diff）。
+- 只读任务产物（prd.md / spec）和代码变更（git diff）。
 
 ## 审查上下文
 
@@ -31,7 +31,6 @@ tools: Read, Write, Edit, Bash, Glob, Grep, mcp__exa__web_search_exa, mcp__exa__
 
 - `.trellis/spec/` - 开发规范
 - Task `prd.md` - 需求文档（验收标准）
-- Task `design.md` - 技术设计（如有，技术契约）
 - Pre-commit checklist - 质量标准
 
 ---
@@ -51,7 +50,6 @@ git diff HEAD
 按顺序读取（不读 implement 的中间过程）：
 
 - `prd.md`（验收标准）
-- `design.md`（如有，技术契约）
 - `.trellis/spec/` 规范文件
 
 ### 步骤 3：运行机械检查（客观门禁，独立于审查维度）

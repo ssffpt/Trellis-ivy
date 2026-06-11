@@ -21,7 +21,7 @@ tools: Read, Write, Edit, Bash, Glob, Grep, mcp__exa__web_search_exa, mcp__exa__
 在你的输入中查找 `<!-- trellis-hook-injected -->` 标记。
 
 - **如果标记存在**：prd / spec / research 文件已经为你自动加载。直接开始实现工作。
-- **如果标记不存在**：hook 注入未触发（Windows + Claude Code、`--continue` 恢复、fork 分发、hooks 禁用等）。从派发提示的第一行 `Active task: <path>` 找到活动任务路径，然后读取 `<task-path>/implement.jsonl`、每个列出的文件、`<task-path>/prd.md` 和 `<task-path>/design.md`（如果存在），然后再开始工作。
+- **如果标记不存在**：hook 注入未触发（Windows + Claude Code、`--continue` 恢复、fork 分发、hooks 禁用等）。从派发提示的第一行 `Active task: <path>` 找到活动任务路径，然后读取 `<task-path>/implement.jsonl`、每个列出的文件和 `<task-path>/prd.md`，然后再开始工作。
 
 ## 上下文
 
@@ -29,13 +29,12 @@ tools: Read, Write, Edit, Bash, Glob, Grep, mcp__exa__web_search_exa, mcp__exa__
 - `.trellis/workflow.md` - 项目工作流
 - `.trellis/spec/` - 开发规范
 - 任务 `prd.md` - 需求文档
-- 任务 `design.md` - 技术设计（如果存在）
 
 ## 核心职责
 
 1. **理解规范** - 读取 `.trellis/spec/` 中的相关规范文件
-2. **理解任务产物** - 读取 prd.md 和 design.md（如果存在）
-3. **实现功能** - 按照规范和任务产物编写代码
+2. **理解任务产物** - 读取 prd.md
+3. **实现功能** - 按照规范和 prd.md 编写代码
 4. **自查** - 确保代码质量
 5. **报告结果** - 报告完成状态
 
@@ -60,14 +59,13 @@ tools: Read, Write, Edit, Bash, Glob, Grep, mcp__exa__web_search_exa, mcp__exa__
 
 ### 2. 理解需求
 
-读取任务的 prd.md 和 design.md（如果存在）：
+读取任务的 prd.md：
 
 - 核心需求是什么
-- 技术设计的关键点
 
 ### 3. 实现功能
 
-- 按照规范和任务产物编写代码
+- 按照规范和 prd.md 编写代码
 - 遵循现有代码模式
 - 只做要求的事，不要过度工程化
 

@@ -13,7 +13,7 @@ tools: Read, Write, Bash, Glob, Grep, mcp__exa__web_search_exa, mcp__exa__get_co
 Look for the `<!-- trellis-hook-injected -->` marker in your input above.
 
 - **If the marker is present**: task artifacts, spec, and research files have already been auto-loaded for you above. Proceed with the check work directly.
-- **If the marker is absent**: hook injection didn't fire (Windows + Claude Code, `--continue` resume, fork distribution, hooks disabled, etc.). Find the active task path from your dispatch prompt's first line `Active task: <path>`, then Read `<task-path>/check.jsonl`, each listed file, `<task-path>/prd.md`, and `<task-path>/design.md` if present before doing the work.
+- **If the marker is absent**: hook injection didn't fire (Windows + Claude Code, `--continue` resume, fork distribution, hooks disabled, etc.). Find the active task path from your dispatch prompt's first line `Active task: <path>`, then Read `<task-path>/check.jsonl`, each listed file, and `<task-path>/prd.md` before doing the work.
 
 ## 递归防护
 
@@ -28,14 +28,13 @@ Look for the `<!-- trellis-hook-injected -->` marker in your input above.
 你的上下文是全新的——你不知道 implement 过程中发生了什么，你只看产物。这是刻意设计的：共享上下文的审查等于自我合理化。
 
 - **不读** implement agent 的任何中间过程或思考记录。
-- 只读任务产物（prd.md / design.md / spec）和代码变更（git diff）。
+- 只读任务产物（prd.md / spec）和代码变更（git diff）。
 
 ## 上下文
 
 审查前读取：
 - `.trellis/spec/` - 开发规范
 - 任务 `prd.md` - 需求文档
-- 任务 `design.md` - 技术设计（如有）
 
 ---
 
@@ -54,7 +53,6 @@ git diff HEAD               # 查看具体变更
 按顺序读取（不读 implement 的中间过程）：
 
 - `prd.md`（验收标准）
-- `design.md`（如有，技术契约）
 - `check.jsonl` 中引用的 `.trellis/spec/` 规范文件
 
 ### 步骤 3：运行机械检查（客观门禁，独立于审查维度）

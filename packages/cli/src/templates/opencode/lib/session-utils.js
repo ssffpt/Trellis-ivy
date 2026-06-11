@@ -69,9 +69,8 @@ function getTaskStatus(ctx, platformInput = null) {
   }
 
   const hasPrd = existsSync(join(taskDir, "prd.md"))
-  const hasDesign = existsSync(join(taskDir, "design.md"))
   const hasImplementPlan = existsSync(join(taskDir, "implement.md"))
-  const artifactNames = ["prd.md", "design.md", "implement.md", "implement.jsonl", "check.jsonl"]
+  const artifactNames = ["prd.md", "implement.md", "implement.jsonl", "check.jsonl"]
   const present = artifactNames.filter(name => existsSync(join(taskDir, name)))
   if (existsSync(join(taskDir, "research"))) present.push("research/")
   const presentLine = present.length > 0 ? present.join(", ") : "(none)"
@@ -87,7 +86,6 @@ function getTaskStatus(ctx, platformInput = null) {
 
   if (taskStatus === "planning") {
     const missingComplex = []
-    if (!hasDesign) missingComplex.push("design.md")
     if (!hasImplementPlan) missingComplex.push("implement.md")
     const nextBits = []
     if (missingComplex.length > 0) {
@@ -107,7 +105,7 @@ function getTaskStatus(ctx, platformInput = null) {
     `Status: ${String(taskStatus).toUpperCase()}\nTask: ${taskTitle}\n` +
     `Present: ${presentLine}\n` +
     "Next-Action: Follow the matching per-turn workflow-state. " +
-    "Implementation/check context order is jsonl entries -> `prd.md` -> `design.md if present` -> `implement.md if present`."
+    "Implementation/check context order is jsonl entries -> `prd.md` -> `implement.md if present`."
   )
 }
 
@@ -422,7 +420,7 @@ Trellis compact SessionStart context. Use it to orient the session; load details
   parts.push("<guidelines>")
   parts.push(
     "Task context order for implementation/check: jsonl entries -> `prd.md` -> " +
-    "`design.md if present` -> `implement.md if present`. Missing optional artifacts " +
+    "`implement.md if present`. Missing optional artifacts " +
     "are skipped for lightweight tasks.\n"
   )
 
