@@ -47,15 +47,17 @@ git diff HEAD
 按顺序读取（不读 implement 的中间过程）：
 
 - `prd.md`（验收标准）
+- `fix-context.md`（如果存在，了解修复历史和已知问题）
 - `.trellis/spec/` 中的规范文件
 
 ### 步骤 3：运行机械检查
 
-运行项目的 lint 和类型检查命令，**不运行测试**（测试由调度方按需触发）。
+运行项目的 lint、类型检查和测试命令。
 
-记录结果，lint/typecheck 失败视为 C 级问题直接列入清单。
+记录结果，lint/typecheck/测试失败视为 C 级问题直接列入清单。
 
-> lint/typecheck 是机械化的客观检查，不混入审查维度判断。
+> lint/typecheck/测试是机械化的客观检查，不混入审查维度判断。
+> 如果项目没有测试框架或 prd.md 测试要求全为"跳过"，则跳过测试运行。
 
 ### 步骤 4：逐维度审查
 
@@ -112,6 +114,7 @@ git diff HEAD
 
 - Lint: pass / fail
 - TypeCheck: pass / fail
+- 测试: pass / fail / 跳过（无测试框架或 prd.md 测试要求全为跳过）
 
 ## 审查问题清单
 
