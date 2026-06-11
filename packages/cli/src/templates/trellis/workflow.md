@@ -115,7 +115,7 @@ python3 ./.trellis/scripts/get_context.py --mode phase --step <X.Y>  # detailed 
     matching enforcement line in its phase's [workflow-state:*] block. The
     breadcrumb is the only per-turn channel; if a mandatory step isn't
     mentioned there, the AI silently skips it (Phase 1 planning gate
-    skip and Phase 3.4 commit skip both manifested via this gap).
+    skip and Phase 3.3 commit skip both manifested via this gap).
 
   TAG ↔ PHASE scoping:
     [workflow-state:no_task]      → no active task; before Phase 1
@@ -209,21 +209,22 @@ Inline mode: skip jsonl curation; Phase 2 reads artifacts/specs via `trellis-bef
 ### Phase 2: Execute
 - 2.1 Implement `[required · repeatable]`
 - 2.2 Quality check `[required · repeatable]`
-- 2.3 Rollback `[on demand]`
+- 2.3 Fix loop `[required · repeatable]`
+- 2.4 Rollback `[on demand]`
 
 <!-- Per-turn breadcrumb: shown while status='in_progress'.
-     Scope: all of Phase 2 + Phase 3.1-3.4 (status stays 'in_progress' from
+     Scope: all of Phase 2 + Phase 3 (status stays 'in_progress' from
      task.py start until task.py archive; only archive flips it). The body
      therefore must cover every required step from implementation through
-     commit, including Phase 3.3 spec update and Phase 3.4 commit. -->
+     commit, including Phase 3.2 spec update and Phase 3.3 commit. -->
 
 Sub-agent dispatch protocol applies to all platforms and all sub-agents, including class-2 Codex/Copilot/Gemini/Qoder and `trellis-research`: every dispatch prompt starts with `Active task: <task path from task.py current>` before role-specific instructions.
 
 [workflow-state:in_progress]
 Tools: `trellis-implement` / `trellis-research` are sub-agent types only (Task/Agent tool, NOT Skill; there is no skill by these names). `trellis-update-spec` is a skill. `trellis-check` exists as both; prefer the Agent form when verifying after code changes.
-Flow: `trellis-implement` -> `trellis-check` -> `trellis-update-spec` -> commit (Phase 3.4) -> `/trellis:finish-work`.
-Main-session default: dispatch implement/check sub-agents. Sub-agent self-exemption: if already running as `trellis-implement`, do NOT spawn another `trellis-implement` or `trellis-check`; if already running as `trellis-check`, do NOT spawn another `trellis-check` or `trellis-implement`. Dispatch is main session only.
-Dispatch prompt starts with `Active task: <task path from task.py current>`. Read context: jsonl entries -> `prd.md`.
+Flow: `trellis-implement` -> `trellis-check` -> fix loop (check has C/H/M → update `fix-context.md` → `trellis-implement` → `trellis-check`, max 3 auto rounds) -> `trellis-update-spec` -> commit (Phase 3.3) -> `/trellis:finish-work`.
+Main-session default: dispatch implement/check sub-agents. Main session maintains `fix-context.md` as cross-round memory for the fix loop. Sub-agent self-exemption: if already running as `trellis-implement`, do NOT spawn another `trellis-implement` or `trellis-check`; if already running as `trellis-check`, do NOT spawn another `trellis-check` or `trellis-implement`. Dispatch is main session only.
+Dispatch prompt starts with `Active task: <task path from task.py current>`. Read context: jsonl entries -> `prd.md` -> `fix-context.md` (if exists).
 [/workflow-state:in_progress]
 
 <!-- Per-turn breadcrumb: shown while status='in_progress' when
@@ -232,17 +233,16 @@ Dispatch prompt starts with `Active task: <task path from task.py current>`. Rea
      instead of dispatching sub-agents. -->
 
 [workflow-state:in_progress-inline]
-Flow: `trellis-before-dev` -> edit -> `trellis-check` -> validation -> `trellis-update-spec` -> commit (Phase 3.4) -> `/trellis:finish-work`.
+Flow: `trellis-before-dev` -> edit -> `trellis-check` -> validation -> `trellis-update-spec` -> commit (Phase 3.3) -> `/trellis:finish-work`.
 Do not dispatch implement/check sub-agents in inline mode.
 Read context: `prd.md`, plus relevant spec/research loaded by skills.
 [/workflow-state:in_progress-inline]
 
 ### Phase 3: Finish
-- 3.1 Quality verification `[required · repeatable]`
-- 3.2 Debug retrospective `[on demand]`
-- 3.3 Spec update `[required · once]`
-- 3.4 Commit changes `[required · once]`
-- 3.5 Wrap-up reminder
+- 3.1 Debug retrospective `[on demand]`
+- 3.2 Spec update `[required · once]`
+- 3.3 Commit changes `[required · once]`
+- 3.4 Wrap-up reminder
 
 <!-- Per-turn breadcrumb: shown while status='completed'.
      Currently DEAD in normal flow: cmd_archive writes status='completed' in
@@ -253,7 +253,7 @@ Read context: `prd.md`, plus relevant spec/research loaded by skills.
      channel as the live blocks. -->
 
 [workflow-state:completed]
-Code committed. Run `/trellis:finish-work`; if dirty, return to Phase 3.4 first.
+Code committed. Run `/trellis:finish-work`; if dirty, return to Phase 3.3 first.
 [/workflow-state:completed]
 
 ### Rules
@@ -521,14 +521,15 @@ The platform prelude auto-handles the context load requirement:
 Spawn the check sub-agent:
 
 - **Agent type**: `trellis-check`
-- **Task description**: Review all code changes against specs and task artifacts; fix any findings directly; ensure lint and type-check pass
-- **Dispatch prompt guard**: Tell the spawned agent it is already the `trellis-check` sub-agent and must review/fix directly, not spawn another `trellis-check` / `trellis-implement`.
+- **Task description**: Review all code changes against specs and task artifacts; output structured issue list to `check-report.md`; ensure lint and type-check pass
+- **Dispatch prompt guard**: Tell the spawned agent it is already the `trellis-check` sub-agent and must review only, not spawn another `trellis-check` / `trellis-implement`.
 
 The check agent's job:
 - Review code changes against specs
 - Review code changes against `prd.md`
-- Auto-fix issues it finds
-- Run lint and typecheck to verify
+- Output structured issue list (C/H/M/L) to `$TASK_DIR/check-report.md`
+- Run lint and typecheck to verify (fail = C level)
+- **只审不改**：禁止修改任何代码文件，发现问题只输出清单
 
 [/Claude Code, Cursor, OpenCode, codex-sub-agent, Kiro, Gemini, Qoder, CodeBuddy, Copilot, Droid, Pi]
 
@@ -539,11 +540,81 @@ Load the `trellis-check` skill and verify the code per its guidance:
 - lint / type-check / tests
 - Cross-layer consistency (when changes span layers)
 
-If issues are found → fix → re-check, until green.
+If issues are found → fix → re-check, until green. Inline mode handles fix loop in the main session directly; `fix-context.md` is optional (main session already has full conversation context).
 
 [/codex-inline, Kilo, Antigravity, Windsurf]
 
-#### 2.3 Rollback `[on demand]`
+#### 2.3 Fix loop `[required · repeatable]`
+
+When `trellis-check` reports C/H/M level issues, the main session orchestrates a fix-verify loop using `fix-context.md` as cross-round memory.
+
+**Loop structure**:
+
+```
+check-report.md 有 C/H/M？
+    ├── 否 → 放行，进入 Phase 3
+    └── 是 → 主会话更新 fix-context.md
+             → 调度 trellis-implement（传入 prd.md + implement.jsonl + fix-context.md）
+             → implement 修复代码
+             → 调度 trellis-check 复审
+             → 主会话更新 fix-context.md（记录修复结果）
+             → 循环，最多 3 轮自动
+             → 第 3 轮仍有 C/H/M → 暂停，用户决定
+```
+
+**主会话职责**:
+
+| 时机 | 操作 |
+|------|------|
+| 首次 check 后 | 若有 C/H/M，创建 `$TASK_DIR/fix-context.md` |
+| 每轮 fix 前 | 更新 fix-context.md 的待修复清单 |
+| 每轮 check 后 | 更新 fix-context.md 的修复结果和决策记录 |
+| 超限暂停时 | 展示遗留问题，用户决定：继续修复 / 缩小范围 / 手动通过 |
+
+**fix-context.md 结构**:
+
+```markdown
+# 修复上下文
+
+## 当前轮次
+第 N 轮
+
+## 原始需求摘要
+<从 prd.md 提取的关键验收标准>
+
+## 修复历史
+
+### 第 1 轮
+- **实现内容**: <摘要>
+- **Check 发现**: [C/H/M] file:line - 问题描述
+- **修复结果**: 已修复 / 部分修复 / 未修复
+- **遗留问题**: 无 / 具体描述
+
+## 待修复清单（当前轮）
+<基于 check-report.md>
+
+1. [等级] file:line - 修复要求
+
+## 关键决策记录
+<跨轮次的重要决策>
+```
+
+**implement agent 如何使用 fix-context.md**:
+
+- `trellis-implement` 启动时读取 `fix-context.md`，了解：
+  - 之前做了什么实现决策
+  - check 发现了什么问题
+  - 本轮需要修复什么
+  - 哪些决策需要遵循
+- 首次 implement（无 fix-context.md）时按正常流程读 prd.md 即可
+
+**用户选择"继续修复"时**：
+
+- 每轮只执行一次 fix → check，然后暂停展示结果
+- 用户确认后继续下一轮
+- 如此循环，直到通过或用户选择其他选项
+
+#### 2.4 Rollback `[on demand]`
 
 - `check` reveals a prd defect → return to Phase 1, fix `prd.md`, then redo 2.1
 - Implementation went wrong → revert code, redo 2.1
@@ -553,18 +624,9 @@ If issues are found → fix → re-check, until green.
 
 ## Phase 3: Finish
 
-Goal: ensure code quality, capture lessons, record the work.
+Goal: capture lessons, update spec, record the work.
 
-#### 3.1 Quality verification `[required · repeatable]`
-
-Load the `trellis-check` skill and do a final verification:
-- Spec compliance
-- lint / type-check / tests
-- Cross-layer consistency (when changes span layers)
-
-If issues are found → fix → re-check, until green.
-
-#### 3.2 Debug retrospective `[on demand]`
+#### 3.1 Debug retrospective `[on demand]`
 
 If this task involved repeated debugging (the same issue was fixed multiple times), load the `trellis-break-loop` skill to:
 - Classify the root cause
@@ -573,7 +635,7 @@ If this task involved repeated debugging (the same issue was fixed multiple time
 
 The goal is to capture debugging lessons so the same class of issue doesn't recur.
 
-#### 3.3 Spec update `[required · once]`
+#### 3.2 Spec update `[required · once]`
 
 Load the `trellis-update-spec` skill and review whether this task produced new knowledge worth recording:
 - Newly discovered patterns or conventions
@@ -582,7 +644,7 @@ Load the `trellis-update-spec` skill and review whether this task produced new k
 
 Update the docs under `.trellis/spec/` accordingly. Even if the conclusion is "nothing to update", walk through the judgment.
 
-#### 3.4 Commit changes `[required · once]`
+#### 3.3 Commit changes `[required · once]`
 
 The AI drives a batched commit of this task's code changes so `/finish-work` can run cleanly afterwards. Goal: produce work commits FIRST, then bookkeeping (archive + journal) commits land after — never interleaved.
 
@@ -632,7 +694,7 @@ The AI drives a batched commit of this task's code changes so `/finish-work` can
 - If the user wants different message wording but accepts the file grouping, edit the message and re-confirm once — but if they reject the grouping, exit to manual mode.
 - The batched plan is one prompt; do not prompt per commit.
 
-#### 3.5 Wrap-up reminder
+#### 3.4 Wrap-up reminder
 
 After the above, remind the user they can run `/finish-work` to wrap up (archive the task, record the session).
 
@@ -647,7 +709,7 @@ This section is for developers who want to modify the Trellis workflow itself. A
 Edit the corresponding step's walkthrough body in the Phase 1 / 2 / 3 sections above. Critical invariants:
 - No active task must triage first and ask for task-creation consent before creating a Trellis task.
 - Planning must persist requirements to `prd.md` before start.
-- Every required execution path must keep the Phase 3.4 commit reminder reachable before `/trellis:finish-work`.
+- Every required execution path must keep the Phase 3.3 commit reminder reachable before `/trellis:finish-work`.
 
 All tag blocks live in the `## Phase Index` section above, immediately after each phase summary:
 
@@ -656,9 +718,9 @@ All tag blocks live in the `## Phase Index` section above, immediately after eac
 | No active task (before Phase 1) | `[workflow-state:no_task]` (after the Phase Index ASCII art) |
 | All of Phase 1 (task created → ready for implementation) | `[workflow-state:planning]` (after Phase 1 summary) |
 | Codex inline Phase 1 | `[workflow-state:planning-inline]` |
-| Phase 2 + Phase 3.1–3.4 (implementation + check + wrap-up) | `[workflow-state:in_progress]` (after Phase 2 summary) |
-| Codex inline Phase 2 + Phase 3.1–3.4 | `[workflow-state:in_progress-inline]` |
-| After Phase 3.5 (archived) | `[workflow-state:completed]` (after Phase 3 summary; **currently DEAD**) |
+| Phase 2 + Phase 3.1–3.3 (implementation + check + wrap-up) | `[workflow-state:in_progress]` (after Phase 2 summary) |
+| Codex inline Phase 2 + Phase 3.1–3.3 | `[workflow-state:in_progress-inline]` |
+| After Phase 3.4 (archived) | `[workflow-state:completed]` (after Phase 3 summary; **currently DEAD**) |
 
 ### Changing the per-turn prompt text
 
