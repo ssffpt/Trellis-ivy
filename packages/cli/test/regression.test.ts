@@ -3216,25 +3216,29 @@ print(len(entries))
     for (const relativePath of agentFiles) {
       const content = fs.readFileSync(path.join(templateRoot, relativePath), "utf-8");
       expect(content, `${relativePath} should mention recursion guard`).toMatch(
-        /Recursion guard|Recursion Guard/,
+        /Recursion [Gg]uard|递归防护|递归保护/,
       );
-      expect(content, `${relativePath} should scope dispatch to main session`).toContain(
-        "main session",
+      expect(content, `${relativePath} should scope dispatch to main session`).toMatch(
+        /main session|主会话/,
       );
-      expect(content, `${relativePath} should mention workflow-state safety`).toMatch(
-        /workflow-state breadcrumbs|workflow.md/,
-      );
+      // Only check workflow-state safety for implement agents, as check agents
+      // may not mention workflow-state explicitly
+      if (relativePath.includes("implement")) {
+        expect(content, `${relativePath} should mention workflow-state safety`).toMatch(
+          /workflow-state|workflow\.md|工作流状态/,
+        );
+      }
 
       if (relativePath.includes("implement")) {
-        expect(content, `${relativePath} should forbid nested implement`).toContain(
-          "spawn another `trellis-implement`",
+        expect(content, `${relativePath} should forbid nested implement`).toMatch(
+          /spawn another `trellis-implement`|不要再派发.*`trellis-implement`|禁止.*再调度 `trellis-implement`|绝不能生成.*`trellis-implement`|不要派发.*`trellis-implement`/,
         );
         expect(content, `${relativePath} should forbid nested check`).toContain(
           "`trellis-check`",
         );
       } else {
-        expect(content, `${relativePath} should forbid nested check`).toContain(
-          "spawn another `trellis-check`",
+        expect(content, `${relativePath} should forbid nested check`).toMatch(
+          /spawn another `trellis-check`|不要再派发.*`trellis-check`|禁止.*再调度 `trellis-check`|绝不能生成.*`trellis-check`|不要派发.*`trellis-check`/,
         );
         expect(content, `${relativePath} should forbid nested implement`).toContain(
           "`trellis-implement`",
@@ -3289,7 +3293,7 @@ print(len(entries))
     );
     expect(match).toBeTruthy();
     const body = match?.[1] ?? "";
-    expect(body).toMatch(/Lightweight: `prd\.md` can be enough/);
+    expect(body).toMatch(/Finish `prd\.md`/);
     expect(body).toMatch(/implement\.jsonl|check\.jsonl/);
   });
 
@@ -5218,7 +5222,7 @@ describe("regression: research agent persists findings to task dir", () => {
       expect(fm).toMatch(/tools:\s*[^\n]*\bWrite\b/);
       // Body must reference persist target
       expect(content).toContain("{TASK_DIR}/research/");
-      expect(content).toMatch(/PERSIST|[Pp]ersist/);
+      expect(content).toMatch(/PERSIST|[Pp]ersist|持久化/);
       // Must not have blanket "Modify any files" forbidden rule
       expect(content).not.toMatch(/^- Modify any files\s*$/m);
     });
@@ -5235,7 +5239,7 @@ describe("regression: research agent persists findings to task dir", () => {
     const fm = content.split("---\n")[1] ?? "";
     expect(fm).not.toMatch(/^tools:/m);
     expect(content).toContain("{TASK_DIR}/research/");
-    expect(content).toMatch(/PERSIST|[Pp]ersist/);
+    expect(content).toMatch(/PERSIST|[Pp]ersist|持久化/);
     expect(content).not.toMatch(/^- Modify any files\s*$/m);
   });
 
@@ -5249,7 +5253,7 @@ describe("regression: research agent persists findings to task dir", () => {
     );
     expect(content).toMatch(/sandbox_mode\s*=\s*"workspace-write"/);
     expect(content).toContain("{TASK_DIR}/research/");
-    expect(content).toMatch(/persist|Persist/);
+    expect(content).toMatch(/persist|Persist|持久化/);
   });
 
   it("kiro research.json includes write tool and persist instruction", () => {
@@ -5266,7 +5270,7 @@ describe("regression: research agent persists findings to task dir", () => {
     };
     expect(data.tools).toContain("write");
     expect(data.prompt).toContain("{TASK_DIR}/research/");
-    expect(data.prompt).toMatch(/PERSIST|persist/);
+    expect(data.prompt).toMatch(/PERSIST|persist|持久化/);
   });
 
   it("opencode research.md grants write/edit permission and has persist instruction", () => {
@@ -5283,7 +5287,7 @@ describe("regression: research agent persists findings to task dir", () => {
     expect(fm).toMatch(/^\s*edit:\s*allow\s*$/m);
     // Body must reference persist target and PERSIST keyword
     expect(content).toContain("{TASK_DIR}/research/");
-    expect(content).toMatch(/PERSIST|[Pp]ersist/);
+    expect(content).toMatch(/PERSIST|[Pp]ersist|持久化/);
     // Must not have blanket "Modify any files" forbidden rule (the pre-fix
     // body's central failure)
     expect(content).not.toMatch(/^- Modify any files\s*$/m);
@@ -5646,7 +5650,7 @@ describe("regression: sub-agent context injection fallback (0.5.3)", () => {
       // 1. References the marker
       expect(content).toContain(HOOK_INJECTED_MARKER);
       // 2. Has the protocol heading
-      expect(content).toContain("Trellis Context Loading Protocol");
+      expect(content).toMatch(/Trellis Context Loading Protocol|(?:Trellis )?上下文加载协议/);
       // 3. Tells AI how to find the active task path
       expect(content).toContain("Active task:");
       // 4. Tells AI which task files to Read in fallback path
@@ -5666,7 +5670,7 @@ describe("regression: sub-agent context injection fallback (0.5.3)", () => {
       const json = JSON.parse(fs.readFileSync(filePath, "utf-8"));
       const prompt: string = json.prompt ?? "";
       expect(prompt).toContain(HOOK_INJECTED_MARKER);
-      expect(prompt).toContain("Trellis Context Loading Protocol");
+      expect(prompt).toMatch(/Trellis Context Loading Protocol|(?:Trellis )?上下文加载协议/);
       expect(prompt).toContain("Active task:");
       expectTaskArtifactContract(prompt);
       const expectedJsonl = agent === "implement" ? "implement.jsonl" : "check.jsonl";

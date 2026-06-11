@@ -103,7 +103,7 @@ describe("codex sub-agent recursion guard (issue #234)", () => {
       );
       const content = fs.readFileSync(tomlPath, "utf-8");
       // Hard prohibition keyword
-      expect(content).toMatch(/MUST NOT spawn/i);
+      expect(content).toMatch(/MUST NOT spawn|禁止|绝不能/);
       // Mentions both sibling agent kinds explicitly
       expect(content).toContain("trellis-implement");
       expect(content).toContain("trellis-check");
