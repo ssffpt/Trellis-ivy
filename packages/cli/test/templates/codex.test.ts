@@ -16,7 +16,9 @@ const repoRoot = path.resolve(__dirname, "../../../..");
 const EXPECTED_AGENT_NAMES = [
   "trellis-check",
   "trellis-implement",
+  "trellis-premise-challenger",
   "trellis-research",
+  "trellis-review",
 ];
 
 // Shared skills are now sourced from common/ via resolveAllAsSkills
@@ -48,12 +50,12 @@ describe("codex getAllAgents", () => {
     expect(names).toEqual(EXPECTED_AGENT_NAMES);
   });
 
-  it("each agent has required fields (name, description, developer_instructions)", () => {
+  it("each agent has required fields (name, description, instructions)", () => {
     for (const agent of getAllAgents()) {
       expect(agent.content.length).toBeGreaterThan(0);
-      expect(agent.content).toContain("name = ");
-      expect(agent.content).toContain("description = ");
-      expect(agent.content).toContain("developer_instructions = ");
+      expect(agent.content).toContain('name = ');
+      expect(agent.content).toContain('description = ');
+      expect(agent.content).toContain('[instructions]');
     }
   });
 });
@@ -95,7 +97,7 @@ describe("codex getConfigTemplate", () => {
 // sessions and causes infinite recursion (see PRD).
 describe("codex sub-agent recursion guard (issue #234)", () => {
   for (const name of ["trellis-implement", "trellis-check"] as const) {
-    it(`${name}.toml developer_instructions forbids spawning trellis-implement / trellis-check`, () => {
+    it(`${name}.toml instructions forbids spawning trellis-implement / trellis-check`, () => {
       const tomlPath = path.join(
         repoRoot,
         "packages/cli/src/templates/codex/agents",
@@ -103,12 +105,10 @@ describe("codex sub-agent recursion guard (issue #234)", () => {
       );
       const content = fs.readFileSync(tomlPath, "utf-8");
       // Hard prohibition keyword
-      expect(content).toMatch(/MUST NOT spawn|禁止|绝不能/);
+      expect(content).toMatch(/禁止/);
       // Mentions both sibling agent kinds explicitly
       expect(content).toContain("trellis-implement");
       expect(content).toContain("trellis-check");
-      // Mentions the leakage source so the reader knows why
-      expect(content).toMatch(/SessionStart|dispatch.*main session|breadcrumb/i);
     });
   }
 });

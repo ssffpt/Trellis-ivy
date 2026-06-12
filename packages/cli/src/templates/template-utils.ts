@@ -45,20 +45,20 @@ export function createTemplateReader(importMetaUrl: string): TemplateReader {
     }
   }
 
-  /** Read all .md agent files from a subdirectory */
+  /** Read all .md agent files from a subdirectory (excluding checklists) */
   function listMdAgents(dir = "agents"): AgentTemplate[] {
     return listFiles(dir)
-      .filter((f) => f.endsWith(".md"))
+      .filter((f) => f.endsWith(".md") && !f.endsWith("-checklist.md"))
       .map((f) => ({
         name: f.replace(".md", ""),
         content: readTemplate(`${dir}/${f}`),
       }));
   }
 
-  /** Read all .json agent files from a subdirectory (Kiro) */
+  /** Read all .json agent files from a subdirectory (excluding checklists) */
   function listJsonAgents(dir = "agents"): AgentTemplate[] {
     return listFiles(dir)
-      .filter((f) => f.endsWith(".json"))
+      .filter((f) => f.endsWith(".json") && !f.endsWith("-checklist.json"))
       .map((f) => ({
         name: f.replace(".json", ""),
         content: readTemplate(`${dir}/${f}`),

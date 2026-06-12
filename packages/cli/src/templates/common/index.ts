@@ -8,8 +8,8 @@
  *   common/
  *   ├── commands/        # Templates that stay as slash commands
  *   ├── skills/          # Single-file templates that become auto-triggered skills
- *   ├── agents/          # Sub-agent body templates (frontmatter added per-platform)
- *   └── bundled-skills/  # Multi-file built-in skills with references/assets
+ *   ├── bundled-skills/  # Multi-file built-in skills with references/assets
+ *   └── agents/          # (deprecated) Old agent templates, now per-platform
  */
 
 import { readdirSync, readFileSync, statSync } from "node:fs";
@@ -57,8 +57,103 @@ export interface CommonBundledSkill {
 // Cached results — files don't change during a CLI run
 let cachedCommands: CommonTemplate[] | undefined;
 let cachedSkills: CommonTemplate[] | undefined;
-let cachedAgents: CommonTemplate[] | undefined;
 let cachedBundledSkills: CommonBundledSkill[] | undefined;
+
+// Platform agent template cache (keyed by platform name)
+const cachedPlatformAgents = new Map<string, CommonTemplate[]>();
+
+/**
+ * Get the path to a platform's templates directory.
+ */
+export function getPlatformTemplatePath(platform: string): string {
+  const templatePath = join(__dirname, "..", platform);
+  if (statSync(templatePath, { throwIfNoEntry: false })?.isDirectory()) {
+    return templatePath;
+  }
+  throw new Error(
+    `Could not find ${platform} templates directory. Expected at templates/${platform}/`,
+  );
+}
+
+/**
+ * List agent template files in a directory (md, toml, json).
+ */
+function listAgentFiles(dir: string): string[] {
+  try {
+    return readdirSync(dir)
+      .filter(
+        (f) =>
+          (f.endsWith(".md") || f.endsWith(".toml") || f.endsWith(".json")) &&
+          !f.endsWith("-checklist.md") &&
+          !f.endsWith("-checklist.toml") &&
+          !f.endsWith("-checklist.json"),
+      )
+      .sort();
+  } catch {
+    return [];
+  }
+}
+
+/**
+ * List all files in a directory.
+ */
+function listAllFiles(dir: string): string[] {
+  try {
+    return readdirSync(dir)
+      .filter((f) => f.endsWith(".md") || f.endsWith(".toml") || f.endsWith(".json"))
+      .sort();
+  } catch {
+    return [];
+  }
+}
+
+/**
+ * Get agent templates from a specific platform directory.
+ * These templates already have platform-specific frontmatter.
+ * Results are cached after first call.
+ */
+export function getPlatformAgentTemplates(platform: string): CommonTemplate[] {
+  let cached = cachedPlatformAgents.get(platform);
+  if (!cached) {
+    const platformDir = getPlatformTemplatePath(platform);
+    const agentsDir = join(platformDir, "agents");
+    cached = listAgentFiles(agentsDir).map((file) => {
+      const ext = file.endsWith(".toml")
+        ? ".toml"
+        : file.endsWith(".json")
+          ? ".json"
+          : ".md";
+      return {
+        name: file.replace(new RegExp(`\\${ext}$`), ""),
+        content: readFileSync(join(agentsDir, file), "utf-8"),
+      };
+    });
+    cachedPlatformAgents.set(platform, cached);
+  }
+  return cached;
+}
+
+/**
+ * Get checklist content from common/agents/ directory.
+ * Returns null if the checklist file is missing.
+ */
+export function getPlatformChecklist(
+  platform: string,
+  checklistName: string,
+): string | null {
+  try {
+    // Checklist files are shared across platforms in common/agents/
+    const commonAgentsDir = join(__dirname, "agents");
+    const files = listAllFiles(commonAgentsDir);
+    const checklistFile = files.find((f) => f.startsWith(checklistName));
+    if (checklistFile) {
+      return readFileSync(join(commonAgentsDir, checklistFile), "utf-8").trim();
+    }
+    return null;
+  } catch {
+    return null;
+  }
+}
 
 /**
  * Get all command templates (stay as slash commands on all platforms).
@@ -82,21 +177,6 @@ export function getSkillTemplates(): CommonTemplate[] {
     content: readTemplate(`skills/${file}`),
   }));
   return cachedSkills;
-}
-
-/**
- * Get all agent templates (sub-agent definitions, body only — no frontmatter).
- * Frontmatter is added per-platform by wrapWithAgentFrontmatter() in shared.ts.
- * Results are cached after first call.
- */
-export function getAgentTemplates(): CommonTemplate[] {
-  cachedAgents ??= listMarkdownFiles("agents")
-    .filter((file) => !file.endsWith("-checklist.md"))
-    .map((file) => ({
-      name: file.replace(/\.md$/, ""),
-      content: readTemplate(`agents/${file}`),
-    }));
-  return cachedAgents;
 }
 
 function listDirectories(dir: string): string[] {
@@ -148,28 +228,4 @@ export function getBundledSkillTemplates(): CommonBundledSkill[] {
     files: listBundledSkillFiles(name),
   }));
   return cachedBundledSkills;
-}
-
-/**
- * Get the review checklist content for inlining into review agent body.
- * Returns null if review-checklist.md is missing (non-fatal for builds).
- */
-export function getReviewChecklist(): string | null {
-  try {
-    return readTemplate("agents/review-checklist.md");
-  } catch {
-    return null;
-  }
-}
-
-/**
- * Get the check checklist content for inlining into check agent body.
- * Returns null if check-checklist.md is missing (non-fatal for builds).
- */
-export function getCheckChecklist(): string | null {
-  try {
-    return readTemplate("agents/check-checklist.md");
-  } catch {
-    return null;
-  }
 }

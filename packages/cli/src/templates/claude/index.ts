@@ -46,6 +46,10 @@ export function getAllAgents(): AgentTemplate[] {
 
   for (const file of files) {
     if (file.endsWith(".md")) {
+      // Exclude checklist files (they are inlined into other agents)
+      if (file.endsWith("-checklist.md")) {
+        continue;
+      }
       const name = file.replace(".md", "");
       const content = readTemplate(`agents/${file}`);
       agents.push({ name, content });

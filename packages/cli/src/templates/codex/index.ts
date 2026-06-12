@@ -67,6 +67,10 @@ export function getAllAgents(): AgentTemplate[] {
     if (!file.endsWith(".toml")) {
       continue;
     }
+    // Exclude checklist files (they are inlined into other agents)
+    if (file.endsWith("-checklist.toml")) {
+      continue;
+    }
 
     const name = file.replace(".toml", "");
     const content = readTemplate(`agents/${file}`);

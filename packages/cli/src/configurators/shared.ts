@@ -472,15 +472,17 @@ export function wrapWithAgentFrontmatter(
 }
 
 /**
- * Resolve agent templates from common/agents/ with platform-specific frontmatter.
+ * Resolve agent templates from platform-specific agents/ directory.
  *
- * Reads body templates from `common/agents/`, resolves placeholders, then wraps
- * each with the appropriate frontmatter for the target platform.
+ * Reads templates from `<platform>/agents/`, resolves placeholders.
+ * Templates already have platform-specific frontmatter, so no wrapping needed.
  */
 export function resolveAgents(ctx: TemplateContext): ResolvedTemplate[] {
-  const reviewChecklist = getReviewChecklist();
-  const checkChecklist = getCheckChecklist();
-  return getAgentTemplates().map((tmpl) => {
+  const platform = ctx.cliFlag;
+  const reviewChecklist = getPlatformChecklist(platform, "review-checklist");
+  const checkChecklist = getPlatformChecklist(platform, "check-checklist");
+
+  return getPlatformAgentTemplates(platform).map((tmpl) => {
     let resolved = resolvePlaceholders(tmpl.content, ctx);
     // Inline review checklist into review agent body
     if (reviewChecklist && resolved.includes("{{REVIEW_CHECKLIST}}")) {
@@ -495,7 +497,7 @@ export function resolveAgents(ctx: TemplateContext): ResolvedTemplate[] {
     }
     return {
       name: tmpl.name,
-      content: wrapWithAgentFrontmatter(tmpl.name, resolved, ctx.cliFlag),
+      content: resolved,
     };
   });
 }
@@ -523,10 +525,9 @@ import path from "node:path";
 import { ensureDir, writeFile } from "../utils/file-writer.js";
 import {
   type CommonTemplate,
-  getAgentTemplates,
+  getPlatformAgentTemplates,
+  getPlatformChecklist,
   getBundledSkillTemplates,
-  getReviewChecklist,
-  getCheckChecklist,
   getCommandTemplates,
   getSkillTemplates,
 } from "../templates/common/index.js";
