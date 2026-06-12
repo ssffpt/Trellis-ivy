@@ -932,20 +932,20 @@ async function handleReinit(
 }
 
 interface InitOptions {
-  cursor?: boolean;
+  // cursor?: boolean;
   claude?: boolean;
-  opencode?: boolean;
+  // opencode?: boolean;
   codex?: boolean;
   kilo?: boolean;
   kiro?: boolean;
-  gemini?: boolean;
-  antigravity?: boolean;
-  windsurf?: boolean;
+  // gemini?: boolean;
+  // antigravity?: boolean;
+  // windsurf?: boolean;
   qoder?: boolean;
   codebuddy?: boolean;
-  copilot?: boolean;
-  droid?: boolean;
-  pi?: boolean;
+  // copilot?: boolean;
+  // droid?: boolean;
+  // pi?: boolean;
   yes?: boolean;
   user?: string;
   force?: boolean;

@@ -312,12 +312,12 @@ const AGENT_FRONTMATTER: Record<
         "PRD 门禁审核 Agent。独立审核需求文档的质量，输出清单式审核报告。只审不改，禁止修改 prd.md。",
       tools: "Read, Write, Bash, Glob",
     },
-    cursor: {
-      description:
-        "PRD 门禁审核 Agent。独立审核需求文档的质量，输出清单式审核报告。只审不改，禁止修改 prd.md。",
-      tools: "Read, Write, Bash, Glob",
-      multilineDesc: false,
-    },
+    // cursor: {
+    //   description:
+    //     "PRD 门禁审核 Agent。独立审核需求文档的质量，输出清单式审核报告。只审不改，禁止修改 prd.md。",
+    //   tools: "Read, Write, Bash, Glob",
+    //   multilineDesc: false,
+    // },
     codebuddy: {
       description:
         "PRD 门禁审核 Agent。独立审核需求文档的质量，输出清单式审核报告。只审不改，禁止修改 prd.md。",
@@ -328,22 +328,22 @@ const AGENT_FRONTMATTER: Record<
         "PRD 门禁审核 Agent。独立审核需求文档的质量，输出清单式审核报告。只审不改，禁止修改 prd.md。",
       tools: "Read, Write, Bash, Glob",
     },
-    gemini: {
-      description:
-        "PRD 门禁审核 Agent。独立审核需求文档的质量，输出清单式审核报告。只审不改，禁止修改 prd.md。",
-      tools: "Read, Write, Bash, Glob",
-    },
-    opencode: {
-      description:
-        "PRD 门禁审核 Agent。独立审核需求文档的质量，输出清单式审核报告。只审不改，禁止修改 prd.md。",
-      mode: "subagent",
-      permission: {
-        read: "allow",
-        write: "allow",
-        bash: "allow",
-        glob: "allow",
-      },
-    },
+    // gemini: {
+    //   description:
+    //     "PRD 门禁审核 Agent。独立审核需求文档的质量，输出清单式审核报告。只审不改，禁止修改 prd.md。",
+    //   tools: "Read, Write, Bash, Glob",
+    // },
+    // opencode: {
+    //   description:
+    //     "PRD 门禁审核 Agent。独立审核需求文档的质量，输出清单式审核报告。只审不改，禁止修改 prd.md。",
+    //   mode: "subagent",
+    //   permission: {
+    //     read: "allow",
+    //     write: "allow",
+    //     bash: "allow",
+    //     glob: "allow",
+    //   },
+    // },
   },
   "trellis-premise-challenger": {
     claude: {
@@ -351,12 +351,12 @@ const AGENT_FRONTMATTER: Record<
         "前提推翻 Agent。在 PRD 进入门禁之前，从外部攻击方案本身的必要性和方向：需求是否必要、有无更简单路径、是否遗漏核心场景。只审不改，输出 premise-challenges.md 质疑清单。",
       tools: "Read, Write, Bash, Glob",
     },
-    cursor: {
-      description:
-        "前提推翻 Agent。在 PRD 进入门禁之前，从外部攻击方案本身的必要性和方向：需求是否必要、有无更简单路径、是否遗漏核心场景。只审不改，输出 premise-challenges.md 质疑清单。",
-      tools: "Read, Write, Bash, Glob",
-      multilineDesc: false,
-    },
+    // cursor: {
+    //   description:
+    //     "前提推翻 Agent。在 PRD 进入门禁之前，从外部攻击方案本身的必要性和方向：需求是否必要、有无更简单路径、是否遗漏核心场景。只审不改，输出 premise-challenges.md 质疑清单。",
+    //   tools: "Read, Write, Bash, Glob",
+    //   multilineDesc: false,
+    // },
     codebuddy: {
       description:
         "前提推翻 Agent。在 PRD 进入门禁之前，从外部攻击方案本身的必要性和方向：需求是否必要、有无更简单路径、是否遗漏核心场景。只审不改，输出 premise-challenges.md 质疑清单。",
@@ -367,22 +367,22 @@ const AGENT_FRONTMATTER: Record<
         "前提推翻 Agent。在 PRD 进入门禁之前，从外部攻击方案本身的必要性和方向：需求是否必要、有无更简单路径、是否遗漏核心场景。只审不改，输出 premise-challenges.md 质疑清单。",
       tools: "Read, Write, Bash, Glob",
     },
-    gemini: {
-      description:
-        "前提推翻 Agent。在 PRD 进入门禁之前，从外部攻击方案本身的必要性和方向：需求是否必要、有无更简单路径、是否遗漏核心场景。只审不改，输出 premise-challenges.md 质疑清单。",
-      tools: "Read, Write, Bash, Glob",
-    },
-    opencode: {
-      description:
-        "前提推翻 Agent。在 PRD 进入门禁之前，从外部攻击方案本身的必要性和方向：需求是否必要、有无更简单路径、是否遗漏核心场景。只审不改，输出 premise-challenges.md 质疑清单。",
-      mode: "subagent",
-      permission: {
-        read: "allow",
-        write: "allow",
-        bash: "allow",
-        glob: "allow",
-      },
-    },
+    // gemini: {
+    //   description:
+    //     "前提推翻 Agent。在 PRD 进入门禁之前，从外部攻击方案本身的必要性和方向：需求是否必要、有无更简单路径、是否遗漏核心场景。只审不改，输出 premise-challenges.md 质疑清单。",
+    //   tools: "Read, Write, Bash, Glob",
+    // },
+    // opencode: {
+    //   description:
+    //     "前提推翻 Agent。在 PRD 进入门禁之前，从外部攻击方案本身的必要性和方向：需求是否必要、有无更简单路径、是否遗漏核心场景。只审不改，输出 premise-challenges.md 质疑清单。",
+    //   mode: "subagent",
+    //   permission: {
+    //     read: "allow",
+    //     write: "allow",
+    //     bash: "allow",
+    //     glob: "allow",
+    //   },
+    // },
   },
   "trellis-check": {
     claude: {
@@ -390,12 +390,12 @@ const AGENT_FRONTMATTER: Record<
         "独立代码审查 Agent。以独立进程对代码变更进行 6 维度对抗审查（功能正确性、回归安全、安全基线、跨层一致性、性能影响、规范合规），只审不改，输出 CHML 问题清单到 check-report.md，由 implement agent 修复。",
       tools: "Read, Write, Bash, Glob, Grep",
     },
-    cursor: {
-      description:
-        "独立代码审查 Agent。以独立进程对代码变更进行 6 维度对抗审查（功能正确性、回归安全、安全基线、跨层一致性、性能影响、规范合规），只审不改，输出 CHML 问题清单到 check-report.md，由 implement agent 修复。",
-      tools: "Read, Write, Bash, Glob, Grep",
-      multilineDesc: false,
-    },
+    // cursor: {
+    //   description:
+    //     "独立代码审查 Agent。以独立进程对代码变更进行 6 维度对抗审查（功能正确性、回归安全、安全基线、跨层一致性、性能影响、规范合规），只审不改，输出 CHML 问题清单到 check-report.md，由 implement agent 修复。",
+    //   tools: "Read, Write, Bash, Glob, Grep",
+    //   multilineDesc: false,
+    // },
     codebuddy: {
       description:
         "独立代码审查 Agent。以独立进程对代码变更进行 6 维度对抗审查（功能正确性、回归安全、安全基线、跨层一致性、性能影响、规范合规），只审不改，输出 CHML 问题清单到 check-report.md，由 implement agent 修复。",
@@ -406,23 +406,23 @@ const AGENT_FRONTMATTER: Record<
         "独立代码审查 Agent。以独立进程对代码变更进行 6 维度对抗审查（功能正确性、回归安全、安全基线、跨层一致性、性能影响、规范合规），只审不改，输出 CHML 问题清单到 check-report.md，由 implement agent 修复。",
       tools: "Read, Write, Bash, Glob, Grep",
     },
-    gemini: {
-      description:
-        "独立代码审查 Agent。以独立进程对代码变更进行 6 维度对抗审查（功能正确性、回归安全、安全基线、跨层一致性、性能影响、规范合规），只审不改，输出 CHML 问题清单到 check-report.md，由 implement agent 修复。",
-      tools: "Read, Write, Bash, Glob, Grep",
-    },
-    opencode: {
-      description:
-        "独立代码审查 Agent。以独立进程对代码变更进行 6 维度对抗审查（功能正确性、回归安全、安全基线、跨层一致性、性能影响、规范合规），只审不改，输出 CHML 问题清单到 check-report.md，由 implement agent 修复。",
-      mode: "subagent",
-      permission: {
-        read: "allow",
-        write: "allow",
-        bash: "allow",
-        glob: "allow",
-        grep: "allow",
-      },
-    },
+    // gemini: {
+    //   description:
+    //     "独立代码审查 Agent。以独立进程对代码变更进行 6 维度对抗审查（功能正确性、回归安全、安全基线、跨层一致性、性能影响、规范合规），只审不改，输出 CHML 问题清单到 check-report.md，由 implement agent 修复。",
+    //   tools: "Read, Write, Bash, Glob, Grep",
+    // },
+    // opencode: {
+    //   description:
+    //     "独立代码审查 Agent。以独立进程对代码变更进行 6 维度对抗审查（功能正确性、回归安全、安全基线、跨层一致性、性能影响、规范合规），只审不改，输出 CHML 问题清单到 check-report.md，由 implement agent 修复。",
+    //   mode: "subagent",
+    //   permission: {
+    //     read: "allow",
+    //     write: "allow",
+    //     bash: "allow",
+    //     glob: "allow",
+    //     grep: "allow",
+    //   },
+    // },
   },
 };
 

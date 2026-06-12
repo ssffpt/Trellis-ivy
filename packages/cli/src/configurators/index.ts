@@ -19,19 +19,19 @@ import {
 
 // Platform configurators
 import { configureClaude } from "./claude.js";
-import { configureCursor } from "./cursor.js";
-import { configureOpenCode, collectOpenCodeTemplates } from "./opencode.js";
+// import { configureCursor } from "./cursor.js";
+// import { configureOpenCode, collectOpenCodeTemplates } from "./opencode.js";
 import { configureCodex } from "./codex.js";
 import { configureKilo } from "./kilo.js";
 import { configureKiro } from "./kiro.js";
-import { configureGemini } from "./gemini.js";
-import { configureAntigravity } from "./antigravity.js";
-import { configureWindsurf } from "./windsurf.js";
+// import { configureGemini } from "./gemini.js";
+// import { configureAntigravity } from "./antigravity.js";
+// import { configureWindsurf } from "./windsurf.js";
 import { configureQoder } from "./qoder.js";
 import { configureCodebuddy } from "./codebuddy.js";
-import { configureCopilot } from "./copilot.js";
-import { configureDroid } from "./droid.js";
-import { configurePi, collectPiTemplates } from "./pi.js";
+// import { configureCopilot } from "./copilot.js";
+// import { configureDroid } from "./droid.js";
+// import { configurePi, collectPiTemplates } from "./pi.js";
 
 // Shared utilities
 import {
@@ -64,10 +64,10 @@ import {
   getConfigTemplate as getCodexConfigTemplate,
   getHooksConfig as getCodexHooksConfig,
 } from "../templates/codex/index.js";
-import {
-  getAllHooks as getCopilotHooks,
-  getHooksConfig as getCopilotHooksConfig,
-} from "../templates/copilot/index.js";
+// import {
+//   getAllHooks as getCopilotHooks,
+//   getHooksConfig as getCopilotHooksConfig,
+// } from "../templates/copilot/index.js";
 import {
   getAllAgents as getQoderAgents,
   getSettingsTemplate as getQoderSettings,
@@ -76,18 +76,18 @@ import {
   getAllAgents as getCodebuddyAgents,
   getSettingsTemplate as getCodebuddySettings,
 } from "../templates/codebuddy/index.js";
-import {
-  getAllDroids as getDroidDroids,
-  getSettingsTemplate as getDroidSettings,
-} from "../templates/droid/index.js";
-import {
-  getAllAgents as getCursorAgents,
-  getHooksConfig as getCursorHooksConfig,
-} from "../templates/cursor/index.js";
-import {
-  getAllAgents as getGeminiAgents,
-  getSettingsTemplate as getGeminiSettings,
-} from "../templates/gemini/index.js";
+// import {
+//   getAllDroids as getDroidDroids,
+//   getSettingsTemplate as getDroidSettings,
+// } from "../templates/droid/index.js";
+// import {
+//   getAllAgents as getCursorAgents,
+//   getHooksConfig as getCursorHooksConfig,
+// } from "../templates/cursor/index.js";
+// import {
+//   getAllAgents as getGeminiAgents,
+//   getSettingsTemplate as getGeminiSettings,
+// } from "../templates/gemini/index.js";
 import { getAllAgents as getKiroAgents } from "../templates/kiro/index.js";
 import {
   getSharedHookScriptsForPlatform,
@@ -182,34 +182,34 @@ const PLATFORM_FUNCTIONS: Record<AITool, PlatformFunctions> = {
       return files;
     },
   },
-  cursor: {
-    configure: configureCursor,
-    collectTemplates: () => {
-      const files = collectBothTemplates(
-        AI_TOOLS.cursor.templateContext,
-        (n) => `.cursor/commands/trellis-${n}.md`,
-        ".cursor/skills",
-      );
-      for (const agent of getCursorAgents()) {
-        files.set(`.cursor/agents/${agent.name}.md`, agent.content);
-      }
-      for (const agent of resolveAgents(AI_TOOLS.cursor.templateContext)) {
-        files.set(`.cursor/agents/${agent.name}.md`, agent.content);
-      }
-      for (const [k, v] of collectSharedHooks(".cursor/hooks", "cursor")) {
-        files.set(k, v);
-      }
-      files.set(
-        ".cursor/hooks.json",
-        resolvePlaceholders(getCursorHooksConfig()),
-      );
-      return files;
-    },
-  },
-  opencode: {
-    configure: configureOpenCode,
-    collectTemplates: () => collectOpenCodeTemplates(),
-  },
+  // cursor: {
+  //   configure: configureCursor,
+  //   collectTemplates: () => {
+  //     const files = collectBothTemplates(
+  //       AI_TOOLS.cursor.templateContext,
+  //       (n) => `.cursor/commands/trellis-${n}.md`,
+  //       ".cursor/skills",
+  //     );
+  //     for (const agent of getCursorAgents()) {
+  //       files.set(`.cursor/agents/${agent.name}.md`, agent.content);
+  //     }
+  //     for (const agent of resolveAgents(AI_TOOLS.cursor.templateContext)) {
+  //       files.set(`.cursor/agents/${agent.name}.md`, agent.content);
+  //     }
+  //     for (const [k, v] of collectSharedHooks(".cursor/hooks", "cursor")) {
+  //       files.set(k, v);
+  //     }
+  //     files.set(
+  //       ".cursor/hooks.json",
+  //       resolvePlaceholders(getCursorHooksConfig()),
+  //     );
+  //     return files;
+  //   },
+  // },
+  // opencode: {
+  //   configure: configureOpenCode,
+  //   collectTemplates: () => collectOpenCodeTemplates(),
+  // },
   codex: {
     configure: configureCodex,
     collectTemplates: () => {
@@ -287,59 +287,59 @@ const PLATFORM_FUNCTIONS: Record<AITool, PlatformFunctions> = {
       return files;
     },
   },
-  gemini: {
-    configure: configureGemini,
-    collectTemplates: () => {
-      const ctx = AI_TOOLS.gemini.templateContext;
-      const files = new Map<string, string>();
-      for (const cmd of resolveCommands(ctx)) {
-        const toml = `description = "Trellis: ${cmd.name}"\n\nprompt = """\n${cmd.content}\n"""\n`;
-        files.set(`.gemini/commands/trellis/${cmd.name}.toml`, toml);
-      }
-      // Shared skills written to `.agents/skills/` (Gemini CLI 0.40+ workspace
-      // alias). Neutral resolver keeps content byte-identical to Codex's writes
-      // for the same skill names.
-      for (const [filePath, content] of collectSkillTemplates(
-        ".agents/skills",
-        resolveSkillsNeutral(ctx),
-        resolveBundledSkills(ctx),
-      )) {
-        files.set(filePath, content);
-      }
-      for (const agent of applyPullBasedPreludeMarkdown([
-        ...getGeminiAgents(),
-        ...resolveAgents(ctx),
-      ])) {
-        files.set(`.gemini/agents/${agent.name}.md`, agent.content);
-      }
-      for (const [k, v] of collectSharedHooks(".gemini/hooks", "gemini")) {
-        files.set(k, v);
-      }
-      files.set(
-        ".gemini/settings.json",
-        resolvePlaceholders(getGeminiSettings()),
-      );
-      return files;
-    },
-  },
-  antigravity: {
-    configure: configureAntigravity,
-    collectTemplates: () =>
-      collectBothTemplates(
-        AI_TOOLS.antigravity.templateContext,
-        (n) => `.agent/workflows/${n}.md`,
-        ".agent/skills",
-      ),
-  },
-  windsurf: {
-    configure: configureWindsurf,
-    collectTemplates: () =>
-      collectBothTemplates(
-        AI_TOOLS.windsurf.templateContext,
-        (n) => `.windsurf/workflows/trellis-${n}.md`,
-        ".windsurf/skills",
-      ),
-  },
+  // gemini: {
+  //   configure: configureGemini,
+  //   collectTemplates: () => {
+  //     const ctx = AI_TOOLS.gemini.templateContext;
+  //     const files = new Map<string, string>();
+  //     for (const cmd of resolveCommands(ctx)) {
+  //       const toml = `description = "Trellis: ${cmd.name}"\n\nprompt = """\n${cmd.content}\n"""\n`;
+  //       files.set(`.gemini/commands/trellis/${cmd.name}.toml`, toml);
+  //     }
+  //     // Shared skills written to `.agents/skills/` (Gemini CLI 0.40+ workspace
+  //     // alias). Neutral resolver keeps content byte-identical to Codex's writes
+  //     // for the same skill names.
+  //     for (const [filePath, content] of collectSkillTemplates(
+  //       ".agents/skills",
+  //       resolveSkillsNeutral(ctx),
+  //       resolveBundledSkills(ctx),
+  //     )) {
+  //       files.set(filePath, content);
+  //     }
+  //     for (const agent of applyPullBasedPreludeMarkdown([
+  //       ...getGeminiAgents(),
+  //       ...resolveAgents(ctx),
+  //     ])) {
+  //       files.set(`.gemini/agents/${agent.name}.md`, agent.content);
+  //     }
+  //     for (const [k, v] of collectSharedHooks(".gemini/hooks", "gemini")) {
+  //       files.set(k, v);
+  //     }
+  //     files.set(
+  //       ".gemini/settings.json",
+  //       resolvePlaceholders(getGeminiSettings()),
+  //     );
+  //     return files;
+  //   },
+  // },
+  // antigravity: {
+  //   configure: configureAntigravity,
+  //   collectTemplates: () =>
+  //     collectBothTemplates(
+  //       AI_TOOLS.antigravity.templateContext,
+  //       (n) => `.agent/workflows/${n}.md`,
+  //       ".agent/skills",
+  //     ),
+  // },
+  // windsurf: {
+  //   configure: configureWindsurf,
+  //   collectTemplates: () =>
+  //     collectBothTemplates(
+  //       AI_TOOLS.windsurf.templateContext,
+  //       (n) => `.windsurf/workflows/trellis-${n}.md`,
+  //       ".windsurf/skills",
+  //     ),
+  // },
   qoder: {
     configure: configureQoder,
     collectTemplates: () => {
@@ -397,75 +397,75 @@ const PLATFORM_FUNCTIONS: Record<AITool, PlatformFunctions> = {
       return files;
     },
   },
-  copilot: {
-    configure: configureCopilot,
-    collectTemplates: () => {
-      const ctx = AI_TOOLS.copilot.templateContext;
-      const files = new Map<string, string>();
-      for (const cmd of resolveCommands(ctx)) {
-        files.set(`.github/prompts/${cmd.name}.prompt.md`, cmd.content);
-      }
-      for (const [filePath, content] of collectSkillTemplates(
-        ".github/skills",
-        resolveSkills(ctx),
-        resolveBundledSkills(ctx),
-      )) {
-        files.set(filePath, content);
-      }
-      // Copilot's own session-start hook
-      for (const hook of getCopilotHooks()) {
-        files.set(`.github/copilot/hooks/${hook.name}`, hook.content);
-      }
-      // Shared hooks (inject-workflow-state.py only). Copilot bundles its own
-      // session-start.py above; sub-agent context is pull-based (class-2).
-      for (const [k, v] of collectSharedHooks(
-        ".github/copilot/hooks",
-        "copilot",
-      )) {
-        files.set(k, v);
-      }
-      // Agents: reuse common agents via Cursor context + prepend pull-based prelude, then
-      // normalize Cursor's Claude-style tools frontmatter for Copilot.
-      for (const agent of applyPullBasedPreludeMarkdown(
-        normalizeCopilotMarkdownAgents([
-          ...getCursorAgents(),
-          ...resolveAgents(AI_TOOLS.cursor.templateContext),
-        ]),
-      )) {
-        files.set(`.github/agents/${agent.name}.agent.md`, agent.content);
-      }
-      const hooksConfig = resolvePlaceholders(getCopilotHooksConfig());
-      files.set(".github/copilot/hooks.json", hooksConfig);
-      files.set(".github/hooks/trellis.json", hooksConfig);
-      return files;
-    },
-  },
-  droid: {
-    configure: configureDroid,
-    collectTemplates: () => {
-      const files = collectBothTemplates(
-        AI_TOOLS.droid.templateContext,
-        (n) => `.factory/commands/trellis/${n}.md`,
-        ".factory/skills",
-      );
-      for (const droid of getDroidDroids()) {
-        files.set(`.factory/droids/${droid.name}.md`, droid.content);
-      }
-      for (const [k, v] of collectSharedHooks(".factory/hooks", "droid")) {
-        files.set(k, v);
-      }
-      const settings = getDroidSettings();
-      files.set(
-        `.factory/${settings.targetPath}`,
-        resolvePlaceholders(settings.content),
-      );
-      return files;
-    },
-  },
-  pi: {
-    configure: configurePi,
-    collectTemplates: () => collectPiTemplates(),
-  },
+  // copilot: {
+  //   configure: configureCopilot,
+  //   collectTemplates: () => {
+  //     const ctx = AI_TOOLS.copilot.templateContext;
+  //     const files = new Map<string, string>();
+  //     for (const cmd of resolveCommands(ctx)) {
+  //       files.set(`.github/prompts/${cmd.name}.prompt.md`, cmd.content);
+  //     }
+  //     for (const [filePath, content] of collectSkillTemplates(
+  //       ".github/skills",
+  //       resolveSkills(ctx),
+  //       resolveBundledSkills(ctx),
+  //     )) {
+  //       files.set(filePath, content);
+  //     }
+  //     // Copilot's own session-start hook
+  //     for (const hook of getCopilotHooks()) {
+  //       files.set(`.github/copilot/hooks/${hook.name}`, hook.content);
+  //     }
+  //     // Shared hooks (inject-workflow-state.py only). Copilot bundles its own
+  //     // session-start.py above; sub-agent context is pull-based (class-2).
+  //     for (const [k, v] of collectSharedHooks(
+  //       ".github/copilot/hooks",
+  //       "copilot",
+  //     )) {
+  //       files.set(k, v);
+  //     }
+  //     // Agents: reuse common agents via Cursor context + prepend pull-based prelude, then
+  //     // normalize Cursor's Claude-style tools frontmatter for Copilot.
+  //     for (const agent of applyPullBasedPreludeMarkdown(
+  //       normalizeCopilotMarkdownAgents([
+  //         ...getCursorAgents(),
+  //         ...resolveAgents(AI_TOOLS.cursor.templateContext),
+  //       ]),
+  //     )) {
+  //       files.set(`.github/agents/${agent.name}.agent.md`, agent.content);
+  //     }
+  //     const hooksConfig = resolvePlaceholders(getCopilotHooksConfig());
+  //     files.set(".github/copilot/hooks.json", hooksConfig);
+  //     files.set(".github/hooks/trellis.json", hooksConfig);
+  //     return files;
+  //   },
+  // },
+  // droid: {
+  //   configure: configureDroid,
+  //   collectTemplates: () => {
+  //     const files = collectBothTemplates(
+  //       AI_TOOLS.droid.templateContext,
+  //       (n) => `.factory/commands/trellis/${n}.md`,
+  //       ".factory/skills",
+  //     );
+  //     for (const droid of getDroidDroids()) {
+  //       files.set(`.factory/droids/${droid.name}.md`, droid.content);
+  //     }
+  //     for (const [k, v] of collectSharedHooks(".factory/hooks", "droid")) {
+  //       files.set(k, v);
+  //     }
+  //     const settings = getDroidSettings();
+  //     files.set(
+  //       `.factory/${settings.targetPath}`,
+  //       resolvePlaceholders(settings.content),
+  //     );
+  //     return files;
+  //   },
+  // },
+  // pi: {
+  //   configure: configurePi,
+  //   collectTemplates: () => collectPiTemplates(),
+  // },
 };
 
 // =============================================================================

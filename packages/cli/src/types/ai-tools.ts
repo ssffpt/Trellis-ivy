@@ -9,19 +9,19 @@
  */
 export type AITool =
   | "claude-code"
-  | "cursor"
-  | "opencode"
+  // | "cursor"
+  // | "opencode"
   | "codex"
   | "kilo"
   | "kiro"
-  | "gemini"
-  | "antigravity"
-  | "windsurf"
+  // | "gemini"
+  // | "antigravity"
+  // | "windsurf"
   | "qoder"
-  | "codebuddy"
-  | "copilot"
-  | "droid"
-  | "pi";
+  | "codebuddy";
+  // | "copilot"
+  // | "droid"
+  // | "pi";
 
 /**
  * Template directory categories
@@ -29,19 +29,19 @@ export type AITool =
 export type TemplateDir =
   | "common"
   | "claude"
-  | "cursor"
-  | "opencode"
+  // | "cursor"
+  // | "opencode"
   | "codex"
   | "kilo"
   | "kiro"
-  | "gemini"
-  | "antigravity"
-  | "windsurf"
+  // | "gemini"
+  // | "antigravity"
+  // | "windsurf"
   | "qoder"
-  | "codebuddy"
-  | "copilot"
-  | "droid"
-  | "pi";
+  | "codebuddy";
+  // | "copilot"
+  // | "droid"
+  // | "pi";
 
 /**
  * CLI flag names for platform selection (e.g., --claude, --cursor, --kilo, --kiro, --gemini, --antigravity)
@@ -49,19 +49,19 @@ export type TemplateDir =
  */
 export type CliFlag =
   | "claude"
-  | "cursor"
-  | "opencode"
+  // | "cursor"
+  // | "opencode"
   | "codex"
   | "kilo"
   | "kiro"
-  | "gemini"
-  | "antigravity"
-  | "windsurf"
+  // | "gemini"
+  // | "antigravity"
+  // | "windsurf"
   | "qoder"
-  | "codebuddy"
-  | "copilot"
-  | "droid"
-  | "pi";
+  | "codebuddy";
+  // | "copilot"
+  // | "droid"
+  // | "pi";
 
 /**
  * Template context for placeholder resolution.
@@ -148,38 +148,38 @@ export const AI_TOOLS: Record<AITool, AIToolConfig> = {
       cliFlag: "claude",
     },
   },
-  cursor: {
-    name: "Cursor",
-    templateDirs: ["common", "cursor"],
-    configDir: ".cursor",
-    cliFlag: "cursor",
-    defaultChecked: true,
-    hasPythonHooks: true,
-    templateContext: {
-      cmdRefPrefix: "/trellis-",
-      executorAI: "Bash scripts or Task calls",
-      userActionLabel: "Slash commands",
-      agentCapable: true,
-      hasHooks: true,
-      cliFlag: "cursor",
-    },
-  },
-  opencode: {
-    name: "OpenCode",
-    templateDirs: ["common", "opencode"],
-    configDir: ".opencode",
-    cliFlag: "opencode",
-    defaultChecked: false,
-    hasPythonHooks: false,
-    templateContext: {
-      cmdRefPrefix: "/trellis:",
-      executorAI: "Bash scripts or Task calls",
-      userActionLabel: "Slash commands",
-      agentCapable: true,
-      hasHooks: false,
-      cliFlag: "opencode",
-    },
-  },
+  // cursor: {
+  //   name: "Cursor",
+  //   templateDirs: ["common", "cursor"],
+  //   configDir: ".cursor",
+  //   cliFlag: "cursor",
+  //   defaultChecked: true,
+  //   hasPythonHooks: true,
+  //   templateContext: {
+  //     cmdRefPrefix: "/trellis-",
+  //     executorAI: "Bash scripts or Task calls",
+  //     userActionLabel: "Slash commands",
+  //     agentCapable: true,
+  //     hasHooks: true,
+  //     cliFlag: "cursor",
+  //   },
+  // },
+  // opencode: {
+  //   name: "OpenCode",
+  //   templateDirs: ["common", "opencode"],
+  //   configDir: ".opencode",
+  //   cliFlag: "opencode",
+  //   defaultChecked: false,
+  //   hasPythonHooks: false,
+  //   templateContext: {
+  //     cmdRefPrefix: "/trellis:",
+  //     executorAI: "Bash scripts or Task calls",
+  //     userActionLabel: "Slash commands",
+  //     agentCapable: true,
+  //     hasHooks: false,
+  //     cliFlag: "opencode",
+  //   },
+  // },
   codex: {
     name: "Codex (also writes .agents/skills/ — read by Cursor, Gemini CLI, GitHub Copilot, Amp, Kimi Code)",
     templateDirs: ["common", "codex"],
@@ -230,57 +230,57 @@ export const AI_TOOLS: Record<AITool, AIToolConfig> = {
       cliFlag: "kiro",
     },
   },
-  gemini: {
-    name: "Gemini CLI",
-    templateDirs: ["common", "gemini"],
-    configDir: ".gemini",
-    supportsAgentSkills: true,
-    cliFlag: "gemini",
-    defaultChecked: false,
-    hasPythonHooks: true,
-    templateContext: {
-      cmdRefPrefix: "/trellis:",
-      executorAI: "Bash scripts or tool calls",
-      userActionLabel: "Slash commands",
-      agentCapable: true,
-      hasHooks: true,
-      cliFlag: "gemini",
-    },
-  },
-  antigravity: {
-    name: "Antigravity",
-    templateDirs: ["common", "antigravity"],
-    configDir: ".agent/workflows",
-    extraManagedPaths: [".agent/skills"],
-    cliFlag: "antigravity",
-    defaultChecked: false,
-    hasPythonHooks: false,
-    templateContext: {
-      cmdRefPrefix: "/",
-      executorAI: "Bash scripts or file reads",
-      userActionLabel: "Workflows",
-      agentCapable: false,
-      hasHooks: false,
-      cliFlag: "antigravity",
-    },
-  },
-  windsurf: {
-    name: "Windsurf",
-    templateDirs: ["common", "windsurf"],
-    configDir: ".windsurf/workflows",
-    extraManagedPaths: [".windsurf/skills"],
-    cliFlag: "windsurf",
-    defaultChecked: false,
-    hasPythonHooks: false,
-    templateContext: {
-      cmdRefPrefix: "/trellis-",
-      executorAI: "Bash scripts or file reads",
-      userActionLabel: "Workflows",
-      agentCapable: false,
-      hasHooks: false,
-      cliFlag: "windsurf",
-    },
-  },
+  // gemini: {
+  //   name: "Gemini CLI",
+  //   templateDirs: ["common", "gemini"],
+  //   configDir: ".gemini",
+  //   supportsAgentSkills: true,
+  //   cliFlag: "gemini",
+  //   defaultChecked: false,
+  //   hasPythonHooks: true,
+  //   templateContext: {
+  //     cmdRefPrefix: "/trellis:",
+  //     executorAI: "Bash scripts or tool calls",
+  //     userActionLabel: "Slash commands",
+  //     agentCapable: true,
+  //     hasHooks: true,
+  //     cliFlag: "gemini",
+  //   },
+  // },
+  // antigravity: {
+  //   name: "Antigravity",
+  //   templateDirs: ["common", "antigravity"],
+  //   configDir: ".agent/workflows",
+  //   extraManagedPaths: [".agent/skills"],
+  //   cliFlag: "antigravity",
+  //   defaultChecked: false,
+  //   hasPythonHooks: false,
+  //   templateContext: {
+  //     cmdRefPrefix: "/",
+  //     executorAI: "Bash scripts or file reads",
+  //     userActionLabel: "Workflows",
+  //     agentCapable: false,
+  //     hasHooks: false,
+  //     cliFlag: "antigravity",
+  //   },
+  // },
+  // windsurf: {
+  //   name: "Windsurf",
+  //   templateDirs: ["common", "windsurf"],
+  //   configDir: ".windsurf/workflows",
+  //   extraManagedPaths: [".windsurf/skills"],
+  //   cliFlag: "windsurf",
+  //   defaultChecked: false,
+  //   hasPythonHooks: false,
+  //   templateContext: {
+  //     cmdRefPrefix: "/trellis-",
+  //     executorAI: "Bash scripts or file reads",
+  //     userActionLabel: "Workflows",
+  //     agentCapable: false,
+  //     hasHooks: false,
+  //     cliFlag: "windsurf",
+  //   },
+  // },
   qoder: {
     name: "Qoder",
     templateDirs: ["common", "qoder"],
@@ -313,60 +313,60 @@ export const AI_TOOLS: Record<AITool, AIToolConfig> = {
       cliFlag: "codebuddy",
     },
   },
-  copilot: {
-    name: "GitHub Copilot",
-    templateDirs: ["common", "copilot"],
-    configDir: ".github/copilot",
-    extraManagedPaths: [
-      ".github/agents",
-      ".github/hooks",
-      ".github/prompts",
-      ".github/skills",
-    ],
-    cliFlag: "copilot",
-    defaultChecked: false,
-    hasPythonHooks: true,
-    templateContext: {
-      cmdRefPrefix: "/",
-      executorAI: "Bash scripts or tool calls",
-      userActionLabel: "Prompts",
-      agentCapable: true,
-      hasHooks: true,
-      cliFlag: "copilot",
-    },
-  },
-  droid: {
-    name: "Factory Droid",
-    templateDirs: ["common", "droid"],
-    configDir: ".factory",
-    cliFlag: "droid",
-    defaultChecked: false,
-    hasPythonHooks: true,
-    templateContext: {
-      cmdRefPrefix: "/trellis-",
-      executorAI: "Bash scripts or Task calls",
-      userActionLabel: "Slash commands",
-      agentCapable: true,
-      hasHooks: true,
-      cliFlag: "droid",
-    },
-  },
-  pi: {
-    name: "Pi Agent",
-    templateDirs: ["common", "pi"],
-    configDir: ".pi",
-    cliFlag: "pi",
-    defaultChecked: false,
-    hasPythonHooks: false,
-    templateContext: {
-      cmdRefPrefix: "/trellis-",
-      executorAI: "Bash scripts or tool calls",
-      userActionLabel: "Slash commands",
-      agentCapable: true,
-      hasHooks: true,
-      cliFlag: "pi",
-    },
-  },
+  // copilot: {
+  //   name: "GitHub Copilot",
+  //   templateDirs: ["common", "copilot"],
+  //   configDir: ".github/copilot",
+  //   extraManagedPaths: [
+  //     ".github/agents",
+  //     ".github/hooks",
+  //     ".github/prompts",
+  //     ".github/skills",
+  //   ],
+  //   cliFlag: "copilot",
+  //   defaultChecked: false,
+  //   hasPythonHooks: true,
+  //   templateContext: {
+  //     cmdRefPrefix: "/",
+  //     executorAI: "Bash scripts or tool calls",
+  //     userActionLabel: "Prompts",
+  //     agentCapable: true,
+  //     hasHooks: true,
+  //     cliFlag: "copilot",
+  //   },
+  // },
+  // droid: {
+  //   name: "Factory Droid",
+  //   templateDirs: ["common", "droid"],
+  //   configDir: ".factory",
+  //   cliFlag: "droid",
+  //   defaultChecked: false,
+  //   hasPythonHooks: true,
+  //   templateContext: {
+  //     cmdRefPrefix: "/trellis-",
+  //     executorAI: "Bash scripts or Task calls",
+  //     userActionLabel: "Slash commands",
+  //     agentCapable: true,
+  //     hasHooks: true,
+  //     cliFlag: "droid",
+  //   },
+  // },
+  // pi: {
+  //   name: "Pi Agent",
+  //   templateDirs: ["common", "pi"],
+  //   configDir: ".pi",
+  //   cliFlag: "pi",
+  //   defaultChecked: false,
+  //   hasPythonHooks: false,
+  //   templateContext: {
+  //     cmdRefPrefix: "/trellis-",
+  //     executorAI: "Bash scripts or tool calls",
+  //     userActionLabel: "Slash commands",
+  //     agentCapable: true,
+  //     hasHooks: true,
+  //     cliFlag: "pi",
+  //   },
+  // },
 };
 
 /**
